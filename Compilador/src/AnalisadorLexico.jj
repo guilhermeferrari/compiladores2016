@@ -1,6 +1,8 @@
 options 
 {
-	static = true;	
+	DEBUG_PARSER = false;
+  	DEBUG_TOKEN_MANAGER = false;
+  	static = true;	
 }
 
 PARSER_BEGIN(AnalisadorLexico)
