@@ -4,23 +4,23 @@ options
   	DEBUG_TOKEN_MANAGER = false;
 }
 
-PARSER_BEGIN(AnalisadorSintatico)
+PARSER_BEGIN(Compilador)
 
 import java.io.*;
 
-public class AnalisadorSintatico
+public class Compilador
 {
 	public static void main (String args []) throws ParseException
 	{
-	  	AnalisadorSintatico analisador = null;
+	  	Compilador compilador = null;
 		while (true)
 		{
 			System.out.println("Fazendo análise...");
 			try
 			{
-			  	analisador = new AnalisadorSintatico(new FileInputStream("codigo.hue"));
-				analisador.inicio();
-				System.out.println("Analisador Lexico e Sintatico sem erros.\n");
+			  	compilador = new Compilador(new FileInputStream("codigo.hue"));
+				compilador.inicio();
+				System.out.println("compilador Lexico e Sintatico sem erros.\n");
 				break;
 			}
 			catch(FileNotFoundException e)
@@ -43,7 +43,7 @@ public class AnalisadorSintatico
 	}
 }
 
-PARSER_END(AnalisadorSintatico)
+PARSER_END(Compilador)
 
 SKIP :
 {
