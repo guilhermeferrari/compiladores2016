@@ -1,0 +1,4 @@
+numero _num;
+
+   _num = 2+3*4;
+   exibe "2 + 3 * 4 = ", _num, "\n";
