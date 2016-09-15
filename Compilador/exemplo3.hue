@@ -1,0 +1,6 @@
+numero _i;
+   para (_i=4 ate 50 passo 2)
+
+      exibe _i, " ";
+
+   fimPara
