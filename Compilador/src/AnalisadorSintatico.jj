@@ -126,9 +126,7 @@ void listaComandos() : {}
 
 void comando() : {}
 {
-  	//LOOKAHEAD(3)
-		expressao()
-	| 	atribVar()
+	 	atribVar()
 	| 	declaraVar()	
 	|	leia()
 	| 	exibe()
@@ -188,8 +186,6 @@ void declaraVar() : {}
 
 void atribVar() : {}
 {
-	 
-	//<NOMEVAR> <ATRIB> (<NUMERO> | <STRING>) <PTVIRG>
 	 <NOMEVAR> (<VIRG> <NOMEVAR>)* <ATRIB> expressao() (<VIRG> expressao())* <PTVIRG>
 }
 
