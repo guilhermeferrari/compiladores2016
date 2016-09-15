@@ -41,4 +41,4 @@
 
    fimSe
 
-   exibe "Relação entre a primeira e segunda datas: ", _relacao "\n";
+   exibe "RelaÃ§Ã£o entre a primeira e segunda datas: ", _relacao "\n";
