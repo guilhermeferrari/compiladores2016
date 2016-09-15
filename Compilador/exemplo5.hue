@@ -1,0 +1,42 @@
+numero _dia1, _mes1, _ano1, _dia2, _mes2, _ano2;
+   string _relacao;
+
+   leia "Entre com o dia da primeira data:", _dia1, "\n";
+   leia "Entre com o mes da primeira data:", _mes1, "\n";
+   leia "Entre com o ano da primeira data:", _ano1, "\n\n";
+
+   leia "Entre com o dia da segunda data:",  _dia2, "\n";
+   leia "Entre com o mes da segunda data:",  _mes2, "\n";`
+   leia "Entre com o ano da segunda data:",  _ano2, "\n\n";`
+
+   se (_ano1 > _ano2)
+
+      _relacao = "maior";
+
+   senaoSe (_ano1 < _ano2)
+
+      _relacao = "menor";
+
+   senaoSe (_mes1 > _mes2)
+
+      _relacao = "maior"
+
+   senaoSe (_mes1 < _mes2)
+
+      _relacao = "menor"
+
+   senaoSe (_dia1 > _dia2)
+
+      _relacao = "maior";
+
+   senaoSe (_dia1 < _dia2)
+
+      _relacao = "menor";
+
+   senao
+
+      _relacao = "igual";
+
+   fimSe
+
+   exibe "Relação entre a primeira e segunda datas: ", _relacao "\n";
