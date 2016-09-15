@@ -1,0 +1,49 @@
+/* Calcula a média semestral e determina se um aluno foi aprovado ou não a
+partir de suas notas. Em caso de não aprovação, refaz o cálculo
+solicitando a prova final. A média final possui 60% de peso para média
+semestral e 40% para prova final */
+
+   numero _Nota1, _Nota2, _Nota3, _MediaSemestral, _MediaFinal, _PrFinal, _Faltas, _notaMinPF;
+   string _Situacao;
+
+   exibe "entre com as duas notas:";
+   leia _Nota1, _Nota2, _Nota3;
+   leia "\nEntre com o percentual de faltas:", _Faltas, "\n\n";
+
+   _MediaSemestral = (_Nota1+_Nota2+_Nota3)/3;
+   _MediaFinal = _MediaSemestral;
+
+   se ( (_Faltas > 50) ou ( (_Faltas > 25) e (_MediaSemestral < 1.5) ) )
+
+      _Situacao = "Reprovado por faltas";
+
+   senao
+
+      se (_MediaSemestral < 1.5) 
+
+         _Situacao = "Reprovado por nota";
+
+      senao
+
+         se (_MediaSemestral < 7)
+
+            _notaMinPF = (5 - _MediaSemestral * 0.4)/0.6;
+            exibe "Nota mínima para a prova final:", _notaMinPF;
+            leia "Entre com a nota da prova final:", _PrFinal;
+            _MediaFinal = _MediaSemestral * 0.4 + _PrFinal * 0.6;
+
+         fimSe
+
+         se (_MediaFinal >= 5)
+
+            _Situacao = "aprovado";
+
+         senao
+
+            _Situacao = "Reprovado por nota";
+
+         fimSe
+      fimSe
+   fimSe
+
+   exibe "Média final é:", _MediaFinal, "Situacao:", _Situacao, "Faltas(%):", _PercentualFaltas;
