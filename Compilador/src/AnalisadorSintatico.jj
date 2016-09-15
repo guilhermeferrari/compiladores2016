@@ -1,0 +1,264 @@
+options 
+{
+	DEBUG_PARSER = false;
+  	DEBUG_TOKEN_MANAGER = false;
+}
+
+PARSER_BEGIN(AnalisadorSintatico)
+
+import java.io.*;
+
+public class AnalisadorSintatico
+{
+	public static void main (String args []) throws ParseException
+	{
+	  	AnalisadorSintatico analisador = null;
+		while (true)
+		{
+			System.out.println("Fazendo análise...");
+			try
+			{
+			  	analisador = new AnalisadorSintatico(new FileInputStream("codigo.hue"));
+				analisador.inicio();
+				System.out.println("Analisador Lexico e Sintatico sem erros.\n");
+				break;
+			}
+			catch(FileNotFoundException e)
+			{
+				System.out.println("Erro: arquivo nao encontrado!\n");
+				break;
+			}
+			catch (TokenMgrError e)
+			{
+				System.out.println("Erro lexico\n" + e.getMessage());
+				break;
+			}
+
+			catch(ParseException e)
+			{
+		         System.out.println("Erro sintatico\n" + e.getMessage());
+		         break;
+			}
+		}
+	}
+}
+
+PARSER_END(AnalisadorSintatico)
+
+SKIP :
+{
+		" "
+	| 	"\r"
+	|	"\t"
+	|	"\n"
+}
+
+/*
+	SKIP que será usado para os comentários
+*/
+
+SKIP : { "/*" : comentarioCompleto }
+
+<comentarioCompleto>
+
+SKIP: { "*/" : DEFAULT | <~[]> }
+
+SKIP : { "//" : comentarioLinha }
+
+<comentarioLinha>
+
+SKIP: { "\n" : DEFAULT | <~[]> }
+
+TOKEN :
+{
+		< NUMERO : (["0" - "9"])*(".")?(["0" - "9"])+ > 
+	|	< STRING : ("\"")(~["\""])*("\"") >
+	|	< NOMEVAR : ("_")(["a"-"z"]|["A"-"Z"])(["a"-"z"]|["A"-"Z"]|["0"-"9"])* >
+	|	< ATRIB : "=" >
+	|	< EXIBE : "exibe" >
+	|	< LEIA : "leia" >
+	| 	< TIPONUM : "numero" >
+	| 	< TIPOSTRING : "string" >
+	|	< PARL : "(" >
+	|	< PARR : ")" >
+	|	< POT : "^" >
+	|	< MULT : "*" >
+	|	< DIV : "/" >
+	|	< ADD : "+" >
+	|	< SUB : "-" >
+	|	< MAIOR : ">" >
+	|	< MENOR : "<" >
+	|	< MAIORIGUAL : ">=" >
+	|	< MENORIGUAL : "<=" >
+	|	< DIFERENTE : "!=" >
+	|	< COMPARA : "==" >
+	|	< E : "e" >
+	|	< OU : "ou" >
+	|	< NAO : "nao" >
+	|	< OUCC : "OU" >
+	|	< SE : "se" >
+	|	< SENAOSE : "senaoSe" >
+	|	< SENAO : "senao" >
+	|	< FIMSE : "fimSe" >
+	|	< ESCOLHA : "escolha" >
+	|	< CASO : "caso" >
+	|	< OUTROS : "outros" >
+	|	< FIMESCOLHA : "fimEscolha" >
+	|	< ENQUANTO : "enquanto" >
+	|	< FIMENQUANTO : "fimEnquanto" >
+	|	< PARA : "para" >
+	|	< ATE : "ate" >
+	|	< PASSO : "passo" >
+	|	< FIMPARA : "fimPara" >
+	|	< PTVIRG : ";" >
+	|	< VIRG : "," >
+}
+
+void inicio() : {}
+{
+	listaComandos() <EOF>
+}
+
+void listaComandos() : {}
+{
+	(comando())*
+}
+
+void comando() : {}
+{
+  	//LOOKAHEAD(3)
+		expressao()
+	| 	atribVar()
+	| 	declaraVar()	
+	|	leia()
+	| 	exibe()
+	| 	comandoSe()
+	| 	comandoEscolha()
+	| 	comandoEnquanto()
+	| 	comandoPara() 
+}
+
+void expressao() : {}
+{
+	termo1() (<OU> termo1() | <OUCC> termo1())*
+}
+
+void termo1() : {}
+{
+	termo2() (<E> termo2())*
+}
+
+void termo2() : {}
+{
+	termo3() (<MAIOR> termo3() | <MENOR> termo3() | <MAIORIGUAL> termo3() | <MENORIGUAL> termo3() | <DIFERENTE> termo3() | <COMPARA> termo3())*
+}
+
+void termo3() : {}
+{
+	termo4() (<ADD> termo4() | <SUB> termo4())*
+}
+
+void termo4() : {}
+{
+	termo5() (<MULT> termo5() | <DIV> termo5())*
+}
+
+void termo5() : {}
+{
+	termo6() (<POT> termo5())?
+}
+
+void termo6() : {}
+{
+	(<NAO>)* fator()
+}
+
+void fator() : {}
+{
+		<PARL> expressao() <PARR>
+	|	<NUMERO>
+	| 	<STRING>
+	| 	<NOMEVAR>
+}
+
+void declaraVar() : {}
+{
+	(<TIPOSTRING> | <TIPONUM>) <NOMEVAR> (<VIRG><NOMEVAR>)* <PTVIRG>
+}
+
+void atribVar() : {}
+{
+	 
+	//<NOMEVAR> <ATRIB> (<NUMERO> | <STRING>) <PTVIRG>
+	 <NOMEVAR> (<VIRG> <NOMEVAR>)* <ATRIB> expressao() (<VIRG> expressao())* <PTVIRG>
+}
+
+void leia() : {}
+{
+	<LEIA> (<STRING> <VIRG>)* (<NOMEVAR>) (<VIRG> (<NOMEVAR> | <STRING>))* <PTVIRG>
+}
+
+void exibe() : {}
+{
+	<EXIBE> (<STRING> | <NUMERO> | <NOMEVAR>) (<VIRG> (<STRING> | <NUMERO> | <NOMEVAR>))* <PTVIRG>
+}
+
+void comandoSe() : {}
+{
+	blocoSe() (blocoSenaoSe())* (blocoSenao())? <FIMSE>
+}
+
+void blocoSe() : {}
+{
+	<SE> <PARL> expressao() <PARR> listaComandos()
+}
+
+void blocoSenaoSe() : {}
+{
+	<SENAOSE> <PARL> expressao() <PARR> listaComandos()
+}
+
+void blocoSenao() : {}
+{
+	<SENAO> listaComandos()
+}
+
+void comandoEscolha() : {}
+{
+	expEscolha() (expCaso())+ (expOutros())? <FIMESCOLHA>
+}
+
+void expEscolha() : {}
+{
+	<ESCOLHA> <PARL> expressao() <PARR>
+}
+
+void expCaso() : {}
+{
+	<CASO> <PARL> expressao() <PARR> listaComandos()
+}
+
+void expOutros() : {}
+{
+	<OUTROS> listaComandos()
+}
+
+void comandoEnquanto() : {}
+{
+	<ENQUANTO> <PARL> expressao() <PARR> listaComandos() <FIMENQUANTO>
+}
+
+void comandoPara() : {}
+{
+	<PARA> <PARL> <NOMEVAR> (paraSimples() | paraEspecial()) <PARR> listaComandos() <FIMPARA>
+}
+
+void paraSimples() : {}
+{
+	expressao() <ATE> expressao() (<PASSO> expressao())?
+}
+
+void paraEspecial() : {}
+{
+	(<VIRG> <NOMEVAR>)+ expressao() <ATE> expressao()
+}
