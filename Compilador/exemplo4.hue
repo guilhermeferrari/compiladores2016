@@ -12,5 +12,5 @@ numero _soma, _valor, _qtde, _cont, _media;
 
    fimEnquanto
 
-   media = _soma/_qtde
+   media = _soma/_qtde;
    exibe "Media:", media, "\n";

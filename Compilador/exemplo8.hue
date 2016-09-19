@@ -4,8 +4,7 @@
    exibe "Serão exibidas as 10 tabuadas: \n";
 
    para (_n=1 ate 10 passo 1)
-
-      exibe "\nTabuada de ", _n,": \n”;
+      exibe "\nTabuada de ", _n,": \n';
 
       para (_k=1 ate 10 passo 1)
 

@@ -37,7 +37,7 @@ semestral e 40% para prova final */
          se (_MediaFinal >= 5)
 
             _Situacao = "aprovado";
-
+		
          senao
 
             _Situacao = "Reprovado por nota";

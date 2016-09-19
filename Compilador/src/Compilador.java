@@ -7,12 +7,12 @@ public class Compilador implements CompiladorConstants {
                 Compilador compilador = null;
                 while (true)
                 {
-                        System.out.println("Fazendo an\u00e1lise...");
+                        System.out.println("Fazendo analise...");
                         try
                         {
-                                compilador = new Compilador(new FileInputStream("codigo.hue"));
+                                compilador = new Compilador(new FileInputStream("exemplo1.hue"));
                                 compilador.inicio();
-                                System.out.println("compilador Lexico e Sintatico sem erros.\u005cn");
+                                System.out.println("\u005cnEnd of compilation.\u005cn");
                                 break;
                         }
                         catch(FileNotFoundException e)
@@ -20,7 +20,7 @@ public class Compilador implements CompiladorConstants {
                                 System.out.println("Erro: arquivo nao encontrado!\u005cn");
                                 break;
                         }
-                        catch (TokenMgrError e)
+                        catch(TokenMgrError e)
                         {
                                 System.out.println("Erro lexico\u005cn" + e.getMessage());
                                 break;
@@ -31,6 +31,18 @@ public class Compilador implements CompiladorConstants {
                          System.out.println("Erro sintatico\u005cn" + e.getMessage());
                          break;
                         }
+                }
+        }
+
+        static public void compiladorErro(String esperado)
+        {
+                Token t = getToken(1);
+                System.out.print("\u005cnErro sintatico (linha "+t.beginLine+") Encontrou \u005c'"+t.image+"\u005c', era esperado: "+esperado);
+
+                while(!t.image.equals(";") && t.kind != 0)
+                {
+                        getNextToken();
+                        t = getToken(1);
                 }
         }
 
@@ -254,6 +266,7 @@ public class Compilador implements CompiladorConstants {
   }
 
   static final public void termo5() throws ParseException {
+                  Token t;
     termo6();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case POT:
@@ -267,6 +280,7 @@ public class Compilador implements CompiladorConstants {
   }
 
   static final public void termo6() throws ParseException {
+                  Token t;
     label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -284,11 +298,6 @@ public class Compilador implements CompiladorConstants {
 
   static final public void fator() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case PARL:
-      jj_consume_token(PARL);
-      expressao();
-      jj_consume_token(PARR);
-      break;
     case NUMERO:
       jj_consume_token(NUMERO);
       break;
@@ -297,6 +306,15 @@ public class Compilador implements CompiladorConstants {
       break;
     case NOMEVAR:
       jj_consume_token(NOMEVAR);
+      break;
+    case PARL:
+      jj_consume_token(PARL);
+      expressao();
+      try {
+        jj_consume_token(PARR);
+      } catch (ParseException e) {
+            compiladorErro("Fecha parenteses");
+      }
       break;
     default:
       jj_la1[13] = jj_gen;
@@ -332,7 +350,11 @@ public class Compilador implements CompiladorConstants {
       jj_consume_token(VIRG);
       jj_consume_token(NOMEVAR);
     }
-    jj_consume_token(PTVIRG);
+    try {
+      jj_consume_token(PTVIRG);
+    } catch (ParseException e) {
+                        compiladorErro("Ponto-e-virgula");
+    }
   }
 
   static final public void atribVar() throws ParseException {
@@ -365,7 +387,11 @@ public class Compilador implements CompiladorConstants {
       jj_consume_token(VIRG);
       expressao();
     }
-    jj_consume_token(PTVIRG);
+    try {
+      jj_consume_token(PTVIRG);
+    } catch (ParseException e) {
+                        compiladorErro("Ponto-e-virgula");
+    }
   }
 
   static final public void leia() throws ParseException {
@@ -408,7 +434,11 @@ public class Compilador implements CompiladorConstants {
         throw new ParseException();
       }
     }
-    jj_consume_token(PTVIRG);
+    try {
+      jj_consume_token(PTVIRG);
+    } catch (ParseException e) {
+                  compiladorErro("Ponto-e-virgula");
+    }
   }
 
   static final public void exibe() throws ParseException {
@@ -455,7 +485,11 @@ public class Compilador implements CompiladorConstants {
         throw new ParseException();
       }
     }
-    jj_consume_token(PTVIRG);
+    try {
+      jj_consume_token(PTVIRG);
+    } catch (ParseException e) {
+                        compiladorErro("Ponto-e-virgula");
+    }
   }
 
   static final public void comandoSe() throws ParseException {
@@ -487,7 +521,11 @@ public class Compilador implements CompiladorConstants {
     jj_consume_token(SE);
     jj_consume_token(PARL);
     expressao();
-    jj_consume_token(PARR);
+    try {
+      jj_consume_token(PARR);
+    } catch (ParseException e) {
+                    compiladorErro("Fecha parenteses");
+    }
     listaComandos();
   }
 
@@ -495,7 +533,11 @@ public class Compilador implements CompiladorConstants {
     jj_consume_token(SENAOSE);
     jj_consume_token(PARL);
     expressao();
-    jj_consume_token(PARR);
+    try {
+      jj_consume_token(PARR);
+    } catch (ParseException e) {
+                    compiladorErro("Fecha parenteses");
+    }
     listaComandos();
   }
 
@@ -533,14 +575,22 @@ public class Compilador implements CompiladorConstants {
     jj_consume_token(ESCOLHA);
     jj_consume_token(PARL);
     expressao();
-    jj_consume_token(PARR);
+    try {
+      jj_consume_token(PARR);
+    } catch (ParseException e) {
+                    compiladorErro("Fecha parenteses");
+    }
   }
 
   static final public void expCaso() throws ParseException {
     jj_consume_token(CASO);
     jj_consume_token(PARL);
     expressao();
-    jj_consume_token(PARR);
+    try {
+      jj_consume_token(PARR);
+    } catch (ParseException e) {
+                    compiladorErro("Fecha parenteses");
+    }
     listaComandos();
   }
 
@@ -553,7 +603,11 @@ public class Compilador implements CompiladorConstants {
     jj_consume_token(ENQUANTO);
     jj_consume_token(PARL);
     expressao();
-    jj_consume_token(PARR);
+    try {
+      jj_consume_token(PARR);
+    } catch (ParseException e) {
+                    compiladorErro("Fecha parenteses");
+    }
     listaComandos();
     jj_consume_token(FIMENQUANTO);
   }
@@ -578,7 +632,11 @@ public class Compilador implements CompiladorConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-    jj_consume_token(PARR);
+    try {
+      jj_consume_token(PARR);
+    } catch (ParseException e) {
+                    compiladorErro("Fecha parenteses");
+    }
     listaComandos();
     jj_consume_token(FIMPARA);
   }
