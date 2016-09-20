@@ -353,7 +353,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                        compiladorErro("Ponto-e-virgula");
+                compiladorErro("Ponto-e-virgula");
     }
   }
 
@@ -390,7 +390,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                        compiladorErro("Ponto-e-virgula");
+                compiladorErro("Ponto-e-virgula");
     }
   }
 
@@ -437,7 +437,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                  compiladorErro("Ponto-e-virgula");
+          compiladorErro("Ponto-e-virgula");
     }
   }
 
@@ -488,7 +488,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                        compiladorErro("Ponto-e-virgula");
+                compiladorErro("Ponto-e-virgula");
     }
   }
 
@@ -524,7 +524,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-                    compiladorErro("Fecha parenteses");
+            compiladorErro("Fecha parenteses");
     }
     listaComandos();
   }
@@ -536,7 +536,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-                    compiladorErro("Fecha parenteses");
+            compiladorErro("Fecha parenteses");
     }
     listaComandos();
   }
@@ -578,7 +578,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-                    compiladorErro("Fecha parenteses");
+            compiladorErro("Fecha parenteses");
     }
   }
 
@@ -589,7 +589,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-                    compiladorErro("Fecha parenteses");
+            compiladorErro("Fecha parenteses");
     }
     listaComandos();
   }
@@ -606,7 +606,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-                    compiladorErro("Fecha parenteses");
+            compiladorErro("Fecha parenteses");
     }
     listaComandos();
     jj_consume_token(FIMENQUANTO);
@@ -635,7 +635,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-                    compiladorErro("Fecha parenteses");
+            compiladorErro("Fecha parenteses");
     }
     listaComandos();
     jj_consume_token(FIMPARA);

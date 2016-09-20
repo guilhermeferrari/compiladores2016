@@ -200,27 +200,27 @@ void declaraVar() : { }
 	( <TIPOSTRING> | <TIPONUM> ) <NOMEVAR> ( <VIRG>  <NOMEVAR> )*
 
 	try
-		{
-			<PTVIRG>
-		}
-		catch(ParseException e)
-		{  
-			compiladorErro("Ponto-e-virgula");
-		} 
+	{
+		<PTVIRG>
+	}
+	catch(ParseException e)
+	{  
+		compiladorErro("Ponto-e-virgula");
+	} 
 }
 
 void atribVar() : {  }
 {
 	 <NOMEVAR> ( <VIRG> <NOMEVAR> )* <ATRIB> expressao() ( <VIRG>  expressao() )*
 
-	 try
-		{
-			<PTVIRG>
-		}
-		catch(ParseException e)
-		{  
-			compiladorErro("Ponto-e-virgula");
-		} 
+	try
+	{
+		<PTVIRG>
+	}
+	catch(ParseException e)
+	{  
+		compiladorErro("Ponto-e-virgula");
+	} 
 }
 
 void leia() : {}
@@ -228,13 +228,13 @@ void leia() : {}
 	<LEIA> (<STRING> <VIRG>)* (<NOMEVAR>) (<VIRG> (<NOMEVAR> | <STRING>))*
 
 	try
-		{
-		  <PTVIRG>
-		}
-		catch(ParseException e)
-		{  
-		  compiladorErro("Ponto-e-virgula");
-		}
+	{
+	  <PTVIRG>
+	}
+	catch(ParseException e)
+	{  
+	  compiladorErro("Ponto-e-virgula");
+	}
 }
 
 void exibe() : {}
@@ -242,13 +242,13 @@ void exibe() : {}
 	<EXIBE> (<STRING> | <NUMERO> | <NOMEVAR>) (<VIRG> (<STRING> | <NUMERO> | <NOMEVAR>))*
 
 	try
-		{
-			<PTVIRG>
-		}
-		catch(ParseException e)
-		{  
-			compiladorErro("Ponto-e-virgula");
-		}
+	{
+		<PTVIRG>
+	}
+	catch(ParseException e)
+	{  
+		compiladorErro("Ponto-e-virgula");
+	}
 }
 
 void comandoSe() : {}
@@ -261,12 +261,12 @@ void blocoSe() : {}
 	<SE> <PARL> expressao()
 
 	try
-		{
-	  	   <PARR>
-		}
-		catch(ParseException e) {
-		    compiladorErro("Fecha parenteses");
-		}
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
 
 	listaComandos()
 }
@@ -276,12 +276,12 @@ void blocoSenaoSe() : {}
 	<SENAOSE> <PARL> expressao()
 
 	try
-		{
-	  	   <PARR>
-		}
-		catch(ParseException e) {
-		    compiladorErro("Fecha parenteses");
-		}
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
 
 	listaComandos()
 }
@@ -301,12 +301,12 @@ void expEscolha() : {}
 	<ESCOLHA> <PARL> expressao()
 
 	try
-		{
-	  	   <PARR>
-		}
-		catch(ParseException e) {
-		    compiladorErro("Fecha parenteses");
-		}
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
 }
 
 void expCaso() : {}
@@ -314,12 +314,12 @@ void expCaso() : {}
 	<CASO> <PARL> expressao()
 
 	try
-		{
-	  	   <PARR>
-		}
-		catch(ParseException e) {
-		    compiladorErro("Fecha parenteses");
-		}
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
 
 	listaComandos()
 }
@@ -334,12 +334,12 @@ void comandoEnquanto() : {}
 	<ENQUANTO> <PARL> expressao()
 
 	try
-		{
-	  	   <PARR>
-		}
-		catch(ParseException e) {
-		    compiladorErro("Fecha parenteses");
-		}
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
 
 	listaComandos() <FIMENQUANTO>
 }
@@ -349,12 +349,12 @@ void comandoPara() : {}
 	<PARA> <PARL> <NOMEVAR> (paraSimples() | paraEspecial())
 
 	try
-		{
-	  	   <PARR>
-		}
-		catch(ParseException e) {
-		    compiladorErro("Fecha parenteses");
-		}
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
 
 	listaComandos() <FIMPARA>
 }
