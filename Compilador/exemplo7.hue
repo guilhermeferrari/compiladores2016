@@ -1,22 +1,26 @@
 // Testa expressões, operadores e precedência
 
-   numero _Valor, _a, _b, _c, _d, _e, _f, _g, _x, _y, _z;
-   string _s1, _s2, _s3;
+numero _Valor, _a, _b, _c, _d, _e, _f, _g, _x, _y, _z;
+string _s1, _s2, _s3;
 
-   _Valor = 6 + 5 - (3 - 2) - 2 * 4;
-   _a = _x + 1 * 2 ^ 4;
-   _b = 1 + 2 * 3 ^ _x;
-   _c = 1 ^ 2 * 3 + _x;
-   _d = _x ^ 2 * 3 + 4;
-   _e = -3--2;
-   _f = _x--2;
-   _g = 1 + _x * 2 > 3 - _y  ou 4 == _z e 5 + 1 < ( 6 + _z ) * ( 7 - ( 8 - 9 )) e nao nao nao (_x > _y) + _z;
+_Valor = 6 + 5 * (3 - 2) - 2 * 4;
+_x, _y, _z = 2, 4, 8;
+_a = _x + 1 * 2 ^ 4;
+_b = 1 + 2 * 3 ^ _x;
+_c = 1 ^ 2 * 3 + _x;
+_d = _x ^ 2 * 3 + 4;
+_e = -3--2;
+_f = _x--2;
+_g = 1 + _x * 2 > 3 - _y ou
+     4 == _z e
+	 5 + 1 < ( 6 + _z ) * ( 7 - ( 8 - 9 )) e
+	 nao nao nao (_x > _y) + _z;
 
-   _s1 = "oi";
-   _s2 = "mundo";
-   _s3 = _s1 + " " + _s2 + "!";
+_s1 = "oi";
+_s2 = "mundo";
+_s3 = _s1 + " " + _s2 + "!";
 
-   exibe "Valor = ", _Valor, "\n",
+exibe "Valor = ", _Valor, "\n",
       "a = ", _a, "\n",
       "b = ", _b, "\n",
       "c = ", _c, "\n",

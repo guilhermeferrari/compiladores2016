@@ -1,16 +1,14 @@
 numero _soma, _valor, _qtde, _cont, _media;
 
-   leia "Quantos valores?", _qtde, "\n";
-   _soma = 0;
-   _cont = 1;
+leia "Quantos valores?", _qtde, "\n";
+_soma, _cont = 0, 1;
 
-   enquanto (_cont <= _qtde)
+enquanto (_cont <= _qtde)
+    exibe "Digite o ", _cont, "valor: ";
+    leia _valor;
+    _soma = _soma + _valor;
+    _cont = _cont + 1;
+fimEnquanto
 
-      leia "Digite o ", _cont, "Valor", _valor, "\n";
-      _soma = _soma + _valor;
-      _cont = _cont + 1;
-
-   fimEnquanto
-
-   media = _soma/_qtde;
-   exibe "Media:", media, "\n";
+_media = _soma/_qtde;
+exibe "\nMedia: ", _media, "\n";

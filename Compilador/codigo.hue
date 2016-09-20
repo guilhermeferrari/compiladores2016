@@ -1,3 +1,5 @@
+// Determina, entre duas datas, a maior/menor
+
 numero _dia1, _mes1, _ano1, _dia2, _mes2, _ano2;
 string _relacao;
 
