@@ -1,0 +1,370 @@
+options  
+{
+	DEBUG_PARSER = false;
+  	DEBUG_TOKEN_MANAGER = false;
+}
+
+PARSER_BEGIN(Compilador)
+
+import java.io.*;
+
+public class Compilador
+{
+	public static void main (String args []) throws ParseException
+	{
+	  	Compilador compilador = null;
+		while (true)
+		{
+			System.out.println("Fazendo analise...");
+			try
+			{
+			  	compilador = new Compilador(new FileInputStream("exemplo1.hue"));
+				compilador.inicio();
+				System.out.println("\nEnd of compilation.\n");
+				break;
+			}
+			catch(FileNotFoundException e)
+			{
+				System.out.println("Erro: arquivo nao encontrado!\n");
+				break;
+			}
+			catch(TokenMgrError e)
+			{
+				System.out.println("Erro lexico\n" + e.getMessage());
+				break;
+			}
+
+			catch(ParseException e)
+			{
+		         System.out.println("Erro sintatico\n" + e.getMessage());
+		         break;
+			}
+		}
+	}
+	
+	static public void compiladorErro(String esperado)
+	{
+		Token t = getToken(1);
+		System.out.print("\nErro sintatico (linha "+t.beginLine+") Encontrou \'"+t.image+"\', era esperado: "+esperado);
+
+		while(!t.image.equals(";") && t.kind != 0)
+		{
+			getNextToken();
+			t = getToken(1);
+		}
+	}
+}
+PARSER_END(Compilador)
+
+SKIP :
+{
+		" "
+	| 	"\r"
+	|	"\t"
+	|	"\n"
+}
+
+/*
+	SKIP que será usado para os comentários
+*/
+
+SKIP : { "/*" : comentarioCompleto }
+
+<comentarioCompleto>
+
+SKIP: { "*/" : DEFAULT | <~[]> }
+
+SKIP : { "//" : comentarioLinha }
+
+<comentarioLinha>
+
+SKIP: { "\n" : DEFAULT | <~[]> }
+
+TOKEN :
+{
+		< NUMERO : (["0" - "9"])*(".")?(["0" - "9"])+ > 
+	|	< STRING : ("\"")(~["\""])*("\"") >
+	|	< NOMEVAR : ("_")(["a"-"z"]|["A"-"Z"])(["a"-"z"]|["A"-"Z"]|["0"-"9"])* >
+	|	< ATRIB : "=" >
+	|	< EXIBE : "exibe" >
+	|	< LEIA : "leia" >
+	| 	< TIPONUM : "numero" >
+	| 	< TIPOSTRING : "string" >
+	|	< PARL : "(" >
+	|	< PARR : ")" >
+	|	< POT : "^" >
+	|	< MULT : "*" >
+	|	< DIV : "/" >
+	|	< ADD : "+" >
+	|	< SUB : "-" >
+	|	< MAIOR : ">" >
+	|	< MENOR : "<" >
+	|	< MAIORIGUAL : ">=" >
+	|	< MENORIGUAL : "<=" >
+	|	< DIFERENTE : "!=" >
+	|	< COMPARA : "==" >
+	|	< E : "e" >
+	|	< OU : "ou" >
+	|	< NAO : "nao" >
+	|	< OUCC : "OU" >
+	|	< SE : "se" >
+	|	< SENAOSE : "senaoSe" >
+	|	< SENAO : "senao" >
+	|	< FIMSE : "fimSe" >
+	|	< ESCOLHA : "escolha" >
+	|	< CASO : "caso" >
+	|	< OUTROS : "outros" >
+	|	< FIMESCOLHA : "fimEscolha" >
+	|	< ENQUANTO : "enquanto" >
+	|	< FIMENQUANTO : "fimEnquanto" >
+	|	< PARA : "para" >
+	|	< ATE : "ate" >
+	|	< PASSO : "passo" >
+	|	< FIMPARA : "fimPara" >
+	|	< PTVIRG : ";" >
+	|	< VIRG : "," >
+}
+
+void inicio() : {}
+{
+	listaComandos() <EOF>
+}
+
+void listaComandos() : { }
+{
+	(comando())*  	
+}
+
+void comando() : { }
+{
+	 	atribVar()
+	| 	declaraVar()	
+	|	leia()
+	| 	exibe()
+	| 	comandoSe()
+	| 	comandoEscolha()
+	| 	comandoEnquanto()
+	| 	comandoPara() 
+}
+
+void expressao() : {  }
+{
+	termo1() ( <OU> termo1() | <OUCC> termo1() )*
+}
+
+void termo1() : {  }
+{
+	termo2() ( <E> termo2() )*
+}
+
+void termo2() : {  }
+{
+	termo3() ( <MAIOR> termo3() | <MENOR> termo3() | <MAIORIGUAL> termo3() | <MENORIGUAL> termo3() | <DIFERENTE> termo3() | <COMPARA> termo3() )*
+}
+
+void termo3() : { }
+{
+	termo4() ( <ADD> termo4() | <SUB> termo4() )*
+}
+
+void termo4() : { }
+{
+	termo5() ( <MULT> termo5() | <DIV> termo5() )*
+}
+
+void termo5() : { Token t; }
+{
+	termo6() ( <POT> termo5() )?
+}
+
+void termo6() : { Token t; }
+{
+	(<NAO> )* fator()
+}
+
+void fator() : { }
+{
+	<NUMERO> | <STRING> | <NOMEVAR> | <PARL> expressao()
+
+	try
+	{
+  	   <PARR>
+	}
+	catch(ParseException e) {
+	    compiladorErro("Fecha parenteses");
+	}
+}
+
+void declaraVar() : { }
+{
+	( <TIPOSTRING> | <TIPONUM> ) <NOMEVAR> ( <VIRG>  <NOMEVAR> )*
+
+	try
+		{
+			<PTVIRG>
+		}
+		catch(ParseException e)
+		{  
+			compiladorErro("Ponto-e-virgula");
+		} 
+}
+
+void atribVar() : {  }
+{
+	 <NOMEVAR> ( <VIRG> <NOMEVAR> )* <ATRIB> expressao() ( <VIRG>  expressao() )*
+
+	 try
+		{
+			<PTVIRG>
+		}
+		catch(ParseException e)
+		{  
+			compiladorErro("Ponto-e-virgula");
+		} 
+}
+
+void leia() : {}
+{
+	<LEIA> (<STRING> <VIRG>)* (<NOMEVAR>) (<VIRG> (<NOMEVAR> | <STRING>))*
+
+	try
+		{
+		  <PTVIRG>
+		}
+		catch(ParseException e)
+		{  
+		  compiladorErro("Ponto-e-virgula");
+		}
+}
+
+void exibe() : {}
+{
+	<EXIBE> (<STRING> | <NUMERO> | <NOMEVAR>) (<VIRG> (<STRING> | <NUMERO> | <NOMEVAR>))*
+
+	try
+		{
+			<PTVIRG>
+		}
+		catch(ParseException e)
+		{  
+			compiladorErro("Ponto-e-virgula");
+		}
+}
+
+void comandoSe() : {}
+{
+	blocoSe() (blocoSenaoSe())* (blocoSenao())? <FIMSE>
+}
+
+void blocoSe() : {}
+{
+	<SE> <PARL> expressao()
+
+	try
+		{
+	  	   <PARR>
+		}
+		catch(ParseException e) {
+		    compiladorErro("Fecha parenteses");
+		}
+
+	listaComandos()
+}
+
+void blocoSenaoSe() : {}
+{
+	<SENAOSE> <PARL> expressao()
+
+	try
+		{
+	  	   <PARR>
+		}
+		catch(ParseException e) {
+		    compiladorErro("Fecha parenteses");
+		}
+
+	listaComandos()
+}
+
+void blocoSenao() : {}
+{
+	<SENAO> listaComandos()
+}
+
+void comandoEscolha() : {}
+{
+	expEscolha() (expCaso())+ (expOutros())? <FIMESCOLHA>
+}
+
+void expEscolha() : {}
+{
+	<ESCOLHA> <PARL> expressao()
+
+	try
+		{
+	  	   <PARR>
+		}
+		catch(ParseException e) {
+		    compiladorErro("Fecha parenteses");
+		}
+}
+
+void expCaso() : {}
+{
+	<CASO> <PARL> expressao()
+
+	try
+		{
+	  	   <PARR>
+		}
+		catch(ParseException e) {
+		    compiladorErro("Fecha parenteses");
+		}
+
+	listaComandos()
+}
+
+void expOutros() : {}
+{
+	<OUTROS> listaComandos()
+}
+
+void comandoEnquanto() : {}
+{
+	<ENQUANTO> <PARL> expressao()
+
+	try
+		{
+	  	   <PARR>
+		}
+		catch(ParseException e) {
+		    compiladorErro("Fecha parenteses");
+		}
+
+	listaComandos() <FIMENQUANTO>
+}
+
+void comandoPara() : {}
+{
+	<PARA> <PARL> <NOMEVAR> (paraSimples() | paraEspecial())
+
+	try
+		{
+	  	   <PARR>
+		}
+		catch(ParseException e) {
+		    compiladorErro("Fecha parenteses");
+		}
+
+	listaComandos() <FIMPARA>
+}
+
+void paraSimples() : {}
+{
+	expressao() <ATE> expressao() (<PASSO> expressao())?
+}
+
+void paraEspecial() : {}
+{
+	(<VIRG> <NOMEVAR>)+ expressao() <ATE> expressao()
+}
