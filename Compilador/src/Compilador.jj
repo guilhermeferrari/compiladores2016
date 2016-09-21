@@ -41,17 +41,21 @@ public class Compilador
 			}
 		}
 	}
-	
-	static public void compiladorErro(String esperado)
+
+	// kindSincronizacao representa o kind do token para a resincronizacao do
+	// compilador.
+	static public void erroSintatico(String esperado, int kindSincronizacao)
 	{
 		Token t = getNextToken();
 		System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
 		System.out.println(", coluna "+t.beginColumn+") ++");
 		System.out.print("Encontrou \'"+t.image+"\'. ");
 		System.out.println("Era esperado: "+esperado);
-
-		while(!t.image.equals(";") && t.kind != 0) // kind 0 representa <EOF>
-			t = getNextToken();
+		if (t.kind != kindSincronizacao) { 
+		    // kind 0 representa <EOF>
+		    while(!t.image.equals(";") && t.kind != 0)
+			    t = getNextToken();
+    	}
 	}
 }
 PARSER_END(Compilador)
@@ -191,7 +195,7 @@ void fator() : { }
   	    <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PARR);
 	}
 }
 
@@ -202,7 +206,7 @@ void declaraVar() : { }
 	    < NOMEVAR >
 	}
 	catch(ParseException e) {
-	    compiladorErro("Nome de variavel");
+	    erroSintatico("Nome de variavel", PTVIRG);
 	}
 	
 	( <VIRG>  <NOMEVAR> )*
@@ -211,9 +215,8 @@ void declaraVar() : { }
 	{
 		<PTVIRG>
 	}
-	catch(ParseException e)
-	{
-		compiladorErro("Virgula ou Ponto-e-virgula");
+	catch(ParseException e) {
+		erroSintatico("Virgula ou Ponto-e-virgula", PTVIRG);
 	}
 }
 
@@ -223,26 +226,48 @@ void atribVar() : {  }
 
 	try
 	{
-		<PTVIRG>
+        <PTVIRG>
 	}
-	catch(ParseException e)
-	{  
-		compiladorErro("Ponto-e-virgula");
+	catch(ParseException e) {  
+	    erroSintatico("Ponto-e-virgula", PTVIRG);
 	} 
 }
 
 void leia() : {}
 {
-	<LEIA> (<STRING> <VIRG>)* (<NOMEVAR>) (<VIRG> (<NOMEVAR> | <STRING>))*
-
+	<LEIA>
 	try
 	{
-	  <PTVIRG>
-	}
-	catch(ParseException e)
-	{  
-	  compiladorErro("Ponto-e-virgula");
-	}
+	    (<STRING> <VIRG>)*
+
+	    try
+        {
+            <NOMEVAR>
+
+            try
+		    {
+		        (<VIRG> (<NOMEVAR> | <STRING>))*
+
+		        try
+		        {
+		            <PTVIRG>
+		        } catch(ParseException e)
+		        {  
+		            erroSintatico("Ponto-e-virgula", PTVIRG);
+		        }
+		        
+		    } catch(ParseException e) {
+		        erroSintatico("Variavel ou String", VIRG);
+		    }
+		    
+        } catch(ParseException e) {
+            erroSintatico("Variavel", PTVIRG);
+        }
+        
+    } catch(ParseException e) {
+        erroSintatico("Virgula e Variavel", PTVIRG);
+    }
+
 }
 
 void exibe() : {}
@@ -255,7 +280,7 @@ void exibe() : {}
 	}
 	catch(ParseException e)
 	{  
-		compiladorErro("Ponto-e-virgula");
+		erroSintatico("Ponto-e-virgula", PTVIRG);
 	}
 }
 
@@ -273,7 +298,7 @@ void blocoSe() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PTVIRG);
 	}
 
 	listaComandos()
@@ -288,7 +313,7 @@ void blocoSenaoSe() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PTVIRG);
 	}
 
 	listaComandos()
@@ -313,7 +338,7 @@ void expEscolha() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PARR);
 	}
 }
 
@@ -326,7 +351,7 @@ void expCaso() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PARR);
 	}
 
 	listaComandos()
@@ -346,7 +371,7 @@ void comandoEnquanto() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PARR);
 	}
 
 	listaComandos() <FIMENQUANTO>
@@ -361,7 +386,7 @@ void comandoPara() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintatico("Fecha parenteses", PARR);
 	}
 
 	listaComandos() <FIMPARA>
