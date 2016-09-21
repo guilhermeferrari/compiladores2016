@@ -15,10 +15,10 @@ public class Compilador
 	  	Compilador compilador = null;
 		while (true)
 		{
-			System.out.println("Fazendo analise...");
-			try
+		    System.out.println("Fazendo analise...");
+		    try
 			{
-			  	compilador = new Compilador(new FileInputStream("exemplo1.hue"));
+			  	compilador = new Compilador(new FileInputStream("exemplo4.hue"));
 				compilador.inicio();
 				System.out.println("\nEnd of compilation.\n");
 				break;
@@ -44,14 +44,14 @@ public class Compilador
 	
 	static public void compiladorErro(String esperado)
 	{
-		Token t = getToken(1);
-		System.out.print("\nErro sintatico (linha "+t.beginLine+") Encontrou \'"+t.image+"\', era esperado: "+esperado);
+		Token t = getNextToken();
+		System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
+		System.out.println(", coluna "+t.beginColumn+") ++");
+		System.out.print("Encontrou \'"+t.image+"\'. ");
+		System.out.println("Era esperado: "+esperado);
 
-		while(!t.image.equals(";") && t.kind != 0)
-		{
-			getNextToken();
-			t = getToken(1);
-		}
+		while(!t.image.equals(";") && t.kind != 0) // kind 0 representa <EOF>
+			t = getNextToken();
 	}
 }
 PARSER_END(Compilador)
@@ -65,7 +65,7 @@ SKIP :
 }
 
 /*
-	SKIP que será usado para os comentários
+	SKIP que serï¿½ usado para os comentï¿½rios
 */
 
 SKIP : { "/*" : comentarioCompleto }
@@ -184,11 +184,11 @@ void termo6() : { Token t; }
 
 void fator() : { }
 {
-	<NUMERO> | <STRING> | <NOMEVAR> | <PARL> expressao()
+    <NUMERO> | <STRING> | <NOMEVAR> | <PARL> expressao()
 
 	try
 	{
-  	   <PARR>
+  	    <PARR>
 	}
 	catch(ParseException e) {
 	    compiladorErro("Fecha parenteses");
@@ -197,16 +197,24 @@ void fator() : { }
 
 void declaraVar() : { }
 {
-	( <TIPOSTRING> | <TIPONUM> ) <NOMEVAR> ( <VIRG>  <NOMEVAR> )*
+	( <TIPOSTRING> | <TIPONUM> )
+	try {
+	    < NOMEVAR >
+	}
+	catch(ParseException e) {
+	    compiladorErro("Nome de variavel");
+	}
+	
+	( <VIRG>  <NOMEVAR> )*
 
 	try
 	{
 		<PTVIRG>
 	}
 	catch(ParseException e)
-	{  
-		compiladorErro("Ponto-e-virgula");
-	} 
+	{
+		compiladorErro("Virgula ou Ponto-e-virgula");
+	}
 }
 
 void atribVar() : {  }
