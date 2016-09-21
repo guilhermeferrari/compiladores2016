@@ -15,10 +15,10 @@ public class Compilador
 	  	Compilador compilador = null;
 		while (true)
 		{
-			System.out.println("Fazendo analise...");
-			try
+		    System.out.println("Fazendo analise...");
+		    try
 			{
-			  	compilador = new Compilador(new FileInputStream("exemplo1.hue"));
+			  	compilador = new Compilador(new FileInputStream("exemplo4.hue"));
 				compilador.inicio();
 				System.out.println("\nEnd of compilation.\n");
 				break;
@@ -41,17 +41,30 @@ public class Compilador
 			}
 		}
 	}
-	
-	static public void compiladorErro(String esperado)
-	{
-		Token t = getToken(1);
-		System.out.print("\nErro sintatico (linha "+t.beginLine+") Encontrou \'"+t.image+"\', era esperado: "+esperado);
 
-		while(!t.image.equals(";") && t.kind != 0)
-		{
-			getNextToken();
-			t = getToken(1);
-		}
+	// kindSincronizacao representa o kind do token para a resincronizacao do
+	// compilador.
+	static public void erroSintaticoPanico(String esperado, int kindSincronizacao)
+	{
+		Token t = getNextToken();
+		System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
+		System.out.println(", coluna "+t.beginColumn+") ++");
+		System.out.print("Encontrou \'"+t.image+"\'. ");
+		System.out.println("Era esperado: "+esperado);
+		if (t.kind != kindSincronizacao) { 
+		    // kind 0 representa <EOF>
+		    while(t.kind!=kindSincronizacao && t.kind != 0)
+			    t = getNextToken();
+    	}
+	}
+
+    // Método usado para a sincronização por recuperação de erro local.
+	static public void erroSintaticoLocal(String esperado) {
+	    Token t = getToken(1);
+	    System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
+	    System.out.println(", coluna "+t.beginColumn+") ++");
+	    System.out.print("Encontrou \'"+t.image+"\'. ");
+	    System.out.println("Era esperado: "+esperado);
 	}
 }
 PARSER_END(Compilador)
@@ -65,7 +78,7 @@ SKIP :
 }
 
 /*
-	SKIP que ser� usado para os coment�rios
+	SKIP que ser� usado para os coment�rios
 */
 
 SKIP : { "/*" : comentarioCompleto }
@@ -184,29 +197,36 @@ void termo6() : { Token t; }
 
 void fator() : { }
 {
-	<NUMERO> | <STRING> | <NOMEVAR> | <PARL> expressao()
+    <NUMERO> | <STRING> | <NOMEVAR> | <PARL> expressao()
 
 	try
 	{
-  	   <PARR>
+  	    <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PARR);
 	}
 }
 
 void declaraVar() : { }
 {
-	( <TIPOSTRING> | <TIPONUM> ) <NOMEVAR> ( <VIRG>  <NOMEVAR> )*
+	( <TIPOSTRING> | <TIPONUM> )
+	try {
+	    < NOMEVAR >
+	}
+	catch(ParseException e) {
+	    erroSintaticoPanico("Nome de variavel", PTVIRG);
+	}
+	
+	( <VIRG>  <NOMEVAR> )*
 
 	try
 	{
 		<PTVIRG>
 	}
-	catch(ParseException e)
-	{  
-		compiladorErro("Ponto-e-virgula");
-	} 
+	catch(ParseException e) {
+		erroSintaticoPanico("Virgula ou Ponto-e-virgula", PTVIRG);
+	}
 }
 
 void atribVar() : {  }
@@ -215,25 +235,56 @@ void atribVar() : {  }
 
 	try
 	{
-		<PTVIRG>
+        <PTVIRG>
 	}
-	catch(ParseException e)
-	{  
-		compiladorErro("Ponto-e-virgula");
+	catch(ParseException e) {  
+	    erroSintaticoPanico("Ponto-e-virgula", PTVIRG);
 	} 
 }
 
-void leia() : {}
+void leia() : {Token t=null; String tokenEsperado="";}
 {
-	<LEIA> (<STRING> <VIRG>)* (<NOMEVAR>) (<VIRG> (<NOMEVAR> | <STRING>))*
-
+	<LEIA>
 	try
 	{
-	  <PTVIRG>
+	    (t=<STRING> <VIRG>)*
+    } catch(ParseException e) {
+        tokenEsperado = "Vírgula e ";
+    }
+
+    try
+    {
+        <NOMEVAR>
+        { 
+            if (tokenEsperado.length()!=0) {
+                token = t; // Volta um token. Volta para String antes da
+                // virgula que deveria ter.
+                erroSintaticoLocal("Vírgula");
+                getNextToken();
+            }
+        }
+    } catch(ParseException e) {
+        tokenEsperado += "Variavel";
+        erroSintaticoLocal(tokenEsperado);
+    }
+
+    try
+	{
+	    (<VIRG> (<NOMEVAR> | <STRING>))*
+	} catch(ParseException e) {
+	    erroSintaticoLocal("Variavel ou String");
 	}
-	catch(ParseException e)
-	{  
-	  compiladorErro("Ponto-e-virgula");
+
+    try
+	{
+	    <PTVIRG>
+	} catch(ParseException e)
+	{
+	    t = getToken(1);
+	    if (t.kind==NOMEVAR || t.kind==STRING)
+	       erroSintaticoPanico("Vírgula",PTVIRG);
+	    else
+	       erroSintaticoLocal("Ponto-e-virgula");
 	}
 }
 
@@ -247,7 +298,7 @@ void exibe() : {}
 	}
 	catch(ParseException e)
 	{  
-		compiladorErro("Ponto-e-virgula");
+		erroSintaticoPanico("Ponto-e-virgula", PTVIRG);
 	}
 }
 
@@ -265,7 +316,7 @@ void blocoSe() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PTVIRG);
 	}
 
 	listaComandos()
@@ -280,7 +331,7 @@ void blocoSenaoSe() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PTVIRG);
 	}
 
 	listaComandos()
@@ -305,7 +356,7 @@ void expEscolha() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PARR);
 	}
 }
 
@@ -318,7 +369,7 @@ void expCaso() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PARR);
 	}
 
 	listaComandos()
@@ -338,7 +389,7 @@ void comandoEnquanto() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PARR);
 	}
 
 	listaComandos() <FIMENQUANTO>
@@ -353,7 +404,7 @@ void comandoPara() : {}
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    compiladorErro("Fecha parenteses");
+	    erroSintaticoPanico("Fecha parenteses", PARR);
 	}
 
 	listaComandos() <FIMPARA>
