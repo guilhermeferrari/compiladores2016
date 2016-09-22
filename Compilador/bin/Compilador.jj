@@ -7,9 +7,11 @@ options
 PARSER_BEGIN(Compilador)
 
 import java.io.*;
+import minhasclasses.*;
 
 public class Compilador
 {
+ 	static Tabela tabela = new Tabela();
 	public static void main (String args []) throws ParseException
 	{
 	  	Compilador compilador = null;
@@ -18,7 +20,7 @@ public class Compilador
 			System.out.println("Fazendo analise...");
 			try
 			{
-			  	compilador = new Compilador(new FileInputStream("exemplo1.hue"));
+			  	compilador = new Compilador(new FileInputStream("exemplo7.hue"));
 				compilador.inicio();
 				System.out.println("\nEnd of compilation.\n");
 				break;
@@ -53,6 +55,12 @@ public class Compilador
 			t = getToken(1);
 		}
 	}
+
+	static public void erroSemantico(String s)
+	{
+	  	System.out.println(s);
+	}
+	  
 }
 PARSER_END(Compilador)
 
@@ -65,7 +73,7 @@ SKIP :
 }
 
 /*
-	SKIP que ser� usado para os coment�rios
+	SKIP que ser� usado para os coment�rios
 */
 
 SKIP : { "/*" : comentarioCompleto }
@@ -182,9 +190,17 @@ void termo6() : { Token t; }
 	(<NAO> )* fator()
 }
 
-void fator() : { }
+void fator() : {Token t; }
 {
-	<NUMERO> | <STRING> | <NOMEVAR> | <PARL> expressao()
+	<NUMERO> | <STRING> |
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	}
+	| <PARL> expressao()
 
 	try
 	{
@@ -195,9 +211,38 @@ void fator() : { }
 	}
 }
 
-void declaraVar() : { }
+void declaraVar() : {Simbolo simb; Token t; char tp;}
 {
-	( <TIPOSTRING> | <TIPONUM> ) <NOMEVAR> ( <VIRG>  <NOMEVAR> )*
+    ( <TIPONUM> {tp='n';} | <TIPOSTRING> {tp='s';} )
+	t = <NOMEVAR>
+	{
+	  	if(!tabela.isExiste(t.image))
+	  	{ 
+			simb = new Simbolo(t.image); 
+			simb.setTipo(tp);
+			simb.setReferencia(tp); 
+			tabela.inclui(simb);
+		}
+		else
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" já foi inicializada");
+		}
+	}
+	( <VIRG>
+	t = <NOMEVAR>
+	{
+	  	if(!tabela.isExiste(t.image))
+	  	{ 
+			simb = new Simbolo(t.image); 
+			simb.setTipo(tp);
+			simb.setReferencia(tp); 
+			tabela.inclui(simb);
+		}
+		else
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" já foi inicializada");
+		}	  
+	}  )*
 
 	try
 	{
@@ -209,9 +254,24 @@ void declaraVar() : { }
 	} 
 }
 
-void atribVar() : {  }
+void atribVar() : {Simbolo simbolo; Token t;  }
 {
-	 <NOMEVAR> ( <VIRG> <NOMEVAR> )* <ATRIB> expressao() ( <VIRG>  expressao() )*
+	 t = <NOMEVAR>
+	 {
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	 }
+	 ( <VIRG>
+	 t = <NOMEVAR>
+	 {
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	 }
+	 )* <ATRIB> expressao() ( <VIRG>  expressao() )*
 
 	try
 	{
@@ -223,9 +283,26 @@ void atribVar() : {  }
 	} 
 }
 
-void leia() : {}
+void leia() : {Token t;}
 {
-	<LEIA> (<STRING> <VIRG>)* (<NOMEVAR>) (<VIRG> (<NOMEVAR> | <STRING>))*
+	<LEIA> (<STRING> <VIRG>)* (
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+ " não foi inicializada");
+		}
+	}
+
+	) (<VIRG> (
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+ " não foi inicializada");
+		}
+	}
+	| <STRING>))*
 
 	try
 	{
@@ -237,9 +314,25 @@ void leia() : {}
 	}
 }
 
-void exibe() : {}
+void exibe() : {Token t;}
 {
-	<EXIBE> (<STRING> | <NUMERO> | <NOMEVAR>) (<VIRG> (<STRING> | <NUMERO> | <NOMEVAR>))*
+	<EXIBE> (<STRING> | <NUMERO> |
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	}
+	) (<VIRG> (<STRING> | <NUMERO> |
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	}
+	))*
 
 	try
 	{
@@ -344,9 +437,17 @@ void comandoEnquanto() : {}
 	listaComandos() <FIMENQUANTO>
 }
 
-void comandoPara() : {}
+void comandoPara() : {Token t;}
 {
-	<PARA> <PARL> <NOMEVAR> (paraSimples() | paraEspecial())
+	<PARA> <PARL>
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	}
+	(paraSimples() | paraEspecial())
 
 	try
 	{
@@ -364,7 +465,15 @@ void paraSimples() : {}
 	expressao() <ATE> expressao() (<PASSO> expressao())?
 }
 
-void paraEspecial() : {}
+void paraEspecial() : { Token t;}
 {
-	(<VIRG> <NOMEVAR>)+ expressao() <ATE> expressao()
+	(<VIRG>
+	t = <NOMEVAR>
+	{
+	   	if(!tabela.isExiste(t.image))
+		{
+		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+		}
+	}
+	)+ expressao() <ATE> expressao()
 }
