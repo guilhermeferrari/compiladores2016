@@ -7,10 +7,10 @@ public class Compilador implements CompiladorConstants {
                 Compilador compilador = null;
                 while (true)
                 {
-                        System.out.println("Fazendo analise...");
-                        try
+                    System.out.println("Fazendo analise...");
+                    try
                         {
-                                compilador = new Compilador(new FileInputStream("exemplo1.hue"));
+                                compilador = new Compilador(new FileInputStream("exemplo4.hue"));
                                 compilador.inicio();
                                 System.out.println("\u005cnEnd of compilation.\u005cn");
                                 break;
@@ -34,16 +34,29 @@ public class Compilador implements CompiladorConstants {
                 }
         }
 
-        static public void compiladorErro(String esperado)
+        // kindSincronizacao representa o kind do token para a resincronizacao do
+        // compilador.
+        static public void erroSintaticoPanico(String esperado, int kindSincronizacao)
         {
-                Token t = getToken(1);
-                System.out.print("\u005cnErro sintatico (linha "+t.beginLine+") Encontrou \u005c'"+t.image+"\u005c', era esperado: "+esperado);
+                Token t = getNextToken();
+                System.out.print("\u005cn++ Erro sintatico (linha "+t.beginLine);
+                System.out.println(", coluna "+t.beginColumn+") ++");
+                System.out.print("Encontrou \u005c'"+t.image+"\u005c'. ");
+                System.out.println("Era esperado: "+esperado);
+                if (t.kind != kindSincronizacao) {
+                    // kind 0 representa <EOF>
+                    while(t.kind!=kindSincronizacao && t.kind != 0)
+                            t = getNextToken();
+        }
+        }
 
-                while(!t.image.equals(";") && t.kind != 0)
-                {
-                        getNextToken();
-                        t = getToken(1);
-                }
+    // Método usado para a sincronização por recuperação de erro local.
+        static public void erroSintaticoLocal(String esperado) {
+            Token t = getToken(1);
+            System.out.print("\u005cn++ Erro sintatico (linha "+t.beginLine);
+            System.out.println(", coluna "+t.beginColumn+") ++");
+            System.out.print("Encontrou \u005c'"+t.image+"\u005c'. ");
+            System.out.println("Era esperado: "+esperado);
         }
 
   static final public void inicio() throws ParseException {
@@ -313,7 +326,7 @@ public class Compilador implements CompiladorConstants {
       try {
         jj_consume_token(PARR);
       } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PARR);
       }
       break;
     default:
@@ -336,7 +349,11 @@ public class Compilador implements CompiladorConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-    jj_consume_token(NOMEVAR);
+    try {
+      jj_consume_token(NOMEVAR);
+    } catch (ParseException e) {
+            erroSintaticoPanico("Nome de variavel", PTVIRG);
+    }
     label_8:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -353,7 +370,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                compiladorErro("Ponto-e-virgula");
+                erroSintaticoPanico("Virgula ou Ponto-e-virgula", PTVIRG);
     }
   }
 
@@ -390,54 +407,78 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                compiladorErro("Ponto-e-virgula");
+            erroSintaticoPanico("Ponto-e-virgula", PTVIRG);
     }
   }
 
   static final public void leia() throws ParseException {
+               Token t=null; String tokenEsperado="";
     jj_consume_token(LEIA);
-    label_11:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case STRING:
-        ;
-        break;
-      default:
-        jj_la1[18] = jj_gen;
-        break label_11;
+    try {
+      label_11:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case STRING:
+          ;
+          break;
+        default:
+          jj_la1[18] = jj_gen;
+          break label_11;
+        }
+        t = jj_consume_token(STRING);
+        jj_consume_token(VIRG);
       }
-      jj_consume_token(STRING);
-      jj_consume_token(VIRG);
+    } catch (ParseException e) {
+        tokenEsperado = "V\u00edrgula e ";
     }
-    jj_consume_token(NOMEVAR);
-    label_12:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case VIRG:
-        ;
-        break;
-      default:
-        jj_la1[19] = jj_gen;
-        break label_12;
+    try {
+      jj_consume_token(NOMEVAR);
+            if (tokenEsperado.length()!=0) {
+                token = t; // Volta um token. Volta para String antes da
+                // virgula que deveria ter.
+                erroSintaticoLocal("V\u00edrgula");
+                getNextToken();
+            }
+    } catch (ParseException e) {
+        tokenEsperado += "Variavel";
+        erroSintaticoLocal(tokenEsperado);
+    }
+    try {
+      label_12:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case VIRG:
+          ;
+          break;
+        default:
+          jj_la1[19] = jj_gen;
+          break label_12;
+        }
+        jj_consume_token(VIRG);
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case NOMEVAR:
+          jj_consume_token(NOMEVAR);
+          break;
+        case STRING:
+          jj_consume_token(STRING);
+          break;
+        default:
+          jj_la1[20] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
       }
-      jj_consume_token(VIRG);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NOMEVAR:
-        jj_consume_token(NOMEVAR);
-        break;
-      case STRING:
-        jj_consume_token(STRING);
-        break;
-      default:
-        jj_la1[20] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
+    } catch (ParseException e) {
+            erroSintaticoLocal("Variavel ou String");
     }
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-          compiladorErro("Ponto-e-virgula");
+            t = getToken(1);
+            if (t.kind==NOMEVAR || t.kind==STRING)
+               erroSintaticoPanico("V\u00edrgula",PTVIRG);
+            else
+               erroSintaticoLocal("Ponto-e-virgula");
     }
   }
 
@@ -488,7 +529,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PTVIRG);
     } catch (ParseException e) {
-                compiladorErro("Ponto-e-virgula");
+                erroSintaticoPanico("Ponto-e-virgula", PTVIRG);
     }
   }
 
@@ -524,7 +565,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PTVIRG);
     }
     listaComandos();
   }
@@ -536,7 +577,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PTVIRG);
     }
     listaComandos();
   }
@@ -578,7 +619,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PARR);
     }
   }
 
@@ -589,7 +630,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PARR);
     }
     listaComandos();
   }
@@ -606,7 +647,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PARR);
     }
     listaComandos();
     jj_consume_token(FIMENQUANTO);
@@ -635,7 +676,7 @@ public class Compilador implements CompiladorConstants {
     try {
       jj_consume_token(PARR);
     } catch (ParseException e) {
-            compiladorErro("Fecha parenteses");
+            erroSintaticoPanico("Fecha parenteses", PARR);
     }
     listaComandos();
     jj_consume_token(FIMPARA);
