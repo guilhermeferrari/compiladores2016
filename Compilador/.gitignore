@@ -2,4 +2,3 @@
 src/Compilador.java
 src/CompiladorConstants.java
 src/CompiladorTokenManager.java
-.classpath
