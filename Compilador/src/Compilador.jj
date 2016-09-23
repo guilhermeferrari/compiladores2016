@@ -68,7 +68,7 @@ public class Compilador
 	    Token t = getToken(1);
 	    System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
 	    System.out.println(", coluna "+t.beginColumn+") ++");
-	    System.out.print("Encontrou \'"+t.image+"\'. ");
+	    System.out.print("Encontrou \'"+(t.kind==0?"EOF":t.image)+"\'. ");
 	    System.out.println("Era esperado: "+esperado);
 	}
 
@@ -397,7 +397,13 @@ void exibe() : {Token t;}
 
 void comandoSe() : {}
 {
-	blocoSe() (blocoSenaoSe())* (blocoSenao())? <FIMSE>
+	blocoSe() (blocoSenaoSe())* (blocoSenao())?
+    try
+    { 
+	    <FIMSE>
+	} catch(ParseException e) {
+        erroSintaticoLocal("Palavra chave \"fimSe\"");
+	}
 }
 
 void blocoSe() : {}
@@ -453,7 +459,13 @@ void blocoSenao() : {}
 
 void comandoEscolha() : {}
 {
-	expEscolha() (expCaso())+ (expOutros())? <FIMESCOLHA>
+	expEscolha() (expCaso())+ (expOutros())?
+	try
+	{
+	    <FIMESCOLHA>
+	} catch(ParseException e) {
+        erroSintaticoLocal("Palavra chave \"fimEscolha\"");
+    }
 }
 
 void expEscolha() : {}
@@ -525,7 +537,13 @@ void comandoEnquanto() : {}
 	    erroSintaticoLocal("Fecha parenteses");
 	}
 
-	listaComandos() <FIMENQUANTO>
+	listaComandos()
+	try
+	{
+	    <FIMENQUANTO>
+    } catch(ParseException e) {
+        erroSintaticoLocal("Palavra chave \"fimEquanto\"");
+    }
 }
 
 void comandoPara() : {Token t=null; }
@@ -553,7 +571,13 @@ void comandoPara() : {Token t=null; }
 	
 	(paraSimples() | paraEspecial())
 
-	listaComandos() <FIMPARA>
+	listaComandos()
+	try
+	{
+        <FIMPARA>
+    } catch(ParseException e) {
+        erroSintaticoLocal("Palavra chave \"fimPara\"");
+    }
 }
 
 void paraSimples() : {Token t=null; }
