@@ -47,6 +47,7 @@ public class Compilador
 
 	// kindSincronizacao representa o kind do token para a resincronizacao do
 	// compilador.
+	// Retorna um token anterior ao token de sincronização.
 	static public void erroSintaticoPanico(String esperado, int kindSincronizacao)
 	{
 		Token t = getNextToken();
@@ -54,10 +55,11 @@ public class Compilador
 		System.out.println(", coluna "+t.beginColumn+") ++");
 		System.out.print("Encontrou \'"+t.image+"\'. ");
 		System.out.println("Era esperado: "+esperado);
-		if (t.kind != kindSincronizacao) { 
+		if (t.kind != kindSincronizacao) {
 		    // kind 0 representa <EOF>
-		    while(t.kind!=kindSincronizacao && t.kind != 0)
+		    while(t.kind!=kindSincronizacao && t.kind != 0) {
 			    t = getNextToken();
+		    }
     	}
 	}
 
@@ -557,6 +559,17 @@ void comandoPara() : {Token t=null;}
 	}
 	catch(ParseException e) {
 	    erroSintaticoLocal("Fecha parenteses");
+	    {
+	        getNextToken();
+	        if (token.kind == ATE) {
+	            Compilador.expressao();
+	            getNextToken();
+	            if (token.kind == PASSO) {
+                    Compilador.expressao();
+                    getNextToken();
+                }
+	        }
+	    }
 	}
 
 	listaComandos() <FIMPARA>
@@ -570,19 +583,19 @@ void paraSimples() : {Token t=null; }
     try
     { 
 	    <ATE>
-
-	    expressao() (<PASSO> expressao())?
 	} catch(ParseException e) {
 	    { String msg = "Palavra-chave \"ate\" ou algum operador";
 		    if (token.kind==NOMEVAR && t.next.image.equals(token.image)) {
 		        msg  = "Palavra-chave \"ate\" ou possivelmente uma Vírgula ";
 		        msg += "na linha "+token.beginLine+" coluna ";
 		        msg += token.beginColumn+", antes da variável "+token.image;
-		        erroSintaticoPanico(msg,PARR);
+		        erroSintaticoLocal(msg);
 		    } else
-		       erroSintaticoPanico(msg,PARR);
+		        erroSintaticoLocal(msg);
 	    }
 	}
+
+	expressao() (<PASSO> expressao())?
 }
 
 void paraEspecial() : { Token t=null;}
