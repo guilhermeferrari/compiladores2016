@@ -332,67 +332,103 @@ void leia() : {Token t=null, tVar; String tokenEsperado="";}
         erroSintaticoLocal(tokenEsperado);
     }
 
-    try
-	{
-	    (
-	        <VIRG>
-	        (
+    (
+        <VIRG>
+        (
+            try
+            { 
 	            tVar = <NOMEVAR>
 	            {
 				    if(!tabela.isExiste(tVar.image))
 				    {
-				        erroSemantico("Erro semântico \n A variável "+tVar.image+ " não foi inicializada");
+				        erroSemantico("Erro semântico \n A variável "+
+				                      tVar.image+ " não foi inicializada");
 				    }
 				}
 	          |
 	            <STRING>
-	        )
-	    )*
-	} catch(ParseException e) {
-	    erroSintaticoLocal("Variavel ou String");
-	}
+	        } catch(ParseException e) {
+	            erroSintaticoLocal("Variavel ou String");
+	        }
+        )
+    )*
 
     try
 	{
 	    <PTVIRG>
-	} catch(ParseException e)
-	{
+    } catch(ParseException e) {
 	    t = getToken(1);
+	    // Caso em que há uma string ou variavel e o programador tenha
+	    // esquecido da virgula antes do token. leia _x,_x "123";
+	    //                                      aqui ---> ^
 	    if (t.kind==NOMEVAR || t.kind==STRING)
-	       erroSintaticoPanico("Vírgula",PTVIRG);
+	        erroSintaticoPanico("Vírgula",PTVIRG);
 	    else
-	       erroSintaticoLocal("Ponto-e-virgula");
+	        erroSintaticoLocal("Ponto-e-virgula");
+	    // Caso em que se esquece do uso do ponto e virgula.
 	}
 }
 
-void exibe() : {Token t;}
+void exibe() : {Token t=null;}
 {
-	<EXIBE> (<STRING> | <NUMERO> |
-	t = <NOMEVAR>
-	{
-	   	if(!tabela.isExiste(t.image))
-		{
-		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
-		}
-	}
-	) (<VIRG> (<STRING> | <NUMERO> |
-	t = <NOMEVAR>
-	{
-	   	if(!tabela.isExiste(t.image))
-		{
-		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
-		}
-	}
-	))*
+    <EXIBE>
+    (
+        try
+        { 
+	        <STRING>
+	      | <NUMERO>
+	      | t = <NOMEVAR>
+	        {
+	            if(!tabela.isExiste(t.image))
+	            {
+	                erroSemantico("Erro semântico \n A variável "+t.image+
+	                              " não foi inicializada");
+	            }
+	        }
+        } catch(ParseException e) {
+            // Aqui é quando há um token diferente ou nenhum token. exibe;
+            //                                              Assim --> ^
+            erroSintaticoLocal("String, numero ou variável");
+        }
+    )
+    (
+        <VIRG>
+        (
+            try
+            { 
+	            <STRING>
+	          | <NUMERO>
+	          | t = <NOMEVAR>
+	            {
+	                if(!tabela.isExiste(t.image))
+	                {
+	                    erroSemantico("Erro semântico \n A variável "+t.image+
+	                                  " não foi inicializada");
+	                }
+	            }
+            } catch(ParseException e) {
+                // Econtra uma virgula mas nenhum token obrigatorio após...
+                erroSintaticoLocal("String, numero ou variável");
+            }
+        )
+    )*
 
-	try
-	{
-		<PTVIRG>
-	}
-	catch(ParseException e)
-	{  
-		erroSintaticoPanico("Ponto-e-virgula", PTVIRG);
-	}
+    try
+    {
+        <PTVIRG>
+    }
+    catch(ParseException e)
+    {
+        t = getToken(1);
+        // Caso em que há uma string ou variavel e o programador tenha
+        // esquecido da virgula antes do token. exibe _x,_x "123";
+        //                                       aqui ---> ^
+        if (t.kind==STRING || t.kind==NUMERO || t.kind==NOMEVAR)
+            erroSintaticoPanico("Vírgula",PTVIRG);
+        else
+            erroSintaticoLocal("Ponto-e-virgula");
+        // Caso em que se esquece do uso do ponto e virgula.
+    }
 }
 
 void comandoSe() : {}
