@@ -20,7 +20,7 @@ public class Compilador
 		    System.out.println("Fazendo analise...");
 		    try
 			{
-			  	compilador = new Compilador(new FileInputStream("exemplo4.hue"));
+			  	compilador = new Compilador(new FileInputStream("exemplo8.hue"));
 			  	
 				compilador.inicio();
 				System.out.println("\nEnd of compilation.\n");
@@ -400,29 +400,45 @@ void comandoSe() : {}
 
 void blocoSe() : {}
 {
-	<SE> <PARL> expressao()
+	<SE>
+    try
+    {
+        <PARL>
+    } catch(ParseException e) {
+        erroSintaticoLocal("Abre parenteses");
+    }
 
-	try
-	{
-  	   <PARR>
-	}
-	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PTVIRG);
-	}
+    expressao()
 
-	listaComandos()
+    try
+    {
+       <PARR>
+    }
+    catch(ParseException e) {
+        erroSintaticoLocal("Fecha parenteses");
+    }
+
+    listaComandos()
 }
 
 void blocoSenaoSe() : {}
 {
-	<SENAOSE> <PARL> expressao()
+	<SENAOSE>
+	try
+	{
+	    <PARL>
+	} catch(ParseException e) {
+	    erroSintaticoLocal("Abre Parenteses");
+	}
+
+	expressao()
 
 	try
 	{
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PTVIRG);
+	    erroSintaticoLocal("Fecha parenteses");
 	}
 
 	listaComandos()
@@ -440,27 +456,43 @@ void comandoEscolha() : {}
 
 void expEscolha() : {}
 {
-	<ESCOLHA> <PARL> expressao()
+	<ESCOLHA>
+	try
+	{
+	    <PARL>
+	} catch(ParseException e) {
+	    erroSintaticoLocal("Abre Parenteses");
+    }
+
+	expressao()
 
 	try
 	{
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PARR);
+	    erroSintaticoLocal("Fecha parenteses");
 	}
 }
 
 void expCaso() : {}
 {
-	<CASO> <PARL> expressao()
+	<CASO>
+	try
+	{
+	    <PARL>
+    } catch(ParseException e) {
+      erroSintaticoLocal("Abre Parenteses");
+    }
+
+    expressao()
 
 	try
 	{
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PARR);
+	    erroSintaticoLocal("Fecha parenteses");
 	}
 
 	listaComandos()
@@ -473,56 +505,103 @@ void expOutros() : {}
 
 void comandoEnquanto() : {}
 {
-	<ENQUANTO> <PARL> expressao()
+	<ENQUANTO>
+	try
+	{
+	    <PARL>
+	} catch(ParseException e) {
+	    erroSintaticoLocal("Abre Parenteses");
+	}
+
+	expressao()
 
 	try
 	{
   	   <PARR>
 	}
 	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PARR);
+	    erroSintaticoLocal("Fecha parenteses");
 	}
 
 	listaComandos() <FIMENQUANTO>
 }
 
-void comandoPara() : {Token t;}
+void comandoPara() : {Token t=null;}
 {
-	<PARA> <PARL>
-	t = <NOMEVAR>
+	<PARA>
+	try
 	{
-	   	if(!tabela.isExiste(t.image))
+	    <PARL>
+	} catch(ParseException e) {
+	    erroSintaticoLocal("Abre parenteses");
+	}
+
+	try
+	{
+	    t = <NOMEVAR>
+    } catch(ParseException e) {
+        erroSintaticoLocal("Variável");
+    }
+	{
+	   	if(t!=null && !tabela.isExiste(t.image))
 		{
 		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
 		}
 	}
+	
 	(paraSimples() | paraEspecial())
 
 	try
 	{
-  	   <PARR>
+  	    <PARR>
 	}
 	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PARR);
+	    erroSintaticoLocal("Fecha parenteses");
 	}
 
 	listaComandos() <FIMPARA>
 }
 
-void paraSimples() : {}
+void paraSimples() : {Token t=null; }
 {
-	expressao() <ATE> expressao() (<PASSO> expressao())?
+    { t = token; }
+    
+	expressao()
+    try
+    { 
+	    <ATE>
+
+	    expressao() (<PASSO> expressao())?
+	} catch(ParseException e) {
+	    { String msg = "Palavra-chave \"ate\" ou algum operador";
+		    if (token.kind==NOMEVAR && t.next.image.equals(token.image)) {
+		        msg  = "Palavra-chave \"ate\" ou possivelmente uma Vírgula ";
+		        msg += "na linha "+token.beginLine+" coluna ";
+		        msg += token.beginColumn+", antes da variável "+token.image;
+		        erroSintaticoPanico(msg,PARR);
+		    } else
+		       erroSintaticoPanico(msg,PARR);
+	    }
+	}
 }
 
-void paraEspecial() : { Token t;}
+void paraEspecial() : { Token t=null;}
 {
-	(<VIRG>
-	t = <NOMEVAR>
-	{
-	   	if(!tabela.isExiste(t.image))
+	(
+	    <VIRG>
+	    try
+	    { 
+	        t = <NOMEVAR>
+	    } catch(ParseException e) {
+	        erroSintaticoLocal("Variável");
+	    }
 		{
-		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
-		}
-	}
-	)+ expressao() <ATE> expressao()
+		   	if(t!=null && !tabela.isExiste(t.image))
+			{
+			  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+			}
+    	}
+	)+
+	
+	expressao() <ATE> expressao()
 }
