@@ -206,24 +206,34 @@ void termo6() : { Token t; }
 	(<NAO> )* fator()
 }
 
-void fator() : {Token t; }
+void fator() : { Token t=null; }
 {
-	<NUMERO> | <STRING> |
-	t = <NOMEVAR>
+	<NUMERO>
+  | <STRING>
+  | t = <NOMEVAR>
 	{
-	   	if(!tabela.isExiste(t.image))
-		{
+	   	if(!tabela.isExiste(t.image)) {
 		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
 		}
 	}
-	| <PARL> expressao()
+	
+  | <PARL> expressao()
 
 	try
 	{
   	    <PARR>
-	}
-	catch(ParseException e) {
-	    erroSintaticoPanico("Fecha parenteses", PARR);
+	} catch(ParseException e) {
+	    t = getToken(1);
+	    // Caso de esquecimento de operador. (3+5+4-9/4 5*k)
+        //                                   aqui ---> ^
+	    if (t.kind==NOMEVAR ||
+            t.kind==NUMERO ||
+            t.kind==STRING ||
+            t.kind==PARL ||
+            t.kind==NAO)
+            erroSintaticoPanico("Algum operador",PARR);
+        else
+            erroSintaticoLocal("Fecha Parenteses");
 	}
 }
 
