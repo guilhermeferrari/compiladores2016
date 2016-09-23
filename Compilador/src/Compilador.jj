@@ -528,7 +528,7 @@ void comandoEnquanto() : {}
 	listaComandos() <FIMENQUANTO>
 }
 
-void comandoPara() : {Token t=null;}
+void comandoPara() : {Token t=null; }
 {
 	<PARA>
 	try
@@ -553,25 +553,6 @@ void comandoPara() : {Token t=null;}
 	
 	(paraSimples() | paraEspecial())
 
-	try
-	{
-  	    <PARR>
-	}
-	catch(ParseException e) {
-	    erroSintaticoLocal("Fecha parenteses");
-	    {
-	        getNextToken();
-	        if (token.kind == ATE) {
-	            Compilador.expressao();
-	            getNextToken();
-	            if (token.kind == PASSO) {
-                    Compilador.expressao();
-                    getNextToken();
-                }
-	        }
-	    }
-	}
-
 	listaComandos() <FIMPARA>
 }
 
@@ -586,9 +567,9 @@ void paraSimples() : {Token t=null; }
 	} catch(ParseException e) {
 	    { String msg = "Palavra-chave \"ate\" ou algum operador";
 		    if (token.kind==NOMEVAR && t.next.image.equals(token.image)) {
-		        msg  = "Palavra-chave \"ate\" ou possivelmente uma Vírgula ";
-		        msg += "na linha "+token.beginLine+" coluna ";
-		        msg += token.beginColumn+", antes da variável "+token.image;
+		        msg  = "Palavra-chave \"ate\", algum operador ou possivelmen";
+                msg += "te uma Vírgula na linha "+token.beginLine+" coluna ";
+                msg += token.beginColumn+", antes da variável "+token.image;
 		        erroSintaticoLocal(msg);
 		    } else
 		        erroSintaticoLocal(msg);
@@ -596,6 +577,25 @@ void paraSimples() : {Token t=null; }
 	}
 
 	expressao() (<PASSO> expressao())?
+
+	try
+    {
+        <PARR>
+    }
+    catch(ParseException e) {
+        erroSintaticoLocal("Fecha parenteses");
+        {
+            getNextToken();
+            if (token.kind == ATE) {
+                Compilador.expressao();
+                getNextToken();
+                if (token.kind == PASSO) {
+                    Compilador.expressao();
+                    getNextToken();
+                }
+            }
+        }
+    }
 }
 
 void paraEspecial() : { Token t=null;}
@@ -616,5 +616,36 @@ void paraEspecial() : { Token t=null;}
     	}
 	)+
 	
-	expressao() <ATE> expressao()
+	expressao()
+	try
+	{
+	    <ATE>
+	} catch(ParseException e) {
+        { String msg = "Palavra-chave \"ate\" ou algum operador";
+            if (token.kind==NOMEVAR && t.next.image.equals(token.image)) {
+                msg  = "Palavra-chave \"ate\", algum operador ou possivelmen";
+                msg += "te uma Vírgula na linha "+token.beginLine+" coluna ";
+                msg += token.beginColumn+", antes da variável "+token.image;
+                erroSintaticoLocal(msg);
+            } else
+                erroSintaticoLocal(msg);
+        }
+	}
+	
+	expressao()
+
+	try
+    {
+        <PARR>
+    }
+    catch(ParseException e) {
+        erroSintaticoLocal("Fecha parenteses");
+        {
+            getNextToken();
+            if (token.kind == PASSO) {
+                Compilador.expressao();
+                getNextToken();
+            }
+        }
+    }
 }
