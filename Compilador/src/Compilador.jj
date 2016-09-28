@@ -171,9 +171,31 @@ void comando() : { }
 	| 	comandoPara()
 }
 
-void expressao() : {  }
+void expressao() : { Expressao expressao= new Expressao(); Item item= null; Token t;}
 {
-	termo1() ( <OU> termo1() | <OUCC> termo1() )*
+	termo1()
+	(
+	  t = <OU>
+	  {
+	    expressao.addCodigoInfixo(t.image);
+	  }
+	  termo1()
+	  {
+	    item=new Item(Item.Tipo.OPERADOR,t.image);
+	    expressao.addItem(item);
+		
+	     }
+	| t = <OUCC>
+	  {
+	    expressao.addCodigoInfixo(t.image);
+	  }
+	  termo1()
+	 {
+	    item=new Item(Item.Tipo.OPERADOR,t.image);
+	    expressao.addItem(item);
+		
+	  }
+	)*
 }
 
 void expressaoAuxiliar() : {  }
@@ -183,10 +205,7 @@ void expressaoAuxiliar() : {  }
 
 void termo1() : {  }
 {
-	termo2() ( <E> termo2() {
-	  addItem(termo2);
-	  addItem(operador <E >);
-	} )*
+	termo2() ( <E> termo2() )*
 }
 
 void termo2() : {  }
