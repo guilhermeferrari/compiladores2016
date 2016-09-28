@@ -13,14 +13,14 @@ public class Compilador
 {
  	static Tabela tabela = new Tabela();
 	public static void main (String args []) throws ParseException
-	{
+	{ 
 	  	Compilador compilador = null;
 		while (true)
 		{
 		    System.out.println("Fazendo analise...");
 		    try
 			{
-			  	compilador = new Compilador(new FileInputStream("exemplo8.hue"));
+			  	compilador = new Compilador(new FileInputStream("exemplo4.hue"));
 			  	
 				compilador.inicio();
 				System.out.println("\nEnd of compilation.\n");
@@ -162,13 +162,13 @@ void listaComandos() : { }
 void comando() : { }
 {
 	 	atribVar()
-	| 	declaraVar()	
+	| 	declaraVar()
 	|	leia()
 	| 	exibe()
 	| 	comandoSe()
 	| 	comandoEscolha()
 	| 	comandoEnquanto()
-	| 	comandoPara() 
+	| 	comandoPara()
 }
 
 void expressao() : {  }
@@ -176,9 +176,17 @@ void expressao() : {  }
 	termo1() ( <OU> termo1() | <OUCC> termo1() )*
 }
 
+void expressaoAuxiliar() : {  }
+{
+    termo1() ( <OU> termo1() | <OUCC> termo1() )*
+}
+
 void termo1() : {  }
 {
-	termo2() ( <E> termo2() )*
+	termo2() ( <E> termo2() {
+	  addItem(termo2);
+	  addItem(operador <E >);
+	} )*
 }
 
 void termo2() : {  }
@@ -206,18 +214,28 @@ void termo6() : { Token t; }
 	(<NAO> )* fator()
 }
 
-void fator() : { Token t=null; }
+void fator() : { Token t=null; Item item = null;}
 {
-	<NUMERO>
-  | <STRING>
+	t = <NUMERO>
+	{
+	  item = new Item(Item.Tipo.NUMERO, t.image);
+	  System.out.println(item.getValor()+item.getTipo());
+	}
+  | t = <STRING>
+    {
+      item = new Item(Item.Tipo.STRING, t.image);
+      System.out.println(item.getValor()+item.getTipo());
+    }
   | t = <NOMEVAR>
 	{
+	    item = new Item(Item.Tipo.VARIAVEL, t.image);
+        System.out.println(item.getValor()+item.getTipo());
 	   	if(!tabela.isExiste(t.image)) {
 		  	erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
 		}
 	}
 	
-  | <PARL> expressao()
+  | <PARL> expressaoAuxiliar()
 
 	try
 	{
