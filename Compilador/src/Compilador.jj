@@ -267,41 +267,55 @@ void termo5() : { Token t=null; }
     )?
 }
 
-void termo6() : { Token t=null; }
+void termo6(Expressao expressao) : { Token t=null; }
 {
     (
        t = <NAO>
+       {
+           expressao.addCodigoInfixo(t.image);
+       }
     )*
-    fator()
+    fator(expressao)
+    {
+      expressao.addItem(new Item(Item.Tipo.OPERADOR));
+    }
 }
 
-void fator() : { Token t=null; Item item = null;}
+void fator(Expressao expressao) : { Token t=null; Token t1=null; Item item = null;}
 {
-    t = <NUMERO>
+    (<ADD> | t1=<SUB>)? t = <NUMERO>
     {
-      item = new Item(Item.Tipo.NUMERO, t.image);
-      System.out.println(item.getValor()+item.getTipo());
+        if (t1!=null)
+            item = new Item( Item.Tipo.NUMERO, String.valueOf(Integer.parseInt(t.image)*-1) );
+        else
+            item = new Item( Item.Tipo.NUMERO, t.image );
+        expressao.addItem(new Item(Item.Tipo.NUMERO, item) );
     }
   | t = <STRING>
     {
-      item = new Item(Item.Tipo.STRING, t.image);
-      System.out.println(item.getValor()+item.getTipo());
+      expressao.addItem(new Item(Item.Tipo.STRING, t.image));
     }
   | t = <NOMEVAR>
     {
-        item = new Item(Item.Tipo.VARIAVEL, t.image);
-        System.out.println(item.getValor()+item.getTipo());
+        expressao.addItem(new Item(Item.Tipo.VARIAVEL, t.image));
         if(!tabela.isExiste(t.image)) {
             erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
         }
     }
     
   | t = <PARL>
-    expressaoAuxiliar()
+    {
+        expressao.addCodigoInfixo(t.image);
+    }
+    
+    expressaoAuxiliar(expressao)
 
     try
     {
         t = <PARR>
+        {
+          expressao.addCodigoInfixo(t.image);
+        }
     } catch(ParseException e) {
         t = getToken(1);
         // Caso de esquecimento de operador. (3+5+4-9/4 5*k)
