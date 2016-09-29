@@ -208,7 +208,7 @@ void termo6() : { Token t; }
 
 void fator() : { Token t=null; }
 {
-	<NUMERO>
+  (<ADD> | <SUB>)?<NUMERO>
   | <STRING>
   | t = <NOMEVAR>
 	{
@@ -225,15 +225,15 @@ void fator() : { Token t=null; }
 	} catch(ParseException e) {
 	    t = getToken(1);
 	    // Caso de esquecimento de operador. (3+5+4-9/4 5*k)
-        //                                   aqui ---> ^
+            //aqui ---> ^
 	    if (t.kind==NOMEVAR ||
-            t.kind==NUMERO ||
-            t.kind==STRING ||
-            t.kind==PARL ||
-            t.kind==NAO)
-            erroSintaticoPanico("Algum operador",PARR);
-        else
-            erroSintaticoLocal("Fecha Parenteses");
+                t.kind==NUMERO ||
+                t.kind==STRING ||
+                t.kind==PARL ||
+                t.kind==NAO)
+                erroSintaticoPanico("Algum operador",PARR);
+            else
+                erroSintaticoLocal("Fecha Parenteses");
 	}
 }
 
