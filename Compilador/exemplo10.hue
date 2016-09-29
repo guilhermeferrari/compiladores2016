@@ -1,0 +1,17 @@
+// Utilizando comando de escolha para definir faixa etária
+
+numero _idade;
+leia "Digite sua idade: ", _idade;
+
+escolha(_idade)
+
+   caso (> 0 e < 20)
+       exibe "\n\nVoce é jovem!";
+   caso (>= 20 e < 60)
+      exibe "\n\nVoce é adulto!";
+   caso (>= 60)
+      exibe "\n\nVoce é idoso!";
+   outros
+      exibe "\n\nIdade inválida";
+
+fimEscolha
