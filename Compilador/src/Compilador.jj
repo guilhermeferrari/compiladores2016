@@ -172,7 +172,7 @@ void comando() : { }
 }
 
 void expressao() : { Expressao expressao=new Expressao(); Item item=null;
-Token t=null; }
+Token t=null; expressao.setLinha(token.beginLine);}
 {
     termo1()
     (
