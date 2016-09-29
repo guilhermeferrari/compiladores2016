@@ -247,23 +247,36 @@ void termo3() : { Token t=null; }
     )*
 }
 
-void termo4() : { Token t=null; }
+void termo4(Expressao expressao) : { Token t=null; Item item;}
 {
-    termo5()
+    termo5(expressao)
     (
         t = <MULT>
-        termo5()
+        {
+          expressao.addCodigoInfixo(t.image);        }
+        termo5(expressao)
+        {
+          item = new Item (Item.Tipo.OPERADOR,t.image);
+          expressao.addItem(t.image,item);
+        }
       | t = <DIV>
-        termo5()
+        termo5(expressao)
     )*
 }
 
-void termo5() : { Token t=null; }
+void termo5(Expressao expressao) : { Token t=null; Item item;}
 {
-    termo6()
+    termo6(expressao)
     (
         t = <POT>
-        termo5()
+        {
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo5(expressao)
+        {
+          item = new Item (Item.Tipo.OPERADOR,t.image);
+          expressao.addItem(t.image,item);
+        }
     )?
 }
 
