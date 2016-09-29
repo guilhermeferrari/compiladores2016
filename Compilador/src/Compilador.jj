@@ -197,23 +197,44 @@ Token t=null; }
     )*
 }
 
-void expressaoAuxiliar() : { Token t=null; }
+void expressaoAuxiliar(Expressao expressao) : { Token t=null; }
 {
     termo1()
     (
         t = <OU>
+        {
+            expressao.addCodigoInfixo(t.image);
+        }
         termo1()
+        {
+            item=new Item(Item.Tipo.OPERADOR,t.image);
+            expressao.addItem(item);
+        }
       | t = <OUCC>
+      	{
+            expressao.addCodigoInfixo(t.image);
+        }
         termo1()
+        {
+            item=new Item(Item.Tipo.OPERADOR,t.image);
+            expressao.addItem(item);
+        }
     )*
 }
 
-void termo1() : { Token t=null; }
+void termo1(Expressao expressao) : { Token t=null; }
 {
     termo2()
     (
         t = <E>
+        {
+            expressao.addCodigoInfixo(t.image);
+        }
         termo2()
+        {
+            item=new Item(Item.Tipo.OPERADOR,t.image);
+            expressao.addItem(item);
+        }
     )*
 }
 
