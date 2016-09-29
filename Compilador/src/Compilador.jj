@@ -197,7 +197,7 @@ Token t=null; expressao.setLinha(token.beginLine);}
     )*
 }
 
-void expressaoAuxiliar(Expressao expressao) : { Token t=null; }
+void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
 {
     termo1(expressao)
     (
@@ -222,7 +222,7 @@ void expressaoAuxiliar(Expressao expressao) : { Token t=null; }
     )*
 }
 
-void termo1(Expressao expressao) : { Token t=null; }
+void termo1(Expressao expressao) : { Token t=null; Item item=null; }
 {
     termo2(expressao)
     (
@@ -238,7 +238,7 @@ void termo1(Expressao expressao) : { Token t=null; }
     )*
 }
 
-void termo2(Expressao expressao) : { Token t=null; Item item;}
+void termo2(Expressao expressao) : { Token t=null; Item item=null; }
 {
     termo3(expressao)
     (
@@ -299,7 +299,7 @@ void termo2(Expressao expressao) : { Token t=null; Item item;}
     )*
 }
 
-void termo3(Expressao expressao) : { Token t=null; }
+void termo3(Expressao expressao) : { Token t=null; Item item=null; }
 {
     termo4(expressao)
     (
@@ -324,7 +324,7 @@ void termo3(Expressao expressao) : { Token t=null; }
     )*
 }
 
-void termo4(Expressao expressao) : { Token t=null; Item item;}
+void termo4(Expressao expressao) : { Token t=null; Item item=null; }
 {
     termo5(expressao)
     (
@@ -334,14 +334,14 @@ void termo4(Expressao expressao) : { Token t=null; Item item;}
         termo5(expressao)
         {
           item = new Item (Item.Tipo.OPERADOR,t.image);
-          expressao.addItem(t.image,item);
+          expressao.addItem(item);
         }
       | t = <DIV>
         termo5(expressao)
     )*
 }
 
-void termo5(Expressao expressao) : { Token t=null; Item item;}
+void termo5(Expressao expressao) : { Token t=null; Item item=null; }
 {
     termo6(expressao)
     (
@@ -352,7 +352,7 @@ void termo5(Expressao expressao) : { Token t=null; Item item;}
         termo5(expressao)
         {
           item = new Item (Item.Tipo.OPERADOR,t.image);
-          expressao.addItem(t.image,item);
+          expressao.addItem(item);
         }
     )?
 }
@@ -360,14 +360,15 @@ void termo5(Expressao expressao) : { Token t=null; Item item;}
 void termo6(Expressao expressao) : { Token t=null; }
 {
     (
-       t = <NAO>
-       {
-           expressao.addCodigoInfixo(t.image);
-       }
+        t = <NAO>
+        {
+            expressao.addCodigoInfixo(t.image);
+        }
     )*
     fator(expressao)
     {
-      expressao.addItem(new Item(Item.Tipo.OPERADOR));
+        if(t!=null)
+            expressao.addItem(new Item(Item.Tipo.OPERADOR, t.image));
     }
 }
 
@@ -379,7 +380,7 @@ void fator(Expressao expressao) : { Token t=null; Token t1=null; Item item = nul
             item = new Item( Item.Tipo.NUMERO, String.valueOf(Integer.parseInt(t.image)*-1) );
         else
             item = new Item( Item.Tipo.NUMERO, t.image );
-        expressao.addItem(new Item(Item.Tipo.NUMERO, item) );
+        expressao.addItem(item);
     }
   | t = <STRING>
     {
