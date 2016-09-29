@@ -217,33 +217,89 @@ void termo1() : { Token t=null; }
     )*
 }
 
-void termo2() : { Token t=null; }
+void termo2(Expressao expressao) : { Token t=null; Item item;}
 {
-    termo3()
+    termo3(expressao)
     (
         t = <MAIOR>
-        termo3()
+        {
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo3(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
       | t = <MENOR>
-        termo3()
+      	{
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo3(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
       | t = <MAIORIGUAL>
-        termo3()
+      	{
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo3(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
       | t = <MENORIGUAL>
-        termo3()
+     	{
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo3(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
       | t = <DIFERENTE>
-        termo3()
+      	{
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo3(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
       | t = <COMPARA>
-        termo3()
+      	{
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo3(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
     )*
 }
 
-void termo3() : { Token t=null; }
+void termo3(Expressao expressao) : { Token t=null; }
 {
-    termo4()
+    termo4(expressao)
     (
         t = <ADD>
-        termo4()
+        {
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo4(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
       | t = <SUB>
-        termo4()
+        {
+          expressao.addCodigoInfixo(t.image);
+        }
+        termo4(expressao)
+        {
+			item= new Item(Item.Tipo.OPERADOR,t.image);
+			expressao.addItem(item);
+        }
     )*
 }
 
