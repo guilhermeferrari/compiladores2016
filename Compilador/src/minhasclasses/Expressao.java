@@ -3,10 +3,15 @@ package minhasclasses;
 import java.util.LinkedList;
 
 public class Expressao {
-	private LinkedList <Item> listaExpressao = new LinkedList<Item>();
+	private LinkedList <Item> listaExpressao;
 	private int linha;
 	private String codigoInfixo;
-	private char tipoRetorno;
+	private TipoDados tipoDados;
+	
+	public Expressao(){
+		codigoInfixo = "";
+		listaExpressao = new LinkedList<Item>();
+	}
 	
 	public LinkedList<Item> getListaExpressao() {
 		return listaExpressao;
@@ -24,26 +29,30 @@ public class Expressao {
 		return codigoInfixo;
 	}
 
-	public void addCodigoInfixo(String codigoAnterior) {
-		codigoInfixo += codigoAnterior;
+	public void addCodigoInfixo(String elemento) {
+		codigoInfixo += elemento + " ";
 	}
 
-	public char getTipoRetorno() {
-		return tipoRetorno;
+	public TipoDados getTipoDados() {
+		return tipoDados;
 	}
 
-
-
-	public void setTipoRetorno(char tipoRetorno) {
-		this.tipoRetorno = tipoRetorno;
-	}
-
-
-	public Expressao(){
-		
+	public void setTipoDados(TipoDados tipo) {
+		this.tipoDados = tipo;
 	}
 	
 	public void addItem(Item item){
 		listaExpressao.add(item);
+	}
+	
+	@Override
+	public String toString(){
+		String message = "";
+		
+		for (int i=0; i<listaExpressao.size(); i++){
+			message += listaExpressao.get(i).getValor() + " ";
+		}
+		
+		return message;
 	}
 }

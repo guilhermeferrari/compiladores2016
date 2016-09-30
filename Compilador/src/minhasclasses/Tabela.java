@@ -23,6 +23,10 @@ public class Tabela {
 		return ((Simbolo)this.tab.get(_chave)).getReferencia();
 	}
 	
+	public char getTipoSimbolo(String _chave){
+		return ((Simbolo)this.tab.get(_chave)).getTipo();
+	}
+	
 	public boolean isExiste(String _chave) {
 		return this.tab.containsKey(_chave);
 	}
