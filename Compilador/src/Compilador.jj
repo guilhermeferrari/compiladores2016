@@ -21,7 +21,6 @@ public class Compilador
             try
             {
                 compilador = new Compilador(new FileInputStream("exemplo7.hue"));
-                
                 compilador.inicio();
                 System.out.println("\nEnd of compilation.\n");
                 break;
@@ -50,7 +49,7 @@ public class Compilador
     // Retorna um token anterior ao token de sincronização.
     static public void erroSintaticoPanico(String esperado, int kindSincronizacao)
     {
-        Token t = getNextToken();
+        Token t = getToken(1);
         System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
         System.out.println(", coluna "+t.beginColumn+") ++");
         System.out.print("Encontrou \'"+t.image+"\'. ");
@@ -61,15 +60,6 @@ public class Compilador
                 t = getNextToken();
             }
         }
-    }
-
-    // Método usado para a sincronização por recuperação de erro local.
-    static public void erroSintaticoLocal(String esperado) {
-        Token t = getToken(1);
-        System.out.print("\n++ Erro sintatico (linha "+t.beginLine);
-        System.out.println(", coluna "+t.beginColumn+") ++");
-        System.out.print("Encontrou \'"+(t.kind==0?"EOF":t.image)+"\'. ");
-        System.out.println("Era esperado: "+esperado);
     }
 
     static public void erroSemantico(String s)
@@ -412,7 +402,6 @@ Item item = null;}
         if (expressao.getTipoDados()==null)
             expressao.setTipoDados(TipoDados.STRING);
     }
-
   | t = <NOMEVAR>
     {
         expressao.addCodigoInfixo(t.image);
@@ -441,33 +430,19 @@ Item item = null;}
 
     try
     {
-        t = <PARR>
-        {
-            expressao.addCodigoInfixo(t.image);
-        }
+       t = <PARR>
+       {
+           expressao.addCodigoInfixo(t.image);
+       }
     } catch(ParseException e) {
-        t = getToken(1);
-        // Caso de esquecimento de operador. (3+5+4-9/4 5*k)
-        //                                   aqui ---> ^
-        if (t.kind==NOMEVAR ||
-            t.kind==NUMERO ||
-            t.kind==STRING ||
-            t.kind==PARL ||
-            t.kind==NAO)
-            erroSintaticoPanico("Algum operador",PARR);
-        else
-            erroSintaticoLocal("Fecha Parenteses");
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 }
 
 void declaraVar() : {Simbolo simb; Token t=null; char tp;}
 {
     ( <TIPONUM> {tp='n';} | <TIPOSTRING> {tp='s';} )
-    try { 
-        t = <NOMEVAR>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Nome de variável");
-    }
+    t = <NOMEVAR>
     {
         if(!tabela.isExiste(t.image)) {
             simb = new Simbolo(t.image); 
@@ -481,22 +456,17 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
     }
     (
         <VIRG>
-        try
+        t = <NOMEVAR>
         {
-            t = <NOMEVAR>
-            {
-                if(!tabela.isExiste(t.image)) { 
-                    simb = new Simbolo(t.image); 
-                    simb.setTipo(tp);
-                    simb.setReferencia(tp); 
-                    tabela.inclui(simb);
-                } else {
-                    erroSemantico("Erro semântico \n A variável "+t.image+
-                                  " já foi inicializada");
-                }     
-            }
-        } catch(ParseException e) {
-            erroSintaticoLocal("Variável");
+            if(!tabela.isExiste(t.image)) { 
+                simb = new Simbolo(t.image); 
+                simb.setTipo(tp);
+                simb.setReferencia(tp); 
+                tabela.inclui(simb);
+            } else {
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " já foi inicializada");
+            }     
         }
     )*
 
@@ -505,15 +475,7 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
         <PTVIRG>
     }
     catch(ParseException e) {
-        t = getToken(1);
-        // Caso em que há uma variavel e o programador tenha esquecido da
-        // virgula antes do token. numero _x, _y, _z _k;
-        //                                aqui ---> ^
-        if (t.kind==NOMEVAR)
-            erroSintaticoPanico("Vírgula",PTVIRG);
-        else
-            erroSintaticoLocal("Ponto-e-virgula");
-        // Caso em que se esquece do uso do ponto e virgula.
+        erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
 }
 
@@ -528,12 +490,7 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
     }
     (
         <VIRG>
-        try
-        { 
-            t = <NOMEVAR>
-        } catch(ParseException e) {
-            erroSintaticoLocal("Variável");
-        }
+        t = <NOMEVAR>
         {
             if(!tabela.isExiste(t.image)) {
                 erroSemantico("Erro semântico \n A variável "+t.image+
@@ -542,92 +499,45 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
         }
     )*
 
-    try
-    { 
-        <ATRIB>
-    } catch(ParseException e) {
-        erroSintaticoLocal("=");
-        getNextToken();
-    }
+    <ATRIB>
 
     expressao()
     (
-        <VIRG>
-        try
-        {
-            expressao()
-        } catch(ParseException e) {
-            erroSintaticoLocal("Expressao");
-        }
+        <VIRG> expressao()
     )*
 
     try
     {
         <PTVIRG>
     } catch(ParseException e) {
-        t = getToken(1);
-        // Caso de esquecimento de virgula. _x, _y, _z = _k, 2 3;
-        //                                          aqui ---> ^
-        if (t.kind==NOMEVAR ||
-            t.kind==NUMERO ||
-            t.kind==STRING ||
-            t.kind==PARL ||
-            t.kind==NAO)
-            erroSintaticoPanico("Vírgula",PTVIRG);
-        else
-            erroSintaticoLocal("Ponto-e-virgula");
-        // Caso em que se esquece do uso do ponto e virgula.
+        erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
 }
 
-void leia() : {Token t=null, tVar; String tokenEsperado="";}
+void leia() : {Token t=null, tVar; }
 {
     <LEIA>
-    try
-    {
-        (t=<STRING> <VIRG>)*
-    } catch(ParseException e) {
-        tokenEsperado = "Vírgula e ";
-    }
+    (<STRING> <VIRG>)*
 
-    try
+    tVar = <NOMEVAR>
     {
-        tVar = <NOMEVAR>
-        {
-            if(!tabela.isExiste(tVar.image)) {
-                erroSemantico("Erro semântico \n A variável "+tVar.image+
-                              " não foi inicializada");
-            }
-            if (tokenEsperado.length()!=0) {
-                token = t; // Volta um token. Volta para String antes da
-                // virgula que deveria ter.
-                erroSintaticoLocal("Vírgula");
-                getNextToken();
-            }
+        if(!tabela.isExiste(tVar.image)) {
+            erroSemantico("Erro semântico \n A variável "+tVar.image+
+                          " não foi inicializada");
         }
-    } catch(ParseException e) {
-        tokenEsperado += "Variavel";
-        erroSintaticoLocal(tokenEsperado);
     }
 
     (
         <VIRG>
         (
-            try
-            { 
-                tVar = <NOMEVAR>
-                {
-                    if(!tabela.isExiste(tVar.image))
-                    {
-                        erroSemantico("Erro semântico \n A variável "+
-                                      tVar.image+ " não foi inicializada");
-                    }
+            tVar = <NOMEVAR>
+            {
+                if(!tabela.isExiste(tVar.image)) {
+                    erroSemantico("Erro semântico \n A variável "+
+                                  tVar.image+ " não foi inicializada");
                 }
-              |
-                <STRING>
-            } catch(ParseException e) {
-                erroSintaticoLocal("Variavel ou String");
             }
+          | <STRING>
         )
     )*
 
@@ -635,15 +545,7 @@ void leia() : {Token t=null, tVar; String tokenEsperado="";}
     {
         <PTVIRG>
     } catch(ParseException e) {
-        t = getToken(1);
-        // Caso em que há uma string ou variavel e o programador tenha
-        // esquecido da virgula antes do token. leia _x,_x "123";
-        //                                      aqui ---> ^
-        if (t.kind==NOMEVAR || t.kind==STRING)
-            erroSintaticoPanico("Vírgula",PTVIRG);
-        else
-            erroSintaticoLocal("Ponto-e-virgula");
-        // Caso em que se esquece do uso do ponto e virgula.
+        erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
 }
 
@@ -651,8 +553,19 @@ void exibe() : {Token t=null;}
 {
     <EXIBE>
     (
-        try
-        { 
+        <STRING>
+      | <NUMERO>
+      | t = <NOMEVAR>
+        {
+            if(!tabela.isExiste(t.image)) {
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " não foi inicializada");
+            }
+        }
+    )
+    (
+        <VIRG>
+        (
             <STRING>
           | <NUMERO>
           | t = <NOMEVAR>
@@ -663,31 +576,6 @@ void exibe() : {Token t=null;}
                                   " não foi inicializada");
                 }
             }
-        } catch(ParseException e) {
-            // Aqui é quando há um token diferente ou nenhum token. exibe;
-            //                                              Assim --> ^
-            erroSintaticoLocal("String, numero ou variável");
-        }
-    )
-    (
-        <VIRG>
-        (
-            try
-            { 
-                <STRING>
-              | <NUMERO>
-              | t = <NOMEVAR>
-                {
-                    if(!tabela.isExiste(t.image))
-                    {
-                        erroSemantico("Erro semântico \n A variável "+t.image+
-                                      " não foi inicializada");
-                    }
-                }
-            } catch(ParseException e) {
-                // Econtra uma virgula mas nenhum token obrigatorio após...
-                erroSintaticoLocal("String, numero ou variável");
-            }
         )
     )*
 
@@ -695,40 +583,19 @@ void exibe() : {Token t=null;}
     {
         <PTVIRG>
     }
-    catch(ParseException e)
-    {
-        t = getToken(1);
-        // Caso em que há uma string ou variavel e o programador tenha
-        // esquecido da virgula antes do token. exibe _x,_x "123";
-        //                                       aqui ---> ^
-        if (t.kind==STRING || t.kind==NUMERO || t.kind==NOMEVAR)
-            erroSintaticoPanico("Vírgula",PTVIRG);
-        else
-            erroSintaticoLocal("Ponto-e-virgula");
-        // Caso em que se esquece do uso do ponto e virgula.
+    catch(ParseException e) {
+        erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
 }
 
 void comandoSe() : {}
 {
-    blocoSe() (blocoSenaoSe())* (blocoSenao())?
-    try
-    { 
-        <FIMSE>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Palavra chave \"fimSe\"");
-    }
+    blocoSe() (blocoSenaoSe())* (blocoSenao())? <FIMSE>
 }
 
 void blocoSe() : {}
 {
-    <SE>
-    try
-    {
-        <PARL>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Abre parenteses");
-    }
+    <SE> <PARL>
 
     expressao()
 
@@ -737,7 +604,7 @@ void blocoSe() : {}
        <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
     listaComandos()
@@ -745,13 +612,7 @@ void blocoSe() : {}
 
 void blocoSenaoSe() : {}
 {
-    <SENAOSE>
-    try
-    {
-        <PARL>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Abre Parenteses");
-    }
+    <SENAOSE> <PARL>
 
     expressao()
 
@@ -760,7 +621,7 @@ void blocoSenaoSe() : {}
        <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
     listaComandos()
@@ -773,24 +634,12 @@ void blocoSenao() : {}
 
 void comandoEscolha() : {}
 {
-    expEscolha() (expCaso())+ (expOutros())?
-    try
-    {
-        <FIMESCOLHA>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Palavra chave \"fimEscolha\"");
-    }
+    expEscolha() (expCaso())+ (expOutros())? <FIMESCOLHA>
 }
 
 void expEscolha() : {}
 {
-    <ESCOLHA>
-    try
-    {
-        <PARL>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Abre Parenteses");
-    }
+    <ESCOLHA> <PARL>
 
     expressao()
 
@@ -799,19 +648,13 @@ void expEscolha() : {}
        <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 }
 
 void expCaso() : {}
 {
-    <CASO>
-    try
-    {
-        <PARL>
-    } catch(ParseException e) {
-      erroSintaticoLocal("Abre Parenteses");
-    }
+    <CASO> <PARL>
 
     expressao()
 
@@ -820,7 +663,7 @@ void expCaso() : {}
        <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
     listaComandos()
@@ -833,13 +676,7 @@ void expOutros() : {}
 
 void comandoEnquanto() : {}
 {
-    <ENQUANTO>
-    try
-    {
-        <PARL>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Abre Parenteses");
-    }
+    <ENQUANTO> <PARL>
 
     expressao()
 
@@ -848,34 +685,17 @@ void comandoEnquanto() : {}
        <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
-    try
-    {
-        <FIMENQUANTO>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Palavra chave \"fimEquanto\"");
-    }
+    listaComandos() <FIMENQUANTO>
 }
 
 void comandoPara() : {Token t=null; }
 {
-    <PARA>
-    try
-    {
-        <PARL>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Abre parenteses");
-    }
+    <PARA> <PARL>
 
-    try
-    {
-        t = <NOMEVAR>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Variável");
-    }
+    t = <NOMEVAR>
     {
         if(t!=null && !tabela.isExiste(t.image))
         {
@@ -886,67 +706,28 @@ void comandoPara() : {Token t=null; }
     
     (paraSimples() | paraEspecial())
 
-    listaComandos()
-    try
-    {
-        <FIMPARA>
-    } catch(ParseException e) {
-        erroSintaticoLocal("Palavra chave \"fimPara\"");
-    }
+    listaComandos() <FIMPARA>
 }
 
-void paraSimples() : {Token t=null; }
+void paraSimples() : { }
 {
-    { t = token; }
-    
-    expressao()
-    try
-    { 
-        <ATE>
-    } catch(ParseException e) {
-        { String msg = "Palavra-chave \"ate\" ou algum operador";
-            if (token.kind==NOMEVAR && t.next.image.equals(token.image)) {
-                msg  = "Palavra-chave \"ate\", algum operador ou possivelmen";
-                msg += "te uma Vírgula na linha "+token.beginLine+" coluna ";
-                msg += token.beginColumn+", antes da variável "+token.image;
-                erroSintaticoLocal(msg);
-            } else
-                erroSintaticoLocal(msg);
-        }
-    }
+    expressao() <ATE> expressao()
 
-    expressao() (<PASSO> expressao())?
+    (<PASSO> expressao())?
 
     try
     {
         <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
-        {
-            getNextToken();
-            if (token.kind == ATE) {
-                Compilador.expressao();
-                getNextToken();
-                if (token.kind == PASSO) {
-                    Compilador.expressao();
-                    getNextToken();
-                }
-            }
-        }
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 }
 
 void paraEspecial() : { Token t=null;}
 {
     (
-        <VIRG>
-        try
-        { 
-            t = <NOMEVAR>
-        } catch(ParseException e) {
-            erroSintaticoLocal("Variável");
-        }
+        <VIRG> t = <NOMEVAR>
         {
             if(t!=null && !tabela.isExiste(t.image))
             {
@@ -956,36 +737,13 @@ void paraEspecial() : { Token t=null;}
         }
     )+
     
-    expressao()
-    try
-    {
-        <ATE>
-    } catch(ParseException e) {
-        { String msg = "Palavra-chave \"ate\" ou algum operador";
-            if (token.kind==NOMEVAR && t.next.image.equals(token.image)) {
-                msg  = "Palavra-chave \"ate\", algum operador ou possivelmen";
-                msg += "te uma Vírgula na linha "+token.beginLine+" coluna ";
-                msg += token.beginColumn+", antes da variável "+token.image;
-                erroSintaticoLocal(msg);
-            } else
-                erroSintaticoLocal(msg);
-        }
-    }
-    
-    expressao()
+    expressao() <ATE> expressao()
 
     try
     {
         <PARR>
     }
     catch(ParseException e) {
-        erroSintaticoLocal("Fecha parenteses");
-        {
-            getNextToken();
-            if (token.kind == PASSO) {
-                Compilador.expressao();
-                getNextToken();
-            }
-        }
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 }
