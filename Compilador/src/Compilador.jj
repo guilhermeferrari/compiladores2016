@@ -20,7 +20,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo4.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
                 
                 compilador.inicio();
                 System.out.println("\nEnd of compilation.\n");
@@ -195,6 +195,12 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
             expressao.addItem(item);
         }
     )*
+
+    /*{
+        System.out.println("Linha da expressao: "+expressao.getLinha());
+        System.out.println("Expressao infixa:\n"+expressao.getCodigoInfixo());
+        System.out.println("Expressao posfixa:\n"+expressao);
+    }*/
 }
 
 void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
@@ -244,7 +250,8 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
     (
         t = <MAIOR>
         {
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
+            expressao.setTipoDados(TipoDados.NUMERO);
         }
         termo3(expressao)
         {
@@ -253,7 +260,8 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
         }
       | t = <MENOR>
       	{
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
+            expressao.setTipoDados(TipoDados.NUMERO);
         }
         termo3(expressao)
         {
@@ -262,7 +270,8 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
         }
       | t = <MAIORIGUAL>
       	{
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
+            expressao.setTipoDados(TipoDados.NUMERO);
         }
         termo3(expressao)
         {
@@ -271,7 +280,8 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
         }
       | t = <MENORIGUAL>
      	{
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
+            expressao.setTipoDados(TipoDados.NUMERO);
         }
         termo3(expressao)
         {
@@ -280,7 +290,8 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
         }
       | t = <DIFERENTE>
       	{
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
+            expressao.setTipoDados(TipoDados.NUMERO);
         }
         termo3(expressao)
         {
@@ -289,7 +300,8 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
         }
       | t = <COMPARA>
       	{
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
+            expressao.setTipoDados(TipoDados.NUMERO);
         }
         termo3(expressao)
         {
@@ -305,7 +317,7 @@ void termo3(Expressao expressao) : { Token t=null; Item item=null; }
     (
         t = <ADD>
         {
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
         }
         termo4(expressao)
         {
@@ -314,7 +326,7 @@ void termo3(Expressao expressao) : { Token t=null; Item item=null; }
         }
       | t = <SUB>
         {
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
         }
         termo4(expressao)
         {
@@ -330,11 +342,11 @@ void termo4(Expressao expressao) : { Token t=null; Item item=null; }
     (
         t = <MULT>
         {
-          expressao.addCodigoInfixo(t.image);        }
+            expressao.addCodigoInfixo(t.image);        }
         termo5(expressao)
         {
-          item = new Item (Item.Tipo.OPERADOR,t.image);
-          expressao.addItem(item);
+            item = new Item (Item.Tipo.OPERADOR,t.image);
+            expressao.addItem(item);
         }
       | t = <DIV>
         termo5(expressao)
@@ -347,50 +359,75 @@ void termo5(Expressao expressao) : { Token t=null; Item item=null; }
     (
         t = <POT>
         {
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
         }
         termo5(expressao)
         {
-          item = new Item (Item.Tipo.OPERADOR,t.image);
-          expressao.addItem(item);
+            item = new Item (Item.Tipo.OPERADOR,t.image);
+            expressao.addItem(item);
         }
     )?
 }
 
-void termo6(Expressao expressao) : { Token t=null; }
+void termo6(Expressao expressao) : { Token t=null; int cont=0; }
 {
     (
         t = <NAO>
         {
             expressao.addCodigoInfixo(t.image);
+            cont++;
         }
     )*
     fator(expressao)
     {
-        if(t!=null)
-            expressao.addItem(new Item(Item.Tipo.OPERADOR, t.image));
+        if(t!=null) {
+            if ((cont % 2) == 1)
+                expressao.addItem(new Item(Item.Tipo.OPERADOR, t.image));
+        }
     }
 }
 
-void fator(Expressao expressao) : { Token t=null; Token t1=null; Item item = null;}
+void fator(Expressao expressao) : { Token t=null; Token t1=null;
+Item item = null;}
 {
-    (<ADD> | t1=<SUB>)? t = <NUMERO>
+    (<ADD> | t1=<SUB>)?
+    t = <NUMERO>
     {
         if (t1!=null)
-            item = new Item( Item.Tipo.NUMERO, String.valueOf(Integer.parseInt(t.image)*-1) );
+            item = new Item( Item.Tipo.NUMERO,
+                             String.valueOf(Integer.parseInt(t.image)*-1) );
         else
             item = new Item( Item.Tipo.NUMERO, t.image );
+        expressao.addCodigoInfixo(item.getValor());
         expressao.addItem(item);
+
+        if (expressao.getTipoDados()==null)
+            expressao.setTipoDados(TipoDados.NUMERO);
     }
   | t = <STRING>
     {
-      expressao.addItem(new Item(Item.Tipo.STRING, t.image));
+        expressao.addCodigoInfixo(t.image);
+        expressao.addItem(new Item(Item.Tipo.STRING, t.image));
+        
+        if (expressao.getTipoDados()==null)
+            expressao.setTipoDados(TipoDados.STRING);
     }
   | t = <NOMEVAR>
     {
+        expressao.addCodigoInfixo(t.image);
         expressao.addItem(new Item(Item.Tipo.VARIAVEL, t.image));
+            
         if(!tabela.isExiste(t.image)) {
-            erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " não foi inicializada");
+        } else {
+            if (expressao.getTipoDados()==null) {
+                char tipo = tabela.getTipoSimbolo(t.image);
+                
+                expressao.setTipoDados(tipo=='n'?
+                                       TipoDados.NUMERO :
+                                       TipoDados.STRING );
+            }
         }
     }
     
@@ -405,7 +442,7 @@ void fator(Expressao expressao) : { Token t=null; Token t1=null; Item item = nul
     {
         t = <PARR>
         {
-          expressao.addCodigoInfixo(t.image);
+            expressao.addCodigoInfixo(t.image);
         }
     } catch(ParseException e) {
         t = getToken(1);
@@ -437,7 +474,8 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
             simb.setReferencia(tp); 
             tabela.inclui(simb);
         } else {
-            erroSemantico("Erro semântico \n A variável "+t.image+" já foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " já foi inicializada");
         }
     }
     (
@@ -452,7 +490,8 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
                     simb.setReferencia(tp); 
                     tabela.inclui(simb);
                 } else {
-                    erroSemantico("Erro semântico \n A variável "+t.image+" já foi inicializada");
+                    erroSemantico("Erro semântico \n A variável "+t.image+
+                                  " já foi inicializada");
                 }     
             }
         } catch(ParseException e) {
@@ -482,7 +521,8 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
     t = <NOMEVAR>
     {
         if(!tabela.isExiste(t.image)) {
-            erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " não foi inicializada");
         }
     }
     (
@@ -495,7 +535,8 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
         }
         {
             if(!tabela.isExiste(t.image)) {
-                erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " não foi inicializada");
             }
         }
     )*
@@ -553,7 +594,8 @@ void leia() : {Token t=null, tVar; String tokenEsperado="";}
         tVar = <NOMEVAR>
         {
             if(!tabela.isExiste(tVar.image)) {
-                erroSemantico("Erro semântico \n A variável "+tVar.image+ " não foi inicializada");
+                erroSemantico("Erro semântico \n A variável "+tVar.image+
+                              " não foi inicializada");
             }
             if (tokenEsperado.length()!=0) {
                 token = t; // Volta um token. Volta para String antes da
@@ -836,7 +878,8 @@ void comandoPara() : {Token t=null; }
     {
         if(t!=null && !tabela.isExiste(t.image))
         {
-            erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " não foi inicializada");
         }
     }
     
@@ -906,7 +949,8 @@ void paraEspecial() : { Token t=null;}
         {
             if(t!=null && !tabela.isExiste(t.image))
             {
-                erroSemantico("Erro semântico \n A variável "+t.image+" não foi inicializada");
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " não foi inicializada");
             }
         }
     )+
