@@ -372,8 +372,11 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
     fator(expressao)
     {
         if(t!=null) {
-            if ((cont % 2) == 1)
+            //if ((cont % 2) == 1)
+            while(cont!=0) { 
                 expressao.addItem(new Item(Item.Tipo.OPERADOR, t.image));
+                cont--;
+            }
         }
     }
 }
