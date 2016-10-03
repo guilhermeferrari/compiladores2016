@@ -187,11 +187,11 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
         }
     )*
 
-    { 
+    /*{
         System.out.println("Linha da expressao: "+expressao.getLinha());
         System.out.println("Expressao infixa:\n"+expressao.getCodigoInfixo());
         System.out.println("Expressao posfixa:\n"+expressao);
-    }
+    }*/
 }
 
 void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
