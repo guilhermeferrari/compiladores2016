@@ -5,11 +5,13 @@ public class Simbolo {
     private int referencia;   // é uma referência usada na geração do código destino
     private static int marcador = 1; // armazena a última referência incluída na tabela
     private char tipo;
+    private boolean inicializada; //Identifica se uma variavel foi inicializada
 
     public Simbolo(String _nome) {
           this.nome = _nome;
           this.referencia = Simbolo.marcador;
           Simbolo.marcador += 2;
+          this.inicializada = false;
     }
 
     public String getNome() {
@@ -46,6 +48,14 @@ public class Simbolo {
 
 	public void setTipo(char tipo) {
 		this.tipo = tipo;
+	}
+	
+	public boolean getInicializada(){
+		return this.inicializada;
+	}
+	
+	public void setInicializada(boolean inicializada){
+		this.inicializada = inicializada;
 	}
     
 }

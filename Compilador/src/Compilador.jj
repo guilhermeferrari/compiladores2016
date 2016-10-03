@@ -20,8 +20,9 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo1.hue"));
                 compilador.inicio();
+                compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
                 break;
             }
@@ -486,7 +487,8 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
         if(!tabela.isExiste(t.image)) {
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " não foi inicializada");
-        }
+        } else        {			tabela.setInicializada(t.image);
+       	} 
     }
     (
         <VIRG>
@@ -495,7 +497,10 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
             if(!tabela.isExiste(t.image)) {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
-            }
+            } else
+	        {
+				tabela.setInicializada(t.image);
+	       	} 
         }
     )*
 
@@ -746,4 +751,10 @@ void paraEspecial() : { Token t=null;}
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
+}
+
+void warning() : {}
+{	{
+		tabela.warningVarNotInit();
+	}
 }
