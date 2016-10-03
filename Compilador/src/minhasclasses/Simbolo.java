@@ -6,12 +6,14 @@ public class Simbolo {
     private static int marcador = 1; // armazena a última referência incluída na tabela
     private char tipo;
     private boolean inicializada; //Identifica se uma variavel foi inicializada
+    private boolean utilizada; //Identifica se uma variavel foi utilizada
 
     public Simbolo(String _nome) {
           this.nome = _nome;
           this.referencia = Simbolo.marcador;
           Simbolo.marcador += 2;
           this.inicializada = false;
+          this.utilizada = false;
     }
 
     public String getNome() {
@@ -56,6 +58,14 @@ public class Simbolo {
 	
 	public void setInicializada(boolean inicializada){
 		this.inicializada = inicializada;
+	}
+	
+	public boolean getUtilizada(){
+		return this.utilizada;
+	}
+	
+	public void setUtilizada(boolean utilizada){
+		this.utilizada = utilizada;
 	}
     
 }

@@ -39,11 +39,18 @@ public class Tabela {
 		((Simbolo)this.tab.get(_chave)).setInicializada(true);
 	}
 	
-	public void warningVarNotInit(){ //Verifica se a variavel foi declarada e nao foi inicializada
+	public void warningVar(){ //Verifica se a variavel foi declarada e nao foi inicializada
 		for(String _chave : this.tab.keySet()){
 			if(!this.tab.get(_chave).getInicializada()){
 				System.out.println("Warning: variavel " + this.tab.get(_chave).getNome() + " foi declarada e nao foi inicializada.");
 			}
+			if(!this.tab.get(_chave).getUtilizada() && this.tab.get(_chave).getInicializada()){
+				System.out.println("Warning: variavel " + this.tab.get(_chave).getNome() + " foi declarada, inicializada e nao foi utilizada.");
+			}
 		}
+	}
+	
+	public void setUtilizada(String _chave){
+		((Simbolo)this.tab.get(_chave)).setUtilizada(true);
 	}
 }

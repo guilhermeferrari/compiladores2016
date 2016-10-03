@@ -419,6 +419,7 @@ Item item = null;}
                                        TipoDados.NUMERO :
                                        TipoDados.STRING );
             }
+            tabela.setUtilizada(t.image);
         }
     }
     
@@ -529,7 +530,10 @@ void leia() : {Token t=null, tVar; }
         if(!tabela.isExiste(tVar.image)) {
             erroSemantico("Erro semântico \n A variável "+tVar.image+
                           " não foi inicializada");
-        }
+        } else
+        {
+			tabela.setInicializada(t.image);
+       	} 
     }
 
     (
@@ -540,7 +544,10 @@ void leia() : {Token t=null, tVar; }
                 if(!tabela.isExiste(tVar.image)) {
                     erroSemantico("Erro semântico \n A variável "+
                                   tVar.image+ " não foi inicializada");
-                }
+                } else
+		        {
+					tabela.setInicializada(t.image);
+		       	} 
             }
           | <STRING>
         )
@@ -565,7 +572,10 @@ void exibe() : {Token t=null;}
             if(!tabela.isExiste(t.image)) {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
-            }
+            } else
+	        {
+				tabela.setUtilizada(t.image);
+	       	} 
         }
     )
     (
@@ -579,7 +589,10 @@ void exibe() : {Token t=null;}
                 {
                     erroSemantico("Erro semântico \n A variável "+t.image+
                                   " não foi inicializada");
-                }
+                } else
+		        {
+					tabela.setUtilizada(t.image);
+		       	} 
             }
         )
     )*
@@ -706,7 +719,10 @@ void comandoPara() : {Token t=null; }
         {
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " não foi inicializada");
-        }
+        } else
+        {
+			tabela.setUtilizada(t.image);
+       	} 
     }
     
     (paraSimples() | paraEspecial())
@@ -738,7 +754,10 @@ void paraEspecial() : { Token t=null;}
             {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
-            }
+            } else
+	        {
+				tabela.setUtilizada(t.image);
+	       	} 
         }
     )+
     
@@ -755,6 +774,6 @@ void paraEspecial() : { Token t=null;}
 
 void warning() : {}
 {	{
-		tabela.warningVarNotInit();
+		tabela.warningVar();
 	}
 }
