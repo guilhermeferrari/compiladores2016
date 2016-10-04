@@ -19,6 +19,10 @@ public class Tabela {
 	    }
 	}
 
+	public Simbolo getSimbolo (String _var) {
+		return (Simbolo)this.tab.get(_var);
+	}
+	
 	public int consultaReferencia(String _chave) {
 		return ((Simbolo)this.tab.get(_chave)).getReferencia();
 	}
@@ -33,6 +37,10 @@ public class Tabela {
 
 	public String toString() {
 		return this.tab.toString();
+	}
+	
+	public boolean isInicializada(String _var) {
+		return ((Simbolo)this.tab.get(_var)).getInicializada();
 	}
 	
 	public void setInicializada(String _chave){

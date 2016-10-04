@@ -8,10 +8,13 @@ PARSER_BEGIN(Compilador)
 
 import java.io.*;
 import minhasclasses.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 public class Compilador
 {
     static Tabela tabela = new Tabela();
+    static LinkedList <Integer> listaExp = new LinkedList<Integer>();
     public static void main (String args []) throws ParseException
     { 
         Compilador compilador = null;
@@ -20,7 +23,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo1.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
                 compilador.inicio();
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -172,7 +175,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
             expressao.addCodigoInfixo(t.image);
         }
         termo1(expressao)
-        {
+        {	
             item=new Item(Item.Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
@@ -186,6 +189,76 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
             expressao.addItem(item);
         }
     )*
+
+//Analisador sem‚ntico - Parte 2
+    {
+      TipoDados tipoExp;
+      Integer valor = 0;
+     
+         for (Iterator<Item> i = expressao.getListaExpressao().iterator(); i.hasNext();) {
+            Item ii = i.next();
+            if (valor==0)
+            {
+              	valor = ii.getTipo().getValorTipo();
+              	if(valor==1) {
+                	listaExp.add(1);
+              	}
+                if (valor==2) {
+					listaExp.add(2);
+              	}
+              	else if(valor==4) {
+              	  	if (!tabela.isInicializada(ii.getValor()))
+              	  		System.out.println("Erro sem‚ntico \nVari·vel n„o inicializada: " + ii.getValor());
+               		if(tabela.getTipoSimbolo(ii.getValor())=='n') {
+                   		valor = 1;
+                   		listaExp.add(1);     
+	                }
+	                else {
+						valor = 2;
+						listaExp.add(2);
+	                }
+              }
+              
+            }
+             else if ((ii.getTipo().getValorTipo()!=8)&&(valor!=( ii.getTipo().getValorTipo()))){
+					if(ii.getTipo().getValorTipo()==4) {
+							if (!tabela.isInicializada(ii.getValor()))
+              	  				System.out.println("Erro sem‚ntico \nVari·vel n„o inicializada: " + ii.getValor());
+                			if(tabela.getTipoSimbolo(ii.getValor())=='n') {
+                 				  if(valor!=1)
+                 				  { 
+										System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                   						
+                 				  }
+                			}
+                			else {
+								if(valor!=2)
+                 				  { 
+										System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                   						
+                 				  }
+                			}
+              			}
+              		else {
+
+						System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                   
+              		   
+              		}
+              				
+			
+      		}
+      		
+      		if((ii.getTipo().getValorTipo()==8)&&(ii.getValor() != "+")&&(valor==2))
+      		{
+						System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+						
+      		}
+      		
+            }
+                 
+        }
+	
 
     /*{
         System.out.println("Linha da expressao: "+expressao.getLinha());
@@ -333,7 +406,8 @@ void termo4(Expressao expressao) : { Token t=null; Item item=null; }
     (
         t = <MULT>
         {
-            expressao.addCodigoInfixo(t.image);        }
+            expressao.addCodigoInfixo(t.image);
+        }
         termo5(expressao)
         {
             item = new Item (Item.Tipo.OPERADOR,t.image);
@@ -484,15 +558,23 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
     }
 }
 
-void atribVar() : { Simbolo simbolo; Token t=null; }
+void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
+  char tipo;}
 {
     t = <NOMEVAR>
     {
+      	listaExp.clear();
         if(!tabela.isExiste(t.image)) {
             erroSemantico("Erro sem√¢ntico \n A vari√°vel "+t.image+
                           " n√£o foi inicializada");
-        } else        {			tabela.setInicializada(t.image);
-       	} 
+        }
+       	tipo = tabela.getTipoSimbolo(t.image);
+        if(tipo=='n') {
+         	listaVar.add(new Item(Item.Tipo.NUMERO, t.image));      
+        }
+        else {
+          	listaVar.add(new Item(Item.Tipo.STRING, t.image));
+        }
     }
     (
         <VIRG>
@@ -501,10 +583,14 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
             if(!tabela.isExiste(t.image)) {
                 erroSemantico("Erro sem√¢ntico \n A vari√°vel "+t.image+
                               " n√£o foi inicializada");
-            } else
-	        {
-				tabela.setInicializada(t.image);
-	       	} 
+            }
+	       	tipo = tabela.getTipoSimbolo(t.image);
+		    if(tipo=='n') {
+		      	listaVar.add(new Item(Item.Tipo.NUMERO, t.image));      
+		    }
+		    else {
+		     	 listaVar.add(new Item(Item.Tipo.STRING, t.image));
+        	} 
         }
     )*
 
@@ -521,6 +607,26 @@ void atribVar() : { Simbolo simbolo; Token t=null; }
     } catch(ParseException e) {
         erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
+
+    {
+       	Integer iVar, iExp;
+       	Item var;
+       	Iterator<Integer> itExp = listaExp.iterator();
+        for (Iterator<Item> itVar = listaVar.iterator(); itVar.hasNext();) {
+          	var = itVar.next();
+          	iVar = var.getTipo().getValorTipo();
+          	iExp = itExp.next();
+          	String tipoExp;
+          	if (iExp == 1)
+          		tipoExp = "numerico";
+          	else
+          		tipoExp = "string";
+          	if (iVar != iExp)
+          		System.out.println("Erro sem‚ntico \nVari·vel " + var.getValor() +
+          							" n„o È do tipo " + tipoExp);
+          	tabela.setInicializada(var.getValor());
+       	} 
+    }
 }
 
 void leia() : {Token t=null, tVar; }
@@ -535,7 +641,7 @@ void leia() : {Token t=null, tVar; }
                           " n√£o foi inicializada");
         } else
         {
-			tabela.setInicializada(t.image);
+			tabela.setInicializada(tVar.image);
        	} 
     }
 
@@ -549,7 +655,7 @@ void leia() : {Token t=null, tVar; }
                                   tVar.image+ " n√£o foi inicializada");
                 } else
 		        {
-					tabela.setInicializada(t.image);
+					tabela.setInicializada(tVar.image);
 		       	} 
             }
           | <STRING>
@@ -776,7 +882,8 @@ void paraEspecial() : { Token t=null;}
 }
 
 void warning() : {}
-{	{
+{
+	{
 		tabela.warningVar();
 	}
 }
