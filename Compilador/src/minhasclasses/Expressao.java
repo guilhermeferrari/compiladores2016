@@ -6,7 +6,7 @@ public class Expressao {
 	private LinkedList <Item> listaExpressao;
 	private int linha;
 	private String codigoInfixo;
-	private TipoDados tipoDados;
+	private Tipo tipoDados;
 	
 	public Expressao(){
 		codigoInfixo = "";
@@ -33,11 +33,11 @@ public class Expressao {
 		codigoInfixo += elemento + " ";
 	}
 
-	public TipoDados getTipoDados() {
+	public Tipo getTipoDados() {
 		return tipoDados;
 	}
 
-	public void setTipoDados(TipoDados tipo) {
+	public void setTipoDados(Tipo tipo) {
 		this.tipoDados = tipo;
 	}
 	
