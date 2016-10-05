@@ -18,18 +18,4 @@ public class Item {
 	public Tipo getTipo() {
 		return tipo;
 	}
-	
-	public enum Tipo {
-		NUMERO(1),STRING(2),VARIAVEL(4),OPERADOR(8);
-
-		public int valorTipo;
-		
-		Tipo(int valor) {
-			valorTipo = valor;
-		}
-		
-		public int getValorTipo() {
-			return valorTipo;
-		}
-	}
 }	
