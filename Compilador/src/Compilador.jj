@@ -190,75 +190,55 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
         }
     )*
 
-//Analisador sem�ntico - Parte 2
+    //Analisador semântico - Parte 2
     {
-      //TipoDados tipoExp;
-      Integer valor = 0;
-     
-         for (Iterator<Item> i = expressao.getListaExpressao().iterator(); i.hasNext();) {
+        //TipoDados tipoExp;
+        Integer valor = 0;
+ 
+        for (Iterator<Item> i = expressao.getListaExpressao().iterator(); i.hasNext();) {
             Item ii = i.next();
-            if (valor==0)
-            {
-              	valor = ii.getTipo().getValor();
-              	if(valor==1) {
-                	listaExp.add(1);
-              	}
+            if (valor==0) {
+                valor = ii.getTipo().getValor();
+                if(valor==1) {
+                    listaExp.add(1);
+          	    }
                 if (valor==2) {
-					listaExp.add(2);
-              	}
-              	else if(valor==4) {
-              	  	if (!tabela.isInicializada(ii.getValor()))
-              	  		System.out.println("Erro sem�ntico \nVari�vel n�o inicializada: " + ii.getValor());
-               		if(tabela.getTipoSimbolo(ii.getValor())=='n') {
-                   		valor = 1;
-                   		listaExp.add(1);     
-	                }
-	                else {
-						valor = 2;
-						listaExp.add(2);
-	                }
-              }
-              
+                  listaExp.add(2);
+                } else if(valor==4) {
+                    if (!tabela.isInicializada(ii.getValor()))
+                        System.out.println("Erro semântico \nVariável não inicializada: " + ii.getValor());
+                    if(tabela.getTipoSimbolo(ii.getValor())=='n') {
+                        valor = 1;
+                        listaExp.add(1);     
+                    } else {
+                        valor = 2;
+                        listaExp.add(2);
+                    }
+                }          
+            } else if ((ii.getTipo().getValor()!=8)&&(valor!=( ii.getTipo().getValor()))) {
+                if(ii.getTipo().getValor()==4) {
+                    if (!tabela.isInicializada(ii.getValor()))
+                        System.out.println("Erro semântico \nVariável não inicializada: " + ii.getValor());
+                    if(tabela.getTipoSimbolo(ii.getValor())=='n') {
+                        if(valor!=1) {
+                            System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                        }
+                    } else {
+                        if(valor!=2) {
+                            System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                        }
+                    }
+                } else {
+                    System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                }
             }
-             else if ((ii.getTipo().getValor()!=8)&&(valor!=( ii.getTipo().getValor()))){
-					if(ii.getTipo().getValor()==4) {
-							if (!tabela.isInicializada(ii.getValor()))
-              	  				System.out.println("Erro sem�ntico \nVari�vel n�o inicializada: " + ii.getValor());
-                			if(tabela.getTipoSimbolo(ii.getValor())=='n') {
-                 				  if(valor!=1)
-                 				  { 
-										System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
-                   						
-                 				  }
-                			}
-                			else {
-								if(valor!=2)
-                 				  { 
-										System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
-                   						
-                 				  }
-                			}
-              			}
-              		else {
 
-						System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
-                   
-              		   
-              		}
-              				
-			
-      		}
-      		
-      		if((ii.getTipo().getValor()==8)&&(ii.getValor() != "+")&&(valor==2))
-      		{
-						System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
-						
-      		}
-      		
-            }
-                 
+            if((ii.getTipo().getValor()==8)&&(ii.getValor() != "+")&&(valor==2)) {
+  	            System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+  		    }
         }
-	
+             
+    }
 
     /*{
         System.out.println("Linha da expressao: "+expressao.getLinha());
