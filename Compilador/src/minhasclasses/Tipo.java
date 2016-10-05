@@ -1,11 +1,11 @@
 package minhasclasses;
 
-public enum TipoDados {
-	NUMERO(1), STRING(2);
+public enum Tipo {
+	NUMERO(1), STRING(2), VARIAVEL(4), OPERADOR(8);
 	
 	private int valor;
 	
-	TipoDados(int valor){
+	Tipo(int valor){
 		this.valor = valor;
 	}
 	
