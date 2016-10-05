@@ -176,7 +176,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
         }
         termo1(expressao)
         {	
-            item=new Item(Item.Tipo.OPERADOR,t.image);
+            item=new Item(Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
       | t = <OUCC>
@@ -185,21 +185,21 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
         }
         termo1(expressao)
         {
-            item=new Item(Item.Tipo.OPERADOR,t.image);
+            item=new Item(Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
     )*
 
-//Analisador semântico - Parte 2
+//Analisador semï¿½ntico - Parte 2
     {
-      TipoDados tipoExp;
+      //TipoDados tipoExp;
       Integer valor = 0;
      
          for (Iterator<Item> i = expressao.getListaExpressao().iterator(); i.hasNext();) {
             Item ii = i.next();
             if (valor==0)
             {
-              	valor = ii.getTipo().getValorTipo();
+              	valor = ii.getTipo().getValor();
               	if(valor==1) {
                 	listaExp.add(1);
               	}
@@ -208,7 +208,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
               	}
               	else if(valor==4) {
               	  	if (!tabela.isInicializada(ii.getValor()))
-              	  		System.out.println("Erro semântico \nVariável não inicializada: " + ii.getValor());
+              	  		System.out.println("Erro semï¿½ntico \nVariï¿½vel nï¿½o inicializada: " + ii.getValor());
                		if(tabela.getTipoSimbolo(ii.getValor())=='n') {
                    		valor = 1;
                    		listaExp.add(1);     
@@ -220,10 +220,10 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
               }
               
             }
-             else if ((ii.getTipo().getValorTipo()!=8)&&(valor!=( ii.getTipo().getValorTipo()))){
-					if(ii.getTipo().getValorTipo()==4) {
+             else if ((ii.getTipo().getValor()!=8)&&(valor!=( ii.getTipo().getValor()))){
+					if(ii.getTipo().getValor()==4) {
 							if (!tabela.isInicializada(ii.getValor()))
-              	  				System.out.println("Erro semântico \nVariável não inicializada: " + ii.getValor());
+              	  				System.out.println("Erro semï¿½ntico \nVariï¿½vel nï¿½o inicializada: " + ii.getValor());
                 			if(tabela.getTipoSimbolo(ii.getValor())=='n') {
                  				  if(valor!=1)
                  				  { 
@@ -249,7 +249,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
 			
       		}
       		
-      		if((ii.getTipo().getValorTipo()==8)&&(ii.getValor() != "+")&&(valor==2))
+      		if((ii.getTipo().getValor()==8)&&(ii.getValor() != "+")&&(valor==2))
       		{
 						System.out.println("Erro sem\u00e2ntico, express\u00f5es n\u00e3o compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
 						
@@ -277,7 +277,7 @@ void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo1(expressao)
         {
-            item=new Item(Item.Tipo.OPERADOR,t.image);
+            item=new Item(Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
       | t = <OUCC>
@@ -286,7 +286,7 @@ void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo1(expressao)
         {
-            item=new Item(Item.Tipo.OPERADOR,t.image);
+            item=new Item(Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
     )*
@@ -302,7 +302,7 @@ void termo1(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo2(expressao)
         {
-            item=new Item(Item.Tipo.OPERADOR,t.image);
+            item=new Item(Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
     )*
@@ -315,61 +315,61 @@ void termo2(Expressao expressao) : { Token t=null; Item item=null; }
         t = <MAIOR>
         {
             expressao.addCodigoInfixo(t.image);
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
         }
         termo3(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
       | t = <MENOR>
       	{
             expressao.addCodigoInfixo(t.image);
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
         }
         termo3(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
       | t = <MAIORIGUAL>
       	{
             expressao.addCodigoInfixo(t.image);
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
         }
         termo3(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
       | t = <MENORIGUAL>
      	{
             expressao.addCodigoInfixo(t.image);
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
         }
         termo3(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
       | t = <DIFERENTE>
       	{
             expressao.addCodigoInfixo(t.image);
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
         }
         termo3(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
       | t = <COMPARA>
       	{
             expressao.addCodigoInfixo(t.image);
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
         }
         termo3(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
     )*
@@ -385,7 +385,7 @@ void termo3(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo4(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
       | t = <SUB>
@@ -394,7 +394,7 @@ void termo3(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo4(expressao)
         {
-			item= new Item(Item.Tipo.OPERADOR,t.image);
+			item= new Item(Tipo.OPERADOR,t.image);
 			expressao.addItem(item);
         }
     )*
@@ -410,7 +410,7 @@ void termo4(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo5(expressao)
         {
-            item = new Item (Item.Tipo.OPERADOR,t.image);
+            item = new Item (Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
       | t = <DIV>
@@ -428,7 +428,7 @@ void termo5(Expressao expressao) : { Token t=null; Item item=null; }
         }
         termo5(expressao)
         {
-            item = new Item (Item.Tipo.OPERADOR,t.image);
+            item = new Item (Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
     )?
@@ -448,7 +448,7 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
         if(t!=null) {
             //if ((cont % 2) == 1)
             while(cont!=0) { 
-                expressao.addItem(new Item(Item.Tipo.OPERADOR, t.image));
+                expressao.addItem(new Item(Tipo.OPERADOR, t.image));
                 cont--;
             }
         }
@@ -462,28 +462,28 @@ Item item = null;}
     t = <NUMERO>
     {
         if (t1!=null)
-            item = new Item( Item.Tipo.NUMERO,
+            item = new Item( Tipo.NUMERO,
                              String.valueOf(Integer.parseInt(t.image)*-1) );
         else
-            item = new Item( Item.Tipo.NUMERO, t.image );
+            item = new Item( Tipo.NUMERO, t.image );
         expressao.addCodigoInfixo(item.getValor());
         expressao.addItem(item);
 
         if (expressao.getTipoDados()==null)
-            expressao.setTipoDados(TipoDados.NUMERO);
+            expressao.setTipoDados(Tipo.NUMERO);
     }
   | t = <STRING>
     {
         expressao.addCodigoInfixo(t.image);
-        expressao.addItem(new Item(Item.Tipo.STRING, t.image));
+        expressao.addItem(new Item(Tipo.STRING, t.image));
         
         if (expressao.getTipoDados()==null)
-            expressao.setTipoDados(TipoDados.STRING);
+            expressao.setTipoDados(Tipo.STRING);
     }
   | t = <NOMEVAR>
     {
         expressao.addCodigoInfixo(t.image);
-        expressao.addItem(new Item(Item.Tipo.VARIAVEL, t.image));
+        expressao.addItem(new Item(Tipo.VARIAVEL, t.image));
             
         if(!tabela.isExiste(t.image)) {
             erroSemantico("Erro semÃ¢ntico \n A variÃ¡vel "+t.image+
@@ -493,8 +493,8 @@ Item item = null;}
                 char tipo = tabela.getTipoSimbolo(t.image);
                 
                 expressao.setTipoDados(tipo=='n'?
-                                       TipoDados.NUMERO :
-                                       TipoDados.STRING );
+                                       Tipo.NUMERO :
+                                       Tipo.STRING );
             }
             tabela.setUtilizada(t.image);
         }
@@ -570,10 +570,10 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
         }
        	tipo = tabela.getTipoSimbolo(t.image);
         if(tipo=='n') {
-         	listaVar.add(new Item(Item.Tipo.NUMERO, t.image));      
+         	listaVar.add(new Item(Tipo.NUMERO, t.image));      
         }
         else {
-          	listaVar.add(new Item(Item.Tipo.STRING, t.image));
+          	listaVar.add(new Item(Tipo.STRING, t.image));
         }
     }
     (
@@ -586,10 +586,10 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
             }
 	       	tipo = tabela.getTipoSimbolo(t.image);
 		    if(tipo=='n') {
-		      	listaVar.add(new Item(Item.Tipo.NUMERO, t.image));      
+		      	listaVar.add(new Item(Tipo.NUMERO, t.image));      
 		    }
 		    else {
-		     	 listaVar.add(new Item(Item.Tipo.STRING, t.image));
+		     	 listaVar.add(new Item(Tipo.STRING, t.image));
         	} 
         }
     )*
@@ -614,7 +614,7 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
        	Iterator<Integer> itExp = listaExp.iterator();
         for (Iterator<Item> itVar = listaVar.iterator(); itVar.hasNext();) {
           	var = itVar.next();
-          	iVar = var.getTipo().getValorTipo();
+          	iVar = var.getTipo().getValor();
           	iExp = itExp.next();
           	String tipoExp;
           	if (iExp == 1)
@@ -622,8 +622,8 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
           	else
           		tipoExp = "string";
           	if (iVar != iExp)
-          		System.out.println("Erro semântico \nVariável " + var.getValor() +
-          							" não é do tipo " + tipoExp);
+          		System.out.println("Erro semï¿½ntico \nVariï¿½vel " + var.getValor() +
+          							" nï¿½o ï¿½ do tipo " + tipoExp);
           	tabela.setInicializada(var.getValor());
        	} 
     }
