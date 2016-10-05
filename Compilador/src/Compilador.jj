@@ -14,7 +14,7 @@ import java.util.LinkedList;
 public class Compilador
 {
     static Tabela tabela = new Tabela();
-    static LinkedList <Integer> listaExp = new LinkedList<Integer>();
+    static LinkedList <Tipo> listaExp = new LinkedList<Tipo>();
     public static void main (String args []) throws ParseException
     { 
         Compilador compilador = null;
@@ -193,51 +193,69 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
     //Analisador semântico - Parte 2
     {
         //TipoDados tipoExp;
-        Integer valor = 0;
+        Tipo valor = null;
  
-        for (Iterator<Item> i = expressao.getListaExpressao().iterator(); i.hasNext();) {
+        for (Iterator<Item> i = expressao.getListaExpressao().iterator();
+             i.hasNext();)
+        {
             Item ii = i.next();
-            if (valor==0) {
-                valor = ii.getTipo().getValor();
-                if(valor==1) {
-                    listaExp.add(1);
+            if (valor==null) {
+                valor = ii.getTipo();
+                if(valor==Tipo.NUMERO) {
+                    listaExp.add(Tipo.NUMERO);
           	    }
-                if (valor==2) {
-                  listaExp.add(2);
-                } else if(valor==4) {
+                if (valor==Tipo.STRING) {
+                  listaExp.add(Tipo.STRING);
+                } else if(valor==Tipo.VARIAVEL) {
                     if (!tabela.isInicializada(ii.getValor()))
-                        System.out.println("Erro semântico \nVariável não inicializada: " + ii.getValor());
+                        System.out.println("Erro semântico \nVariável não"+
+                                           "inicializada: " + ii.getValor());
                     if(tabela.getTipoSimbolo(ii.getValor())=='n') {
-                        valor = 1;
-                        listaExp.add(1);     
+                        valor = Tipo.NUMERO;
+                        listaExp.add(Tipo.NUMERO);     
                     } else {
-                        valor = 2;
-                        listaExp.add(2);
+                        valor = Tipo.STRING;
+                        listaExp.add(Tipo.STRING);
                     }
                 }          
-            } else if ((ii.getTipo().getValor()!=8)&&(valor!=( ii.getTipo().getValor()))) {
-                if(ii.getTipo().getValor()==4) {
+            } else if ( (ii.getTipo()!=Tipo.OPERADOR) &&
+                        (valor!=ii.getTipo()) )
+            {
+                if(ii.getTipo()==Tipo.VARIAVEL) {
                     if (!tabela.isInicializada(ii.getValor()))
-                        System.out.println("Erro semântico \nVariável não inicializada: " + ii.getValor());
+                        System.out.println("Erro semântico \nVariável não"+
+                                           " inicializada: " + ii.getValor());
                     if(tabela.getTipoSimbolo(ii.getValor())=='n') {
-                        if(valor!=1) {
-                            System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                        if(valor!=Tipo.NUMERO) {
+                            System.out.println("Erro semântico, expressões"+
+                                               " não compativeis: "+
+                                               expressao.getCodigoInfixo()+
+                                               "\n");
                         }
                     } else {
-                        if(valor!=2) {
-                            System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                        if(valor!=Tipo.STRING) {
+                            System.out.println("Erro semântico, expressões"+
+                                               " não compativeis: "+
+                                               expressao.getCodigoInfixo()+
+                                               "\n");
                         }
                     }
                 } else {
-                    System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
+                    System.out.println("Erro semântico, expressões não"+
+                                       " compativeis: "+
+                                       expressao.getCodigoInfixo()+ "\n");
                 }
             }
 
-            if((ii.getTipo().getValor()==8)&&(ii.getValor() != "+")&&(valor==2)) {
-  	            System.out.println("Erro semântico, expressões não compativeis: "+expressao.getCodigoInfixo()  + "\u005cn");
-  		    }
+            if( (ii.getTipo()==Tipo.OPERADOR) &&
+                (ii.getValor() != "+") &&
+                (valor==Tipo.STRING))
+  	        {
+  	            System.out.println("Erro semântico, expressões não"+
+  	                               " compativeis: "+
+  	                               expressao.getCodigoInfixo()+ "\n");
+  	        }
         }
-             
     }
 
     /*{
@@ -589,23 +607,24 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
     }
 
     {
-       	Integer iVar, iExp;
-       	Item var;
-       	Iterator<Integer> itExp = listaExp.iterator();
+        Tipo iVar, iExp;
+        Item var;
+        Iterator<Tipo> itExp = listaExp.iterator();
         for (Iterator<Item> itVar = listaVar.iterator(); itVar.hasNext();) {
-          	var = itVar.next();
-          	iVar = var.getTipo().getValor();
-          	iExp = itExp.next();
-          	String tipoExp;
-          	if (iExp == 1)
-          		tipoExp = "numerico";
-          	else
-          		tipoExp = "string";
-          	if (iVar != iExp)
-          		System.out.println("Erro sem�ntico \nVari�vel " + var.getValor() +
-          							" n�o � do tipo " + tipoExp);
+            var = itVar.next();
+            iVar = var.getTipo();
+            iExp = itExp.next();
+            String tipoExp;
+            if (iExp == Tipo.NUMERO)
+                tipoExp = "numerico";
+            else
+                tipoExp = "string";
+            if (iVar != iExp)
+                System.out.println("Erro semântico \nVariável " +
+                                   var.getValor() +
+                                   " não é do tipo " + tipoExp);
           	tabela.setInicializada(var.getValor());
-       	} 
+        }
     }
 }
 
