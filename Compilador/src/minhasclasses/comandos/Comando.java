@@ -1,4 +1,4 @@
-package minhasclasses;
+package minhasclasses.comandos;
 
 public abstract class Comando {
 
