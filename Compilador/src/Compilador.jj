@@ -15,6 +15,7 @@ public class Compilador
 {
     static Tabela tabela = new Tabela();
     static LinkedList <Tipo> listaExp = new LinkedList<Tipo>();
+    static boolean varWarning = false;
     public static void main (String args []) throws ParseException
     { 
         Compilador compilador = null;
@@ -23,7 +24,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo5.hue"));
                 compilador.inicio();
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -256,6 +257,17 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
   	                               expressao.getCodigoInfixo()+ "\n");
   	        }
         }
+
+        if(varWarning)        {
+          	boolean aux = true;
+          	for (Item i : expressao.getListaExpressao())
+        	{
+				if(i.getTipo().getValor() == 4)				{					aux = false;
+					break;
+				}
+       		}
+       		if(aux)       		{
+       		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");       		}        }
     }
 
     /*{
@@ -723,7 +735,14 @@ void blocoSe() : {}
 {
     <SE> <PARL>
 
+    {
+      varWarning = true;    }
+
     expressao()
+
+    {
+      varWarning = false;
+    }
 
     try
     {
@@ -740,8 +759,16 @@ void blocoSenaoSe() : {}
 {
     <SENAOSE> <PARL>
 
+	{
+      varWarning = true;
+    }
+    
     expressao()
 
+	{
+      varWarning = false;
+    }
+    
     try
     {
        <PARR>
@@ -767,7 +794,15 @@ void expEscolha() : {}
 {
     <ESCOLHA> <PARL>
 
+    {
+      varWarning = true;
+    }
+
     expressao()
+
+    {
+      varWarning = false;
+    }
 
     try
     {
@@ -782,7 +817,15 @@ void expCaso() : {}
 {
     <CASO> <PARL>
 
+    {
+      varWarning = true;
+    }
+
     expressao()
+
+    {
+      varWarning = false;
+    }
 
     try
     {
@@ -804,7 +847,15 @@ void comandoEnquanto() : {}
 {
     <ENQUANTO> <PARL>
 
+    {
+      varWarning = true;
+    }
+
     expressao()
+
+    {
+      varWarning = false;
+    }
 
     try
     {
@@ -840,10 +891,17 @@ void comandoPara() : {Token t=null; }
 
 void paraSimples() : { }
 {
+	{
+      varWarning = true;
+    }
     expressao() <ATE> expressao()
 
     (<PASSO> expressao())?
 
+	{
+      varWarning = false;
+    }
+    
     try
     {
         <PARR>
@@ -868,8 +926,16 @@ void paraEspecial() : { Token t=null;}
 	       	} 
         }
     )+
+
+    {
+      varWarning = true;
+    }
     
     expressao() <ATE> expressao()
+
+    {
+      varWarning = false;
+    }
 
     try
     {
