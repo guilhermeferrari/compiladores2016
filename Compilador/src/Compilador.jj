@@ -166,7 +166,7 @@ void comando() : { }
     |   comandoPara()
 }
 
-void expressao() : { Expressao expressao=new Expressao(); Item item=null;
+Expressao expressao() : { Expressao expressao=new Expressao(); Item item=null;
 Token t=null; expressao.setLinha(getToken(1).beginLine);}
 {
     termo1(expressao)
@@ -268,6 +268,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
        		}
        		if(aux)       		{
        		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");       		}        }
+        return expressao;
     }
 
     /*{
@@ -868,7 +869,9 @@ void comandoEnquanto() : {}
     listaComandos() <FIMENQUANTO>
 }
 
-void comandoPara() : {Token t=null; }
+Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para (); Comando paraMultiplo = new ParaMultiplo ();
+					ListaComandos listaComandos; LinkedList<Expressao> listaExpressoes;
+					Expressao expAtribEnquanto = new Expressao(); boolean paraSimples = false; }
 {
     <PARA> <PARL>
 
@@ -880,23 +883,75 @@ void comandoPara() : {Token t=null; }
                           " n√£o foi inicializada");
         } else
         {
+          	simbolo = tabela.getSimbolo(t.image);
 			tabela.setUtilizada(t.image);
        	} 
     }
     
-    (paraSimples() | paraEspecial())
+    (
+      listaExpressoes = paraSimples(para, simbolo)
+      {
+        paraSimples = true;
+      }
+      |
+      listaExpressoes = paraEspecial(paraMultiplo, simbolo)
+    )
 
-    listaComandos() <FIMPARA>
+    listaComandos = listaComandos()
+	{
+	  	if (paraSimples && listaExpressoes.size() > 1) //Existe passo
+	  		expAtribEnquanto = listaExpressoes.get(1);
+	  	else { //Se n„o, o passo È unit·rio
+	  		expAtribEnquanto.addItem(new Item (Tipo.NUMERO, "1"));
+	  		expAtribEnquanto.addCodigoInfixo("1");
+	  	}
+	  	expAtribEnquanto.addItem(new Item (Tipo.VARIAVEL, t.image));
+	  	expAtribEnquanto.addItem(new Item (Tipo.OPERADOR, "+"));
+	  	expAtribEnquanto.addCodigoInfixo("+ " + t.image);
+
+	  	Comando atribuicao = new Atribuicao (simbolo, expAtribEnquanto);
+	  	listaComandos.insere(atribuicao);
+		Comando enquanto = new Enquanto (listaExpressoes.get(0), listaComandos);
+		para.setEnquanto(enquanto);
+	}
+
+    <FIMPARA>
+
+    {
+      if (paraSimples)
+      	return para;
+      else
+      	return paraMultiplo;
+    }
 }
 
-void paraSimples() : { }
+LinkedList<Expressao> paraSimples(Comando para, Simbolo simbolo) : {Expressao expressao; LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();}
 {
 	{
       varWarning = true;
     }
-    expressao() <ATE> expressao()
 
-    (<PASSO> expressao())?
+    expressao = expressao()
+    {
+      Comando atribuicao = new Atribuicao (simbolo, expressao);
+      para.setAtribuicao(atribuicao);
+    }
+
+    <ATE>
+
+    expressao = expressao()
+    {
+      listaExpressoes.add(expressao);
+    }
+
+    (
+      <PASSO>
+
+      expressao = expressao()
+      {
+      	listaExpressoes.add(expressao);
+      }
+    )?
 
 	{
       varWarning = false;
@@ -909,10 +964,19 @@ void paraSimples() : { }
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
+
+    {
+      return listaExpressoes;
+    }
 }
 
-void paraEspecial() : { Token t=null;}
+Expressao paraEspecial(Comando paraMultiplo, Simbolo simbolo) : {Token t=null; Expressao expressao;
+					LinkedList<Simbolo> listaVariaveis = new LinkedList<Simbolo>(); }
 {
+  	{
+  	  	listaVariaveis.add(simbolo);
+  	}
+  	
     (
         <VIRG> t = <NOMEVAR>
         {
@@ -922,6 +986,7 @@ void paraEspecial() : { Token t=null;}
                               " n√£o foi inicializada");
             } else
 	        {
+	          	listaVariaveis.add(tabela.getSimbolo(t.image));
 				tabela.setUtilizada(t.image);
 	       	} 
         }
@@ -930,11 +995,19 @@ void paraEspecial() : { Token t=null;}
     {
       varWarning = true;
     }
+
+	expressao = expressao()
+    {
+      	for (int i = 0; i < listaVariaveis.size(); i++)
+      	  paraMultiplo.insereAtribuicao(new Atribuicao (listaVariaveis.get(i), expressao));
+    }
     
-    expressao() <ATE> expressao()
+    <ATE>
+
+    expressao = expressao()
 
     {
-      varWarning = false;
+      	varWarning = false;
     }
 
     try
@@ -943,7 +1016,10 @@ void paraEspecial() : { Token t=null;}
     }
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
+
     }
+		return expressao;
+    { 
 }
 
 void warning() : {}
