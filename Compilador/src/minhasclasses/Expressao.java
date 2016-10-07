@@ -32,6 +32,18 @@ public class Expressao {
 	public void addCodigoInfixo(String elemento) {
 		codigoInfixo += elemento + " ";
 	}
+	
+	public void addExpressao(Expressao exp) {
+		LinkedList<Item> listaExpressao = exp.getListaExpressao();
+		addCodigoInfixo( exp.getCodigoInfixo() );
+		
+		for(int i=0; i<listaExpressao.size(); i++){
+			addItem( listaExpressao.get(i) );
+		}
+		
+		setLinha( exp.getLinha() );
+		setTipoDados( exp.getTipoDados() );
+	}
 
 	public Tipo getTipoDados() {
 		return tipoDados;
