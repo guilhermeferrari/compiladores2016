@@ -891,10 +891,11 @@ Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para 
     (
       listaExpressoes = paraSimples(para, simbolo)
       {
+        expressao = listaExpressoes.get(0);
         paraSimples = true;
       }
       |
-      listaExpressoes = paraEspecial(paraMultiplo, simbolo)
+      expressao = paraEspecial(paraMultiplo, simbolo)
     )
 
     listaComandos = listaComandos()
@@ -911,7 +912,7 @@ Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para 
 
 	  	Comando atribuicao = new Atribuicao (simbolo, expAtribEnquanto);
 	  	listaComandos.insere(atribuicao);
-		Comando enquanto = new Enquanto (listaExpressoes.get(0), listaComandos);
+		Comando enquanto = new Enquanto (expressao, listaComandos);
 		para.setEnquanto(enquanto);
 	}
 
