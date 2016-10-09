@@ -2,15 +2,23 @@ package minhasclasses.comandos;
 
 public class Para {
 	
-	Comando atribuicao, enquanto;
+	private Comando atribuicao, enquanto;
 	
 	Para () {}
 	
-	void setAtribuicao (Comando atribuicao) {
+	public void setAtribuicao (Comando atribuicao) {
 		this.atribuicao = atribuicao;
 	}
 	
-	void setEnquanto (Comando enquanto) {
+	public Comando getAtribuicao() {
+		return atribuicao;
+	}
+	
+	public void setEnquanto (Comando enquanto) {
 		this.enquanto = enquanto;
+	}
+	
+	public Comando getEnquanto() {
+		return enquanto;
 	}
 }
