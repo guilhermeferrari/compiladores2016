@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class ParaMultiplo {
 	
 	private LinkedList<Comando> atribuicoes;
-	private Comando enquanto;
+	private LinkedList<Comando> enquantos;
 	
 	ParaMultiplo () {}
 	
@@ -17,11 +17,11 @@ public class ParaMultiplo {
 		return atribuicoes;
 	}
 	
-	public void setEnquanto (Comando enquanto) {
-		this.enquanto = enquanto;
+	public void insereEnquanto (Comando enquanto) {
+		this.enquantos.add(enquanto);
 	}
 	
-	public Comando getEnquanto() {
-		return enquanto;
+	public LinkedList<Comando> getEnquantos() {
+		return enquantos;
 	}
 }
