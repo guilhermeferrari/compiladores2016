@@ -7,7 +7,10 @@ public class ParaMultiplo {
 	private LinkedList<Comando> atribuicoes;
 	private LinkedList<Comando> enquantos;
 	
-	ParaMultiplo () {}
+	public ParaMultiplo () {
+        atribuicoes = new LinkedList<Comando>();
+        enquantos   = new LinkedList<Comando>();
+	}
 	
 	public void insereAtribuicao (Comando atribuicao) {
 		this.atribuicoes.add(atribuicao);
