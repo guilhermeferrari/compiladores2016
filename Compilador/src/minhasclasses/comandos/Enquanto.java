@@ -1,24 +1,33 @@
 package minhasclasses.comandos;
 
-public class Enquanto {
+import minhasclasses.Expressao;
+import minhasclasses.comandos.ListaComandos;
+
+public class Enquanto extends Comando {
 	
-	private Comando atribuicao, para;
+	private Expressao condicao;
+	private ListaComandos listaComandos;
 	
-	Enquanto () {}
+	public Enquanto() {}
 	
-	public Comando getAtribuicao() {
-		return atribuicao;
+	public Enquanto(Expressao expressao, ListaComandos listaComandos){
+		this.condicao = expressao;
+		this.setListaComandos(listaComandos);
+	}
+	
+	public Expressao getCondicao() {
+		return condicao;
 	}
 
-	public void setAtribuicao(Comando atribuicao) {
-		this.atribuicao = atribuicao;
+	public void setCondicao(Expressao condicao) {
+		this.condicao = condicao;
 	}
 
-	public Comando getPara() {
-		return para;
+	public ListaComandos getListaComandos() {
+		return listaComandos;
 	}
 
-	public void setPara(Comando para) {
-		this.para = para;
+	public void setListaComandos(ListaComandos listaComandos) {
+		this.listaComandos = listaComandos;
 	}
 }

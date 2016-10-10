@@ -853,7 +853,7 @@ void expOutros() : {}
     <OUTROS> listaComandos()
 }
 
-void comandoEnquanto() : {}
+Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condicao; ListaComandos listaComandos;}
 {
     <ENQUANTO> <PARL>
 
@@ -861,8 +861,12 @@ void comandoEnquanto() : {}
       varWarning = true;
     }
 
-    expressao()
+    condicao = expressao()
 
+    {
+    	enquanto.setCondicao(condicao);
+    }
+    
     {
       varWarning = false;
     }
@@ -875,7 +879,16 @@ void comandoEnquanto() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos() <FIMENQUANTO>
+    listaComandos = listaComandos()
+
+    {
+    	enquanto.setListaComandos(listaComandos);
+    }
+    
+    {
+      return enquanto;
+   	}
+   	<FIMENQUANTO>
 }
 
 Comando comandoPara() : {Token t=null; Simbolo simbolo=null; Comando para = new Para (); Comando paraMultiplo = new ParaMultiplo ();
