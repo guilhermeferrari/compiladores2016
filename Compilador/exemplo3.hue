@@ -1,5 +1,5 @@
 numero _i;
 
-para (_i 4 ate 50 passo 2)
+para (_i 4 ate 50+3+4+5*3 passo 2)
     exibe _i, " ";
 fimPara

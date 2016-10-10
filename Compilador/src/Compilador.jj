@@ -267,16 +267,22 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
   	        }
         }
 
-        if(varWarning)        {
+        if(varWarning)
+        {
           	boolean aux = true;
           	for (Item i : expressao.getListaExpressao())
         	{
-				if(i.getTipo().getValor() == 4)				{					aux = false;
+				if(i.getTipo().getValor() == 4)
+				{
+					aux = false;
 					break;
 				}
        		}
-       		if(aux)       		{
-       		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");       		}        }
+       		if(aux)
+       		{
+       		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");
+       		}
+        }
         return expressao;
     }
 
@@ -746,7 +752,8 @@ void blocoSe() : {}
     <SE> <PARL>
 
     {
-      varWarning = true;    }
+      varWarning = true;
+    }
 
     expressao()
 
@@ -853,7 +860,7 @@ void expOutros() : {}
     <OUTROS> listaComandos()
 }
 
-void comandoEnquanto() : {}
+Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condicao; ListaComandos listaComandos;}
 {
     <ENQUANTO> <PARL>
 
@@ -861,8 +868,12 @@ void comandoEnquanto() : {}
       varWarning = true;
     }
 
-    expressao()
+    condicao = expressao()
 
+    {
+    	enquanto.setCondicao(condicao);
+    }
+    
     {
       varWarning = false;
     }
@@ -875,7 +886,16 @@ void comandoEnquanto() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos() <FIMENQUANTO>
+    listaComandos = listaComandos()
+
+    {
+    	enquanto.setListaComandos(listaComandos);
+    }
+    
+    {
+      return enquanto;
+   	}
+   	<FIMENQUANTO>
 }
 
 Comando comandoPara() : {Token t=null; Simbolo simbolo=null; Comando para = new Para (); Comando paraMultiplo = new ParaMultiplo ();

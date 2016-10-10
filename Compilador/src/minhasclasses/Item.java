@@ -18,4 +18,8 @@ public class Item {
 	public Tipo getTipo() {
 		return tipo;
 	}
+	
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
 }	

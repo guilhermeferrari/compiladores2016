@@ -54,6 +54,38 @@ public class Expressao {
 	}
 	
 	public void addItem(Item item){
+		if(item.getTipo().getValor() == 8) {
+			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 1 &&
+					this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 1) {
+				float valor = 0;
+				switch(item.getValor()) {
+					case "+":
+						valor = Float.valueOf(listaExpressao.get(this.listaExpressao.size()-2).getValor()) +
+									Float.valueOf(listaExpressao.get(this.listaExpressao.size()-1).getValor());
+						break;
+					case "-":
+						valor = Float.valueOf(listaExpressao.get(this.listaExpressao.size()-2).getValor()) -
+									Float.valueOf(listaExpressao.get(this.listaExpressao.size()-1).getValor());
+						break;
+					case "*":
+						valor = Float.valueOf(listaExpressao.get(this.listaExpressao.size()-2).getValor()) *
+									Float.valueOf(listaExpressao.get(this.listaExpressao.size()-1).getValor());
+						break;
+					case "/":
+						valor = Float.valueOf(listaExpressao.get(this.listaExpressao.size()-2).getValor()) /
+									Float.valueOf(listaExpressao.get(this.listaExpressao.size()-1).getValor());
+						break;
+					case "^":
+						valor = (float) Math.pow((double)Float.valueOf(listaExpressao.get(this.listaExpressao.size()-2).getValor()),
+									(double)Float.valueOf(listaExpressao.get(this.listaExpressao.size()-1).getValor()));
+						break;
+						
+				}
+				this.listaExpressao.get(this.listaExpressao.size()-2).setValor(String.valueOf(valor));
+				this.listaExpressao.remove(this.listaExpressao.size()-1);
+				return;
+			}
+		}
 		listaExpressao.add(item);
 	}
 	
