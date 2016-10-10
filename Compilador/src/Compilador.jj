@@ -869,9 +869,21 @@ void comandoEnquanto() : {}
     listaComandos() <FIMENQUANTO>
 }
 
+Expressao criaPassoUnitario (Simbolo variavel) { Expressao expressao = new Expressao();}
+{
+  {   
+  	expressao.addItem(new Item (Tipo.NUMERO, "1"));
+  	expressao.addCodigoInfixo("1");
+	expressao.addItem(new Item (Tipo.VARIAVEL, variavel.getNome()));
+  	expressao.addItem(new Item (Tipo.OPERADOR, "+"));
+  	expressao.addCodigoInfixo("+ " + variavel.getNome());
+  	return expressao;
+ }
+}
+
 Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para (); Comando paraMultiplo = new ParaMultiplo ();
 					ListaComandos listaComandos; LinkedList<Expressao> listaExpressoes;
-					Expressao expAtribEnquanto = new Expressao(); boolean paraSimples = false; }
+					Expressao expPasso = new Expressao(); boolean paraSimples = false; }
 {
     <PARA> <PARL>
 
@@ -900,20 +912,46 @@ Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para 
 
     listaComandos = listaComandos()
 	{
-	  	if (paraSimples && listaExpressoes.size() > 1) //Existe passo
-	  		expAtribEnquanto = listaExpressoes.get(1);
-	  	else { //Se não, o passo é unitário
-	  		expAtribEnquanto.addItem(new Item (Tipo.NUMERO, "1"));
-	  		expAtribEnquanto.addCodigoInfixo("1");
-	  	}
-	  	expAtribEnquanto.addItem(new Item (Tipo.VARIAVEL, t.image));
-	  	expAtribEnquanto.addItem(new Item (Tipo.OPERADOR, "+"));
-	  	expAtribEnquanto.addCodigoInfixo("+ " + t.image);
+	  	if (paraSimples) { 
+		  	if (listaExpressoes.size() > 1) //Existe passo
+		  		expPasso = listaExpressoes.get(1);
+		  	else { //Se não, o passo é unitário
+		  		expPasso.addItem(new Item (Tipo.NUMERO, "1"));
+		  		expPasso.addCodigoInfixo("1");
+		  	}
+		  	expPasso.addItem(new Item (Tipo.VARIAVEL, t.image));
+		  	expPasso.addItem(new Item (Tipo.OPERADOR, "+"));
+		  	expPasso.addCodigoInfixo("+ " + t.image);
 
-	  	Comando atribuicao = new Atribuicao (simbolo, expAtribEnquanto);
-	  	listaComandos.insere(atribuicao);
-		Comando enquanto = new Enquanto (expressao, listaComandos);
-		para.setEnquanto(enquanto);
+		  	Comando atribuicao = new Atribuicao (simbolo, expPasso); //Supondo existente!
+			listaComandos.insere(atribuicao);
+			Comando enquanto = new Enquanto (expressao, listaComandos);  //Supondo existente!
+			//ESSA EXPRESSÃO CONTÉM SÓ O VALOR LIMITE (POR EXEMPLO, "20"). DEVE-SE CONSTRUIR UMA SENTENÇA, COMO "i<=20"
+			para.setEnquanto(enquanto);
+		}
+		else {	
+		  	LinkedList<Atribuicao> atribuicoes = paraMultiplo.getAtribuicoes();
+		  	Simbolo ultimaVariavel = atribuicoes.get(atribuicoes.size() - 1).getSimbolo();
+		  	//FAZER MÉTODO getSimbolo() na classe Atribuicao!
+
+			expPasso = criaPassoUnitario (Simbolo ultimaVariavel);
+		  	
+			Comando atribuicao = new Atribuicao (ultimaVariavel, expPasso);
+			listaComandos.insere(atribuicao);
+			Comando enquanto = new Enquanto (expressao, listaComandos);
+			//ESSA EXPRESSÃO CONTÉM SÓ O VALOR LIMITE (POR EXEMPLO, "20"). DEVE-SE CONSTRUIR UMA SENTENÇA, COMO "i<=20"
+		  	for (int i = atribuicoes.size() - 2; i >= 0; i++) {
+		  	  	Simbolo variavel = atribuicoes.get(i).getSimbolo();
+
+				expPasso = criaPassoUnitario (Simbolo variavel);
+		  	  	
+			  	atribuicao = new Atribuicao (variavel, expPasso);
+			  	listaComandos.clear();
+			  	listaComando.insere(enquanto);
+			  	listaComandos.insere(atribuicao);
+				enquanto = new Enquanto (expressao, listaComandos);
+			}
+		}
 	}
 
     <FIMPARA>
@@ -1018,9 +1056,9 @@ Expressao paraEspecial(Comando paraMultiplo, Simbolo simbolo) : {Token t=null; E
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
 
-    }
-		return expressao;
     { 
+		return expressao;
+  	} 
 }
 
 void warning() : {}
