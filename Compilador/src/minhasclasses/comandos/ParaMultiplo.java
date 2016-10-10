@@ -2,7 +2,7 @@ package minhasclasses.comandos;
 
 import java.util.LinkedList;
 
-public class ParaMultiplo {
+public class ParaMultiplo extends Comando {
 	
 	private LinkedList<Comando> atribuicoes;
 	private Comando enquanto;

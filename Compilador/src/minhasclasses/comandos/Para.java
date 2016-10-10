@@ -1,10 +1,10 @@
 package minhasclasses.comandos;
 
-public class Para {
+public class Para extends Comando {
 	
 	private Comando atribuicao, enquanto;
 	
-	Para () {}
+	public Para () {}
 	
 	public void setAtribuicao (Comando atribuicao) {
 		this.atribuicao = atribuicao;

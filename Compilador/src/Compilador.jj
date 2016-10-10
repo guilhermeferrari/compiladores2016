@@ -8,6 +8,7 @@ PARSER_BEGIN(Compilador)
 
 import java.io.*;
 import minhasclasses.*;
+import minhasclasses.comandos.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -24,7 +25,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo5.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo3.hue"));
                 compilador.inicio();
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -70,6 +71,11 @@ public class Compilador
     static public void erroSemantico(String s)
     {
         System.out.println(s);
+    }
+
+    public static void warning()
+    {
+        tabela.warningVar();
     }
       
 }
@@ -149,9 +155,12 @@ void inicio() : {}
     listaComandos() <EOF>
 }
 
-void listaComandos() : { }
+ListaComandos listaComandos() : { ListaComandos listaComandos = null; }
 {
-    (comando())*    
+    (comando())*
+    {
+        return listaComandos;
+    }
 }
 
 void comando() : { }
@@ -869,21 +878,9 @@ void comandoEnquanto() : {}
     listaComandos() <FIMENQUANTO>
 }
 
-Expressao criaPassoUnitario (Simbolo variavel) { Expressao expressao = new Expressao();}
-{
-  {   
-  	expressao.addItem(new Item (Tipo.NUMERO, "1"));
-  	expressao.addCodigoInfixo("1");
-	expressao.addItem(new Item (Tipo.VARIAVEL, variavel.getNome()));
-  	expressao.addItem(new Item (Tipo.OPERADOR, "+"));
-  	expressao.addCodigoInfixo("+ " + variavel.getNome());
-  	return expressao;
- }
-}
-
-Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para (); Comando paraMultiplo = new ParaMultiplo ();
-					ListaComandos listaComandos; LinkedList<Expressao> listaExpressoes;
-					Expressao expPasso = new Expressao(); boolean paraSimples = false; }
+Comando comandoPara() : {Token t=null; Simbolo simbolo=null; Comando para = new Para (); Comando paraMultiplo = new ParaMultiplo ();
+					ListaComandos listaComandos; LinkedList<Expressao> listaExpressoes=null;
+					Expressao expPasso = new Expressao(); boolean paraSimples = false; Expressao expressao; }
 {
     <PARA> <PARL>
 
@@ -915,7 +912,7 @@ Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para 
 	  	if (paraSimples) { 
 		  	if (listaExpressoes.size() > 1) //Existe passo
 		  		expPasso = listaExpressoes.get(1);
-		  	else { //Se não, o passo é unitário
+		  	else { //Se nï¿½o, o passo ï¿½ unitï¿½rio
 		  		expPasso.addItem(new Item (Tipo.NUMERO, "1"));
 		  		expPasso.addCodigoInfixo("1");
 		  	}
@@ -923,34 +920,34 @@ Comando comandoPara() : {Token t=null; Simbolo simbolo; Comando para = new Para 
 		  	expPasso.addItem(new Item (Tipo.OPERADOR, "+"));
 		  	expPasso.addCodigoInfixo("+ " + t.image);
 
-		  	Comando atribuicao = new Atribuicao (simbolo, expPasso); //Supondo existente!
-			listaComandos.insere(atribuicao);
-			Comando enquanto = new Enquanto (expressao, listaComandos);  //Supondo existente!
-			//ESSA EXPRESSÃO CONTÉM SÓ O VALOR LIMITE (POR EXEMPLO, "20"). DEVE-SE CONSTRUIR UMA SENTENÇA, COMO "i<=20"
-			para.setEnquanto(enquanto);
+		  	//Comando atribuicao = new Atribuicao (simbolo, expPasso); //Supondo existente!
+			//listaComandos.insere(atribuicao);
+			//Comando enquanto = new Enquanto (expressao, listaComandos);  //Supondo existente!
+			//  ESSA EXPRESSï¿½O CONTï¿½M Sï¿½ O VALOR LIMITE (POR EXEMPLO, "20"). DEVE-SE CONSTRUIR UMA SENTENï¿½A, COMO "i<=20"
+			//para.setEnquanto(enquanto);
 		}
 		else {	
-		  	LinkedList<Atribuicao> atribuicoes = paraMultiplo.getAtribuicoes();
-		  	Simbolo ultimaVariavel = atribuicoes.get(atribuicoes.size() - 1).getSimbolo();
-		  	//FAZER MÉTODO getSimbolo() na classe Atribuicao!
+		  	//LinkedList<Atribuicao> atribuicoes = paraMultiplo.getAtribuicoes();
+		  	//Simbolo ultimaVariavel = atribuicoes.get(atribuicoes.size() - 1).getSimbolo();
+		  	//FAZER Mï¿½TODO getSimbolo() na classe Atribuicao!
 
-			expPasso = criaPassoUnitario (Simbolo ultimaVariavel);
+			//expPasso = criaPassoUnitario (ultimaVariavel);
 		  	
-			Comando atribuicao = new Atribuicao (ultimaVariavel, expPasso);
-			listaComandos.insere(atribuicao);
-			Comando enquanto = new Enquanto (expressao, listaComandos);
-			//ESSA EXPRESSÃO CONTÉM SÓ O VALOR LIMITE (POR EXEMPLO, "20"). DEVE-SE CONSTRUIR UMA SENTENÇA, COMO "i<=20"
-		  	for (int i = atribuicoes.size() - 2; i >= 0; i++) {
+			//Comando atribuicao = new Atribuicao (ultimaVariavel, expPasso);
+			//listaComandos.insere(atribuicao);
+			//Comando enquanto = new Enquanto (expressao, listaComandos);
+			//  ESSA EXPRESSï¿½O CONTï¿½M Sï¿½ O VALOR LIMITE (POR EXEMPLO, "20"). DEVE-SE CONSTRUIR UMA SENTENï¿½A, COMO "i<=20"
+		  	/**for (int i = atribuicoes.size() - 2; i >= 0; i++) {
 		  	  	Simbolo variavel = atribuicoes.get(i).getSimbolo();
 
-				expPasso = criaPassoUnitario (Simbolo variavel);
+				expPasso = ParaHelper.criaPassoUnitario (variavel);
 		  	  	
 			  	atribuicao = new Atribuicao (variavel, expPasso);
-			  	listaComandos.clear();
-			  	listaComando.insere(enquanto);
+			  	listaComandos = new ListaComandos();
+			  	listaComandos.insere(enquanto);
 			  	listaComandos.insere(atribuicao);
 				enquanto = new Enquanto (expressao, listaComandos);
-			}
+			}*/
 		}
 	}
 
@@ -972,8 +969,8 @@ LinkedList<Expressao> paraSimples(Comando para, Simbolo simbolo) : {Expressao ex
 
     expressao = expressao()
     {
-      Comando atribuicao = new Atribuicao (simbolo, expressao);
-      para.setAtribuicao(atribuicao);
+      //Comando atribuicao = new Atribuicao (simbolo, expressao);
+      //para.setAtribuicao(atribuicao);
     }
 
     <ATE>
@@ -1037,8 +1034,8 @@ Expressao paraEspecial(Comando paraMultiplo, Simbolo simbolo) : {Token t=null; E
 
 	expressao = expressao()
     {
-      	for (int i = 0; i < listaVariaveis.size(); i++)
-      	  paraMultiplo.insereAtribuicao(new Atribuicao (listaVariaveis.get(i), expressao));
+      	for (int i = 0; i < listaVariaveis.size(); i++);
+      	  //paraMultiplo.insereAtribuicao(new Atribuicao (listaVariaveis.get(i), expressao));
     }
     
     <ATE>
@@ -1055,15 +1052,8 @@ Expressao paraEspecial(Comando paraMultiplo, Simbolo simbolo) : {Token t=null; E
     }
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
-
+    }
     { 
 		return expressao;
   	} 
-}
-
-void warning() : {}
-{
-	{
-		tabela.warningVar();
-	}
 }
