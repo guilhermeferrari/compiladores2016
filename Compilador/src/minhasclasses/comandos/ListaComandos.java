@@ -17,5 +17,9 @@ public class ListaComandos{
 	public void insere(Comando comando){
 		comandos.add(comando);
 	}
+	
+	public Comando removeUltimo(){
+		return comandos.removeLast();
+	}
 
 }

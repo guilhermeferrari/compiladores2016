@@ -742,12 +742,39 @@ void exibe() : {Token t=null;}
     }
 }
 
-void comandoSe() : {}
+void comandoSe() : {Condicional condicional; Condicional condicionalAux; ListaComandos condicionais = new ListaComandos(); ListaComandos listaAux;}
 {
-    blocoSe() (blocoSenaoSe())* (blocoSenao())? <FIMSE>
+    condicional = blocoSe()
+    {
+      	condicionais.insere(condicional);
+    }
+
+   	(
+      	condicional = blocoSenaoSe()
+      	{
+      	  	listaAux = new ListaComandos();
+      	  	listaAux.insere(condicional);
+      	  	condicionalAux = (Condicional)condicionais.removeUltimo();
+      	  	condicionalAux.setFalso(listaAux);
+      	  	condicionais.insere(condicionalAux);
+      	  	condicionais.insere(condicional);
+      	  	listaAux = null;
+      	}
+    )*
+
+    (
+      	listaAux = blocoSenao()
+      	{
+			condicionalAux = (Condicional)condicionais.removeUltimo();
+			condicionalAux.setFalso(listaAux);
+			condicionais.insere(condicionalAux);
+      	}
+   	)?
+
+   	<FIMSE>
 }
 
-void blocoSe() : {}
+Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao expressao; ListaComandos verdadeiro; ListaComandos falso;}
 {
     <SE> <PARL>
 
@@ -755,7 +782,11 @@ void blocoSe() : {}
       varWarning = true;
     }
 
-    expressao()
+    expressao = expressao()
+
+    {
+      	condicional.setExpressao(expressao);
+    }
 
     {
       varWarning = false;
@@ -769,19 +800,28 @@ void blocoSe() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
+    verdadeiro = listaComandos()
+
+    {
+      	condicional.setVerdadeiro(verdadeiro);
+      	return condicional;
+    }
 }
 
-void blocoSenaoSe() : {}
+Condicional blocoSenaoSe() : {Condicional condicional = new Condicional(); Expressao expressao; ListaComandos verdadeiro;}
 {
     <SENAOSE> <PARL>
 
 	{
       varWarning = true;
     }
-    
-    expressao()
 
+    expressao = expressao()
+
+    {
+      	condicional.setExpressao(expressao);
+    }
+    
 	{
       varWarning = false;
     }
@@ -794,13 +834,23 @@ void blocoSenaoSe() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
+    verdadeiro = listaComandos()
+
+    {
+		condicional.setVerdadeiro(verdadeiro);
+		return condicional;
+    }
 }
 
-void blocoSenao() : {}
+ListaComandos blocoSenao() : {ListaComandos listaComandos;}
 {
-    <SENAO> listaComandos()
+    <SENAO>
+    listaComandos = listaComandos()
+    {
+      	return listaComandos;
+    }
 }
+
 
 void comandoEscolha() : {}
 {
