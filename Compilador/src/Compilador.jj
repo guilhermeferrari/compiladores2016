@@ -870,12 +870,36 @@ ListaComandos blocoSenao() : {ListaComandos listaComandos;}
       	return listaComandos;    }
 }
 
-void comandoEscolha() : {}
+Condicional comandoEscolha() : {Expressao expressaoEscolha; Condicional condicional = null; Condicional condicionalLast, condicionalAux; ListaComandos listaAux;}
 {
-    expEscolha() (expCaso())+ (expOutros())? <FIMESCOLHA>
+    expressaoEscolha = expEscolha()
+    {
+      	condicionalLast = condicional;    }
+    (
+      	condicionalAux = expCaso(expressaoEscolha)
+      	{
+      	  	if(condicionalLast == null)      	  	{				condicional = condicionalAux;
+				condicionalLast = condicional;
+      	  	}
+      	  	else      	  	{
+      	  	  	listaAux = new ListaComandos();
+	      	  	listaAux.insere(condicionalAux);
+	      	  	condicionalLast.setFalso(listaAux);
+	      	  	listaAux = null;
+	      	  	condicionalLast = condicionalAux;      	  	}
+      	}
+    )+
+    (
+      	listaAux = expOutros()
+      	{
+      	  	condicionalLast.setFalso(listaAux);      	}
+   	)?
+    <FIMESCOLHA>
+    {
+      	return condicional;    }
 }
 
-void expEscolha() : {}
+Expressao expEscolha() : {Expressao expressao;}
 {
     <ESCOLHA> <PARL>
 
@@ -883,7 +907,7 @@ void expEscolha() : {}
       varWarning = true;
     }
 
-    expressao()
+    expressao = expressao()
 
     {
       varWarning = false;
@@ -896,9 +920,11 @@ void expEscolha() : {}
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
+    {
+      	return expressao;    }
 }
 
-void expCaso() : {}
+Condicional expCaso(Expressao expressaoEscolha) : {Expressao expressao; ListaComandos verdadeiro; Condicional condicional = new Condicional();}
 {
     <CASO> <PARL>
 
@@ -906,7 +932,12 @@ void expCaso() : {}
       varWarning = true;
     }
 
-    expressao()
+    expressao = expressao()
+
+    {
+      	Item item = new Item(Tipo.OPERADOR, "==");
+      	expressao.addExpressao(expressaoEscolha);
+      	expressao.addItem(item);    }
 
     {
       varWarning = false;
@@ -920,12 +951,19 @@ void expCaso() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
+    verdadeiro = listaComandos()
+    {
+      	condicional.setExpressao(expressao);
+      	condicional.setVerdadeiro(verdadeiro);
+      	return condicional;    }
 }
 
-void expOutros() : {}
+ListaComandos expOutros() : {ListaComandos listaComandos;}
 {
-    <OUTROS> listaComandos()
+    <OUTROS>
+    listaComandos = listaComandos()
+    {
+      	return listaComandos;    }
 }
 
 void comandoEnquanto() : {}
