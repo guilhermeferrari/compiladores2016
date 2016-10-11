@@ -287,7 +287,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
        /* System.out.println("Linha da expressao: "+expressao.getLinha());
         System.out.println("Expressao infixa:\n"+expressao.getCodigoInfixo());
         System.out.println("Expressao posfixa:\n"+expressao);*/
-        
+           System.out.println(expressao);
         return expressao;
     }
 
@@ -462,47 +462,38 @@ void termo5(Expressao expressao) : { Token t=null; Item item=null; }
         }
     )?
 }
-
-void termo6(Expressao expressao) : { Token t=null; int cont=0;Item item=null; int numNao=0;}
+void termo6(Expressao expressao) : { Token t=null; int cont=0; }
 {
- 
-  /*Mantêm 1 ou 2 NOTs na expressão
-  1 quando o numero de NOT for ímpar
-  2 quando o número de NOT for par
-  OBS: são mantidos 2 NOTs no caso par pois, por exemplo, NOTNOT(5) deve retornar 0 ou 1,
-   se tirarmos os dois NOT ele retornará 5*/
     (
         t = <NAO>
         {
-          //System.out.println("passei aqui");
-        if(( t!=null)) { 
-            numNao++;   
-            if(numNao==3) { //Possue 3 NOTs
-              //Excluo o 1 dos 2 NOTs e recomeço a contagem
-              expressao.setCodigoInfixo(expressao.getCodigoInfixo().substring(0, expressao.getCodigoInfixo().length()-4));
-			  numNao=1;	
-              }
-            else {
-              expressao.addCodigoInfixo(t.image);
-	
-            }
-                      
-		}
-		
+            expressao.addCodigoInfixo(t.image);
+            cont++;
         }
-
     )*
-    
     fator(expressao)
     {
-    	  if( t!=null) { 
-         	item = new Item (Tipo.OPERADOR,t.image);
-      	    expressao.addItem(item);
-      	    //System.out.println(expressao.getCodigoInfixo());
-		}
+        if(t!=null) {
+          if((cont%2)==1) {
+            //Adiciona 1 para Impar
+                expressao.addItem(new Item(Tipo.OPERADOR, t.image));
+                cont = 1;
+            
+          }
+          else {
+			//Adiciona 2 para pares
+			cont = 2;
+			while(cont > 0) {
+			 	 expressao.addItem(new Item(Tipo.OPERADOR, t.image));
+              	 cont--;
+			  }
+			
+          }
+           
+        }
     }
+    
 }
-
 void fator(Expressao expressao) : { Token t=null; Token t1=null;
 Item item = null;}
 {
@@ -689,8 +680,8 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
          else {
            //Variavel recebe expressao
            	var.setValor(exp.getCodigoInfixo());
+           	//Salvar na lista de comandos
            	//System.out.println("" + exp.getCodigoInfixo());
-
            }
         }
     }
