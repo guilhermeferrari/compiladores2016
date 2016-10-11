@@ -773,19 +773,43 @@ void exibe() : {Token t=null;}
     }
 }
 
-void comandoSe() : {}
+Condicional comandoSe() : {Condicional condicional, condicionalAux, condicionalLast; ListaComandos listaAux;}
 {
-    blocoSe() (blocoSenaoSe())* (blocoSenao())? <FIMSE>
+    condicional = blocoSe()
+
+	{
+	  	condicionalLast = condicional;	}
+	
+    (
+      	condicionalAux = blocoSenaoSe()
+      	{
+      	  	listaAux = new ListaComandos();
+      	  	listaAux.insere(condicionalAux);
+      	  	condicionalLast.setFalso(listaAux);
+      	  	listaAux = null;
+      	  	condicionalLast = condicionalAux;      	}
+ 	)*
+
+ 	(
+ 	  	listaAux = blocoSenao()
+ 	  	{
+ 	  	  	condicionalLast.setFalso(listaAux); 	  	}
+	)?
+
+	<FIMSE>
+
+	{
+	  	return condicional;	}
 }
 
-void blocoSe() : {}
+Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao expressao; ListaComandos verdadeiro;}
 {
     <SE> <PARL>
 
     {
       varWarning = true;    }
 
-    expressao()
+    expressao = expressao()
 
     {
       varWarning = false;
@@ -799,10 +823,15 @@ void blocoSe() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
+    verdadeiro = listaComandos()
+
+    {
+      	condicional.setExpressao(expressao);
+      	condicional.setVerdadeiro(verdadeiro);
+      	return condicional;    }
 }
 
-void blocoSenaoSe() : {}
+Condicional blocoSenaoSe() : {Condicional condicional = new Condicional(); Expressao expressao; ListaComandos verdadeiro;}
 {
     <SENAOSE> <PARL>
 
@@ -810,7 +839,7 @@ void blocoSenaoSe() : {}
       varWarning = true;
     }
     
-    expressao()
+    expressao = expressao()
 
 	{
       varWarning = false;
@@ -824,12 +853,21 @@ void blocoSenaoSe() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
+    verdadeiro = listaComandos()
+
+    {
+      	condicional.setExpressao(expressao);
+      	condicional.setVerdadeiro(verdadeiro);
+      	return condicional;
+    }
 }
 
-void blocoSenao() : {}
+ListaComandos blocoSenao() : {ListaComandos listaComandos;}
 {
-    <SENAO> listaComandos()
+    <SENAO>
+    listaComandos = listaComandos()
+    {
+      	return listaComandos;    }
 }
 
 void comandoEscolha() : {}
