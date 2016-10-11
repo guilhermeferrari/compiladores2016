@@ -61,7 +61,9 @@ public class Expressao {
 	public void addItem(Item item){
 		listaExpressao.add(item);
 	}
-	
+	public void removeUltimo(){
+		listaExpressao.removeLast();
+	}
 	@Override
 	public String toString(){
 		String message = "";
