@@ -8,7 +8,7 @@ public class ParaMultiplo extends Comando {
 	private Comando enquanto;
 	
 	public ParaMultiplo () {
-        atribuicoes = new LinkedList<Comando>();
+		atribuicoes = new LinkedList<Comando>();
 	}
 	
 	public void insereAtribuicao (Comando atribuicao) {
@@ -25,5 +25,15 @@ public class ParaMultiplo extends Comando {
 	
 	public Comando getEnquanto() {
 		return enquanto;
+	}
+	
+	public String toString() {
+		String message = "";
+		message += "------ ParaMultiplo ------\n";
+		//for (int i=0; i<atribuicoes.size(); i++)
+			//message += (Atribuicao)(atribuicoes.get(i));
+		message += enquanto;
+		message += "--------------------------\n";
+		return message;
 	}
 }
