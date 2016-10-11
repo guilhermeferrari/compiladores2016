@@ -21,4 +21,13 @@ public class Para extends Comando {
 	public Comando getEnquanto() {
 		return enquanto;
 	}
+	
+	public String toString() {
+		String message = "";
+		message += "---------- Para ----------\n";
+		message += atribuicao;
+		message += enquanto;
+		message += "--------------------------\n";
+		return message;
+	}
 }
