@@ -656,10 +656,24 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
     }
 }
 
-void leia() : {Token t=null, tVar; }
+void leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Expressao exp;
+				LinkedList<EntradaDados> listaEntrada = new LinkedList<EntradaDados>(); }
 {
     <LEIA>
-    (<STRING> <VIRG>)*
+    (
+	    tStr = <STRING>
+	    {
+			exp = new Expressao();
+			exp.addCodigoInfixo(tStr.image);
+			exp.setTipoDados(Tipo.STRING);
+			entradaDados = new EntradaDados();
+			entradaDados.setTipo('L');
+			entradaDados.setExpressao(exp);
+			listaEntrada.add(entradaDados);
+	  	}
+		
+	    <VIRG>
+    )*
 
     tVar = <NOMEVAR>
     {
@@ -669,6 +683,13 @@ void leia() : {Token t=null, tVar; }
         } else
         {
 			tabela.setInicializada(tVar.image);
+			exp = new Expressao();
+			exp.addCodigoInfixo(tVar.image);
+			exp.setTipoDados(Tipo.VARIAVEL);
+			entradaDados = new EntradaDados();
+			entradaDados.setTipo('L');
+			entradaDados.setExpressao(exp);
+			listaEntrada.add(entradaDados);
        	} 
     }
 
@@ -683,12 +704,28 @@ void leia() : {Token t=null, tVar; }
                 } else
 		        {
 					tabela.setInicializada(tVar.image);
+					exp = new Expressao();
+					exp.addCodigoInfixo(tVar.image);
+					exp.setTipoDados(Tipo.VARIAVEL);
+					entradaDados = new EntradaDados();
+					entradaDados.setTipo('L');
+					entradaDados.setExpressao(exp);
+					listaEntrada.add(entradaDados);
 		       	} 
             }
-          | <STRING>
+          |
+          tStr = <STRING>
+          {
+	            exp = new Expressao();
+				exp.addCodigoInfixo(tStr.image);
+				exp.setTipoDados(Tipo.STRING);
+				entradaDados = new EntradaDados();
+				entradaDados.setTipo('L');
+				entradaDados.setExpressao(exp);
+				listaEntrada.add(entradaDados);
+          }
         )
     )*
-
     try
     {
         <PTVIRG>
