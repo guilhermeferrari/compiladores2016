@@ -6,6 +6,7 @@ public class Expressao {
 	private LinkedList <Item> listaExpressao;
 	private int linha;
 	private String codigoInfixo;
+
 	private Tipo tipoDados;
 	
 	public Expressao(){
@@ -29,6 +30,10 @@ public class Expressao {
 		return codigoInfixo;
 	}
 
+	public void setCodigoInfixo(String codigoInfixo) {
+		this.codigoInfixo = codigoInfixo;
+	}
+	
 	public void addCodigoInfixo(String elemento) {
 		codigoInfixo += elemento + " ";
 	}
