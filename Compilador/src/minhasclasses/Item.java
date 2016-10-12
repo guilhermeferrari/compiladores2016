@@ -11,6 +11,10 @@ public class Item {
 		this.valor = valor;
 	}
 	
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
 	public String getValor(){
 		return valor;
 	}
