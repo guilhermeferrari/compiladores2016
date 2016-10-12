@@ -15,7 +15,8 @@ import java.util.LinkedList;
 public class Compilador
 {
     static Tabela tabela = new Tabela();
-    static LinkedList <Tipo> listaExp = new LinkedList<Tipo>();
+    static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
+     static LinkedList <String> listaExp = new LinkedList<String>();
     static boolean varWarning = false;
     public static void main (String args []) throws ParseException
     { 
@@ -25,7 +26,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo3.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
                 compilador.inicio();
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -178,6 +179,7 @@ void comando() : { }
 Expressao expressao() : { Expressao expressao=new Expressao(); Item item=null;
 Token t=null; expressao.setLinha(getToken(1).beginLine);}
 {
+ 
     termo1(expressao)
     (
         t = <OU>
@@ -212,20 +214,22 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
             if (valor==null) {
                 valor = ii.getTipo();
                 if(valor==Tipo.NUMERO) {
-                    listaExp.add(Tipo.NUMERO);
+                    listaExpTipo.add(Tipo.NUMERO);
+                  
+                    
           	    }
                 if (valor==Tipo.STRING) {
-                  listaExp.add(Tipo.STRING);
+                  listaExpTipo.add(Tipo.STRING);
                 } else if(valor==Tipo.VARIAVEL) {
                     if (!tabela.isInicializada(ii.getValor()))
                         System.out.println("Erro semântico \nVariável não"+
                                            "inicializada: " + ii.getValor());
                     if(tabela.getTipoSimbolo(ii.getValor())=='n') {
                         valor = Tipo.NUMERO;
-                        listaExp.add(Tipo.NUMERO);     
+                        listaExpTipo.add(Tipo.NUMERO);     
                     } else {
                         valor = Tipo.STRING;
-                        listaExp.add(Tipo.STRING);
+                        listaExpTipo.add(Tipo.STRING);
                     }
                 }          
             } else if ( (ii.getTipo()!=Tipo.OPERADOR) &&
@@ -278,19 +282,23 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
 					break;
 				}
        		}
+
        		if(aux)
        		{
        		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");
        		}
         }
+
+
+
+       /* System.out.println("Linha da expressao: "+expressao.getLinha());
+        System.out.println("Expressao infixa:\n"+expressao.getCodigoInfixo());
+        System.out.println("Expressao posfixa:\n"+expressao);*/
+        System.out.println(expressao);
         return expressao;
     }
 
-    /*{
-        System.out.println("Linha da expressao: "+expressao.getLinha());
-        System.out.println("Expressao infixa:\n"+expressao.getCodigoInfixo());
-        System.out.println("Expressao posfixa:\n"+expressao);
-    }*/
+ 
 }
 
 void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
@@ -432,10 +440,12 @@ void termo4(Expressao expressao) : { Token t=null; Item item=null; }
     (
         t = <MULT>
         {
+           
             expressao.addCodigoInfixo(t.image);
         }
         termo5(expressao)
         {
+          
             item = new Item (Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
@@ -459,7 +469,6 @@ void termo5(Expressao expressao) : { Token t=null; Item item=null; }
         }
     )?
 }
-
 void termo6(Expressao expressao) : { Token t=null; int cont=0; }
 {
     (
@@ -472,22 +481,35 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
     fator(expressao)
     {
         if(t!=null) {
-            //if ((cont % 2) == 1)
-            while(cont!=0) { 
+          if((cont%2)==1) {
+            //Adiciona 1 para Impar
                 expressao.addItem(new Item(Tipo.OPERADOR, t.image));
-                cont--;
-            }
+                cont = 1;
+            
+          }
+          else {
+			//Adiciona 2 para pares
+			cont = 2;
+			while(cont > 0) {
+			 	 expressao.addItem(new Item(Tipo.OPERADOR, t.image));
+              	 cont--;
+			  }
+			
+          }
+           
         }
     }
+    
 }
-
 void fator(Expressao expressao) : { Token t=null; Token t1=null;
 Item item = null;}
 {
     (<ADD> | t1=<SUB>)?
     t = <NUMERO>
     {
+      
         if (t1!=null)
+        
             item = new Item( Tipo.NUMERO,
                              String.valueOf(Float.parseFloat(t.image)*-1) );
         else
@@ -585,11 +607,11 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
 }
 
 void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
-  char tipo;}
+  char tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();}
 {
     t = <NOMEVAR>
     {
-      	listaExp.clear();
+      	listaExpTipo.clear();
         if(!tabela.isExiste(t.image)) {
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " não foi inicializada");
@@ -622,9 +644,14 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
 
     <ATRIB>
 
-    expressao()
+    expressao = expressao()
+    {listaExpressoes.add(expressao); }
     (
-        <VIRG> expressao()
+        <VIRG> expressao = expressao()
+        {
+				listaExpressoes.add(expressao);
+        }
+        
     )*
 
     try
@@ -637,21 +664,32 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
     {
         Tipo iVar, iExp;
         Item var;
-        Iterator<Tipo> itExp = listaExp.iterator();
+        Expressao exp;
+        Iterator<Tipo> itExp = listaExpTipo.iterator();
+        Iterator<Expressao> iteExpressao = listaExpressoes.iterator();
         for (Iterator<Item> itVar = listaVar.iterator(); itVar.hasNext();) {
             var = itVar.next();
             iVar = var.getTipo();
             iExp = itExp.next();
+            exp = iteExpressao.next();
             String tipoExp;
             if (iExp == Tipo.NUMERO)
                 tipoExp = "numerico";
             else
                 tipoExp = "string";
             if (iVar != iExp)
+            { 
                 System.out.println("Erro semântico \nVariável " +
                                    var.getValor() +
                                    " não é do tipo " + tipoExp);
           	tabela.setInicializada(var.getValor());
+         }
+         else {
+           //Variavel recebe expressao
+           	var.setValor(exp.getCodigoInfixo());
+           	//Salvar na lista de comandos
+           	//System.out.println("" + exp.getCodigoInfixo());
+           }
         }
     }
 }
@@ -766,39 +804,39 @@ void exibe() : {Token t=null;}
     }
 }
 
-void comandoSe() : {Condicional condicional; Condicional condicionalAux; ListaComandos condicionais = new ListaComandos(); ListaComandos listaAux;}
+Condicional comandoSe() : {Condicional condicional, condicionalAux, condicionalLast; ListaComandos listaAux;}
 {
     condicional = blocoSe()
-    {
-      	condicionais.insere(condicional);
-    }
-
-   	(
-      	condicional = blocoSenaoSe()
+	{
+	  	condicionalLast = condicional;
+	}
+	
+    (
+      	condicionalAux = blocoSenaoSe()
       	{
       	  	listaAux = new ListaComandos();
-      	  	listaAux.insere(condicional);
-      	  	condicionalAux = (Condicional)condicionais.removeUltimo();
-      	  	condicionalAux.setFalso(listaAux);
-      	  	condicionais.insere(condicionalAux);
-      	  	condicionais.insere(condicional);
+      	  	listaAux.insere(condicionalAux);
+      	  	condicionalLast.setFalso(listaAux);
       	  	listaAux = null;
+      	  	condicionalLast = condicionalAux;
       	}
-    )*
+ 	)*
 
-    (
-      	listaAux = blocoSenao()
-      	{
-			condicionalAux = (Condicional)condicionais.removeUltimo();
-			condicionalAux.setFalso(listaAux);
-			condicionais.insere(condicionalAux);
-      	}
-   	)?
+ 	(
+ 	  	listaAux = blocoSenao()
+ 	  	{
+ 	  	  	condicionalLast.setFalso(listaAux);
+ 	  	}
+	)?
 
-   	<FIMSE>
+	<FIMSE>
+
+	{
+	  	return condicional;
+	}
 }
 
-Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao expressao; ListaComandos verdadeiro; ListaComandos falso;}
+Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao expressao; ListaComandos verdadeiro;}
 {
     <SE> <PARL>
 
@@ -807,10 +845,6 @@ Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao 
     }
 
     expressao = expressao()
-
-    {
-      	condicional.setExpressao(expressao);
-    }
 
     {
       varWarning = false;
@@ -827,6 +861,7 @@ Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao 
     verdadeiro = listaComandos()
 
     {
+      	condicional.setExpressao(expressao);
       	condicional.setVerdadeiro(verdadeiro);
       	return condicional;
     }
@@ -861,8 +896,9 @@ Condicional blocoSenaoSe() : {Condicional condicional = new Condicional(); Expre
     verdadeiro = listaComandos()
 
     {
-		condicional.setVerdadeiro(verdadeiro);
-		return condicional;
+      	condicional.setExpressao(expressao);
+      	condicional.setVerdadeiro(verdadeiro);
+      	return condicional;
     }
 }
 
@@ -876,12 +912,43 @@ ListaComandos blocoSenao() : {ListaComandos listaComandos;}
 }
 
 
-void comandoEscolha() : {}
+Condicional comandoEscolha() : {Expressao expressaoEscolha; Condicional condicional = null; Condicional condicionalLast, condicionalAux; ListaComandos listaAux;}
 {
-    expEscolha() (expCaso())+ (expOutros())? <FIMESCOLHA>
+    expressaoEscolha = expEscolha()
+    {
+      	condicionalLast = condicional;
+    }
+    (
+      	condicionalAux = expCaso(expressaoEscolha)
+      	{
+      	  	if(condicionalLast == null)
+      	  	{
+				condicional = condicionalAux;
+				condicionalLast = condicional;
+      	  	}
+      	  	else
+      	  	{
+      	  	  	listaAux = new ListaComandos();
+	      	  	listaAux.insere(condicionalAux);
+	      	  	condicionalLast.setFalso(listaAux);
+	      	  	listaAux = null;
+	      	  	condicionalLast = condicionalAux;
+      	  	}
+      	}
+    )+
+    (
+      	listaAux = expOutros()
+      	{
+      	  	condicionalLast.setFalso(listaAux);
+      	}
+   	)?
+    <FIMESCOLHA>
+    {
+      	return condicional;
+    }
 }
 
-void expEscolha() : {}
+Expressao expEscolha() : {Expressao expressao;}
 {
     <ESCOLHA> <PARL>
 
@@ -889,7 +956,7 @@ void expEscolha() : {}
       varWarning = true;
     }
 
-    expressao()
+    expressao = expressao()
 
     {
       varWarning = false;
@@ -902,9 +969,12 @@ void expEscolha() : {}
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
+    {
+      	return expressao;
+    }
 }
 
-void expCaso() : {}
+Condicional expCaso(Expressao expressaoEscolha) : {Expressao expressao; ListaComandos verdadeiro; Condicional condicional = new Condicional();}
 {
     <CASO> <PARL>
 
@@ -912,7 +982,13 @@ void expCaso() : {}
       varWarning = true;
     }
 
-    expressao()
+    expressao = expressao()
+
+    {
+      	Item item = new Item(Tipo.OPERADOR, "==");
+      	expressao.addExpressao(expressaoEscolha);
+      	expressao.addItem(item);
+    }
 
     {
       varWarning = false;
@@ -926,12 +1002,21 @@ void expCaso() : {}
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
 
-    listaComandos()
+    verdadeiro = listaComandos()
+    {
+      	condicional.setExpressao(expressao);
+      	condicional.setVerdadeiro(verdadeiro);
+      	return condicional;
+    }
 }
 
-void expOutros() : {}
+ListaComandos expOutros() : {ListaComandos listaComandos;}
 {
-    <OUTROS> listaComandos()
+    <OUTROS>
+    listaComandos = listaComandos()
+    {
+      	return listaComandos;
+    }
 }
 
 Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condicao; ListaComandos listaComandos;}
@@ -1139,8 +1224,7 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
-    
     { 
-        return expressao;
-    } 
+		return expressao;
+  	} 
 }

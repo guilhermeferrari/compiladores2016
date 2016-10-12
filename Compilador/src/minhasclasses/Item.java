@@ -11,15 +11,15 @@ public class Item {
 		this.valor = valor;
 	}
 	
+	public void setValor(String valor) {
+		this.valor = valor;
+	}
+
 	public String getValor(){
 		return valor;
 	}
 
 	public Tipo getTipo() {
 		return tipo;
-	}
-	
-	public void setValor(String valor) {
-		this.valor = valor;
 	}
 }	

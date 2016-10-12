@@ -1,21 +1,13 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
-import minhasclasses.comandos.ListaComandos;
 
 public class Condicional extends Comando {
-	
 	private Expressao expressao;
 	private ListaComandos verdadeiro;
 	private ListaComandos falso;
 	
 	public Condicional(){}
-	
-	public Condicional(Expressao expressao, ListaComandos verdadeiro, ListaComandos falso){
-		this.expressao = expressao;
-		this.verdadeiro = verdadeiro;
-		this.falso = falso;
-	}
 
 	public Expressao getExpressao() {
 		return expressao;
@@ -39,5 +31,5 @@ public class Condicional extends Comando {
 
 	public void setFalso(ListaComandos falso) {
 		this.falso = falso;
-	}
+	}	
 }
