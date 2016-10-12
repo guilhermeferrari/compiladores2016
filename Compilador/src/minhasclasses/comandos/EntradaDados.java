@@ -1,24 +1,17 @@
 package minhasclasses.comandos;
 
-import minhasclasses.Expressao;
+import minhasclasses.Item;
 
 public class EntradaDados extends Comando{
-	private char tipo;
-	private Expressao ref1;
+	private Item ref1;
 	
 	public EntradaDados(){}
 	
-	public char getTipo() {
-		return tipo;
-	}
-	public void setTipo(char tipo) {
-		this.tipo = tipo;
-	}
-	public Expressao getListaComandos() {
+	public Item getListaComandos() {
 		return ref1;
 	}
 
-	public void setExpressao(Expressao ref1) {
+	public void setItem(Item ref1) {
 		this.ref1 = ref1;
 	}
 	
