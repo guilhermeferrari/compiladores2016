@@ -147,7 +147,7 @@ public final class ParaHelper {
         //FAZER M�TODO getSimbolo() na classe Atribuicao!
 
         expressaoPasso = ParaHelper.criaPassoUnitario(ultimaVariavel);
-        System.out.println(expressaoPasso);
+        //System.out.println(expressaoPasso);
 
         atribuicao = new Atribuicao (ultimaVariavel, expressaoPasso);
         listaComandos.insere(atribuicao);
