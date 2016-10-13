@@ -680,6 +680,7 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
                                    " não é do tipo " + tipoExp);
           	tabela.setInicializada(var.getValor());
          }
+
          
         }
     }
@@ -694,6 +695,7 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
             var1 = itVar1.next();
             iExp1 = itExp1.next();
             exp1 = iteExpressao1.next();
+
             Atribuicao atribuicao= new Atribuicao(var1.getValor(),exp1);
             listaAtribuicoes.add(atribuicao);
        }
@@ -703,7 +705,6 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
          return listaAtribuicoes;
        }
     }
-
 
 ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item item;
 				ListaComandos listaAux = new ListaComandos(); }
