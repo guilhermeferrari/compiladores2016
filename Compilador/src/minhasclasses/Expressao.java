@@ -59,6 +59,65 @@ public class Expressao {
 	}
 	
 	public void addItem(Item item){
+		if(item.getTipo().getValor() == 8) {
+			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 1 ||
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 1 ||
+			   this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 4 ||
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 4){
+				if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "1" || listaExpressao.get(this.listaExpressao.size()-1).getValor() == "1" || listaExpressao.get(this.listaExpressao.size()-2).getValor() == "0" || listaExpressao.get(this.listaExpressao.size()-1).getValor() == "0") {
+					String aux = "";
+					if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "0" && listaExpressao.get(this.listaExpressao.size()-1).getValor() != "0") {
+						switch(item.getValor()) {
+							case "+":
+								aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
+								break;
+							case "*":
+								aux = "0";
+								break;
+							case "/":
+								aux = "0";	
+								break;
+						}
+		
+					}	
+					if (listaExpressao.get(this.listaExpressao.size()-1).getValor() == "0") {
+						switch(item.getValor()) {
+							case "+":
+								aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
+								break;
+							case "-":
+								aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
+								break;
+							case "*":
+								aux = "0";
+								break;	
+						}
+					}
+					if (listaExpressao.get(this.listaExpressao.size()-2).getValor() != "0" && listaExpressao.get(this.listaExpressao.size()-1).getValor() != "0") {
+					
+						if (listaExpressao.get(this.listaExpressao.size()-1).getValor() == "1") {
+							switch(item.getValor()) {
+								case "*":
+									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
+									break;
+								case "/":
+									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();	
+									break;
+								case "^":
+									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
+							}
+						}
+						if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "1" && item.getValor()== "*"){
+							aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
+						}
+					}
+				this.listaExpressao.get(this.listaExpressao.size()-2).setValor(aux);
+				this.listaExpressao.remove(this.listaExpressao.size()-1);
+				return;	
+				}	
+			}
+		}
+		
 		/*
 		 * A título de otimizar as constantes, o código que adiciona itena à lista de Itens antes verifica
 		 * se o Item a ser então adicionado se trata de um operador.
