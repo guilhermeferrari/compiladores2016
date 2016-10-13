@@ -1,29 +1,31 @@
 package minhasclasses.comandos;
 
-import java.util.List;
+
 
 import minhasclasses.Expressao;
 
 public class Atribuicao extends Comando{
-		
 	
-	private List<String> nomeVariavel;
-	private List<Expressao> expressao;
+	private String nomeVariavel;
+	private Expressao expressao;
 	
-	public List<String> getNomeVariavel() {
+	public String getNomeVariavel() {
 		return nomeVariavel;
 	}
-	public void setNomeVariavel(List<String> nomeVariavel) {
+	public void setNomeVariavel(String nomeVariavel) {
 		this.nomeVariavel = nomeVariavel;
 	}
-	public List<Expressao> getExpressao() {
+	public Expressao getExpressao() {
 		return expressao;
 	}
-	public void setExpressao(List<Expressao> expressao) {
+	public void setExpressao(Expressao expressao) {
 		this.expressao = expressao;
 	}
 	
-	public Atribuicao(){}
+	public Atribuicao(String nomeVariavel,Expressao expressao){
+		this.expressao=expressao;
+		this.nomeVariavel=nomeVariavel;
+	}
 	
 
 }
