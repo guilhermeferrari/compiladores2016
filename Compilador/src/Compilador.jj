@@ -644,9 +644,7 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
         	} 
         }
     )*
-
     <ATRIB>
-
     expressao = expressao()
     {listaExpressoes.add(expressao); }
     (
@@ -656,14 +654,12 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
         }
         
     )*
-
     try
     {
         <PTVIRG>
     } catch(ParseException e) {
         erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
-
     {
         Tipo iVar, iExp;
         Item var;
@@ -702,7 +698,8 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
             var1 = itVar1.next();
             iExp1 = itExp1.next();
             exp1 = iteExpressao1.next();
-            Atribuicao atribuicao= new Atribuicao(var1.valor,exp1);
+
+            Atribuicao atribuicao= new Atribuicao(var1.getValor(),exp1);
             listaAtribuicoes.add(atribuicao);
        }
          
@@ -1093,7 +1090,7 @@ Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condi
    	<FIMENQUANTO>
 }
 
-Comando comandoPara() : {
+ListaComandos comandoPara() : {
     Token t=null;
     //Simbolo simbolo=null;
     Comando para = new Para ();
@@ -1156,11 +1153,20 @@ Comando comandoPara() : {
     <FIMPARA>
 
     {
-      if (paraSimples)
-      	return para;
-      else
-      	return paraMultiplo;
-    }
+	    listaComandos = new ListaComandos ();
+	
+	    if (paraSimples) {
+	       listaComandos.insere(para.getAtribuicao());
+	       listaComandos.insere(para.getEnquanto());
+	    }
+	    else {
+	       LinkedList<Comando> atribuicoes = paraMultiplo.getAtribuicoes();
+	       for (int i = 0; i < atribuicoes.size(); i++)
+	       	listaComandos.insere(atribuicoes.get(i));
+	       listaComandos.insere(paraMultiplo.getEnquanto());
+	    }
+	    return listaComandos;
+	}
 }
 
 LinkedList<Expressao> paraSimples(Comando para, String variavel) : {

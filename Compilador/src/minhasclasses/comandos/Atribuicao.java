@@ -1,7 +1,6 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
-
 public class Atribuicao extends Comando{
 		
 	
@@ -26,5 +25,4 @@ public class Atribuicao extends Comando{
 		this.nomeVariavel=nomeVariavel;
 	}
 	
-
 }

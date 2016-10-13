@@ -59,6 +59,15 @@ public class Expressao {
 	}
 	
 	public void addItem(Item item){
+		/*
+		 * A título de otimizar as constantes, o código que adiciona itena à lista de Itens antes verifica
+		 * se o Item a ser então adicionado se trata de um operador.
+		 * Caso seja, verifica se ambos itens anteriores adicionados à lista são também constantes.
+		 * Esse é o único caso possível em que podemos fazer o cálculo prévio para otimização, logo o novo
+		 * valor é calculado e substituído no lugar do penúltimo item, enquanto o último é excluído da lista.
+		 * O operador, nesse caso, não chega a ser adicionado à lista.
+		 * Exemplo: 2 3 + -> 5
+		 */
 		if(item.getTipo().getValor() == 8) {
 			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 1 &&
 					this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 1) {
@@ -91,6 +100,18 @@ public class Expressao {
 				return;
 			}
 		}
+		
+		/*
+		 * Analogamente, caso um item do tipo string esteja para ser adicionado na lista de itens,
+		 * caso a última posição da lista esteja sendo ocupada por outra string, efetuaremos a concatenação
+		 * para otimização.
+		 */
+		/*if(item.getTipo().getValor() == 2 &&
+				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 2) {
+					String valor = this.listaExpressao.get(this.listaExpressao.size()-1).getValor() + item.getValor();
+					this.listaExpressao.get(this.listaExpressao.size()-1).setValor(valor);
+			
+		}*/
 		listaExpressao.add(item);
 	}
 	public void removeUltimo(){
