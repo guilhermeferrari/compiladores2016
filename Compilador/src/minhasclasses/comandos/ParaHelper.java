@@ -142,11 +142,12 @@ public final class ParaHelper {
         Comando atribuicao = null;
         Comando enquanto   = null;
         LinkedList<Comando> atribuicoes = para.getAtribuicoes();
-        Atribuicao ultimaAtribuicao = (Atribuicao)atribuicoes.get(atribuicoes.size()-1); 
+        Atribuicao ultimaAtribuicao = (Atribuicao)(atribuicoes.get(atribuicoes.size()-1)); 
         String ultimaVariavel = ultimaAtribuicao.getNomeVariavel();
         //FAZER M�TODO getSimbolo() na classe Atribuicao!
 
         expressaoPasso = ParaHelper.criaPassoUnitario(ultimaVariavel);
+        System.out.println(expressaoPasso);
 
         atribuicao = new Atribuicao (ultimaVariavel, expressaoPasso);
         listaComandos.insere(atribuicao);

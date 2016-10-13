@@ -26,7 +26,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo9.hue"));
                 compilador.inicio();
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -1156,14 +1156,14 @@ ListaComandos comandoPara() : {
 	    listaComandos = new ListaComandos ();
 	
 	    if (paraSimples) {
-	       listaComandos.insere(para.getAtribuicao());
-	       listaComandos.insere(para.getEnquanto());
+	       listaComandos.insere(((Para)para).getAtribuicao());
+	       listaComandos.insere(((Para)para).getEnquanto());
 	    }
 	    else {
-	       LinkedList<Comando> atribuicoes = paraMultiplo.getAtribuicoes();
+	       LinkedList<Comando> atribuicoes = ((ParaMultiplo)paraMultiplo).getAtribuicoes();
 	       for (int i = 0; i < atribuicoes.size(); i++)
 	       	listaComandos.insere(atribuicoes.get(i));
-	       listaComandos.insere(paraMultiplo.getEnquanto());
+	       listaComandos.insere(((ParaMultiplo)paraMultiplo).getEnquanto());
 	    }
 	    return listaComandos;
 	}
@@ -1179,8 +1179,8 @@ LinkedList<Expressao> paraSimples(Comando para, String variavel) : {
 
     expressao = expressao()
     {
-      //Comando atribuicao = new Atribuicao (variavel, expressao);
-      //((Para)para).setAtribuicao(atribuicao);
+      Comando atribuicao = new Atribuicao (variavel, expressao);
+      ((Para)para).setAtribuicao(atribuicao);
     }
 
     <ATE>
@@ -1247,8 +1247,8 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
     expressao = expressao()
     {
         for (int i = 0; i < listaVariaveis.size(); i++) { 
-            //((ParaMultiplo)paraMultiplo).insereAtribuicao(
-                  //new Atribuicao (listaVariaveis.get(i), expressao));
+            ((ParaMultiplo)paraMultiplo).insereAtribuicao(
+                  new Atribuicao (listaVariaveis.get(i), expressao));
         }
     }
     
