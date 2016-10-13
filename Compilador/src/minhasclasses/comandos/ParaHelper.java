@@ -103,7 +103,7 @@ public final class ParaHelper {
         Comando atribuicao = null;
         Comando enquanto   = null;
         Expressao expressaoCondicional = null;
-        /*String variavel = ((Atribuicao)para.getAtribuicao()).getSimbolo();
+        String variavel = ((Atribuicao)para.getAtribuicao()).getNomeVariavel();
         
         if ( expressaoPasso!=null ) { //Existe passo
             expressaoPasso = ParaHelper.
@@ -128,7 +128,7 @@ public final class ParaHelper {
 
         listaComandos.insere(new Atribuicao(variavel,expressaoPasso));
         enquanto = new Enquanto(expressaoCondicional,listaComandos);  //Supondo existente!
-        para.setEnquanto(enquanto);*/
+        para.setEnquanto(enquanto);
     }
     
     public static void configuraLacoEnquantoMultiplo(ParaMultiplo para,
@@ -141,9 +141,9 @@ public final class ParaHelper {
         Expressao expressaoCondicional = null;
         Comando atribuicao = null;
         Comando enquanto   = null;
-        /*LinkedList<Atribuicao> atribuicoes = para.getAtribuicoes();
-        Atribuicao ultimaAtribuicao = atribuicoes.get(atribuicoes.size()-1); 
-        String ultimaVariavel = ultimaAtribuicao.getSimbolo();
+        LinkedList<Comando> atribuicoes = para.getAtribuicoes();
+        Atribuicao ultimaAtribuicao = (Atribuicao)atribuicoes.get(atribuicoes.size()-1); 
+        String ultimaVariavel = ultimaAtribuicao.getNomeVariavel();
         //FAZER M�TODO getSimbolo() na classe Atribuicao!
 
         expressaoPasso = ParaHelper.criaPassoUnitario(ultimaVariavel);
@@ -158,7 +158,7 @@ public final class ParaHelper {
                                    operadorMaiorI);
         enquanto = new Enquanto (expressaoCondicional, listaComandos);
         for (int i = atribuicoes.size()-2; i >= 0; i--) {
-            String variavel = atribuicoes.get(i).getSimbolo();
+            String variavel = ((Atribuicao)atribuicoes.get(i)).getNomeVariavel();
 
             expressaoPasso = ParaHelper.criaPassoUnitario(variavel);
 
@@ -174,7 +174,7 @@ public final class ParaHelper {
                                        operadorMaiorI);
             enquanto = new Enquanto (expressaoCondicional, listaComandos);
         }
-        para.setEnquanto(enquanto);*/
+        para.setEnquanto(enquanto);
     }
     
 }
