@@ -164,12 +164,15 @@ ListaComandos listaComandos() : { ListaComandos listaComandos = null; }
     }
 }
 
-void comando() : { }
+void comando() : {ListaComandos x; }
 {
         atribVar()
     |   declaraVar()
     |   leia()
-    |   exibe()
+    |   x = exibe() {
+      	
+      		System.out.println("passou " + x.toString() + " passou");
+    	} 
     |   comandoSe()
     |   comandoEscolha()
     |   comandoEnquanto()
@@ -774,12 +777,18 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
     }
 }
 
-void exibe() : {Token t=null;}
+ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos();}
 {
     <EXIBE>
     (
-        <STRING>
-      | <NUMERO>
+        t = <STRING>
+        {
+          exibir.insere(new Exibe(Tipo.STRING,t.image));
+        }
+      | t = <NUMERO>
+      	{
+          exibir.insere(new Exibe(Tipo.NUMERO,t.image));
+        }
       | t = <NOMEVAR>
         {
             if(!tabela.isExiste(t.image)) {
@@ -788,14 +797,21 @@ void exibe() : {Token t=null;}
             } else
 	        {
 				tabela.setUtilizada(t.image);
-	       	} 
+	       	}
+	       	exibir.insere(new Exibe(Tipo.VARIAVEL,t.image)); 
         }
     )
     (
         <VIRG>
         (
-            <STRING>
-          | <NUMERO>
+            t = <STRING>
+            {
+              exibir.insere(new Exibe(Tipo.STRING,t.image));
+           	} 
+          | t = <NUMERO>
+          	{
+          	  exibir.insere(new Exibe(Tipo.NUMERO,t.image));
+          	}
           | t = <NOMEVAR>
             {
                 if(!tabela.isExiste(t.image))
@@ -805,7 +821,8 @@ void exibe() : {Token t=null;}
                 } else
 		        {
 					tabela.setUtilizada(t.image);
-		       	} 
+		       	}
+		       	exibir.insere(new Exibe(Tipo.VARIAVEL,t.image));
             }
         )
     )*
@@ -817,6 +834,10 @@ void exibe() : {Token t=null;}
     catch(ParseException e) {
         erroSintaticoPanico("Ponto-e-virgula",PTVIRG);
     }
+  	{
+  	  return exibir;
+  	}
+    
 }
 
 Condicional comandoSe() : {Condicional condicional, condicionalAux, condicionalLast; ListaComandos listaAux;}

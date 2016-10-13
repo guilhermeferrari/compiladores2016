@@ -22,4 +22,9 @@ public class Item {
 	public Tipo getTipo() {
 		return tipo;
 	}
+	
+	@Override
+	public String toString(){
+		return "Tipo : " + this.tipo + " Valor : " + this.valor;
+	}
 }	

@@ -21,5 +21,9 @@ public class ListaComandos{
 	public Comando removeUltimo(){
 		return comandos.removeLast();
 	}
-
+	
+	@Override
+	public String toString(){
+		return this.comandos.toString();
+	}
 }
