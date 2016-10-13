@@ -1120,11 +1120,20 @@ Comando comandoPara() : {
     <FIMPARA>
 
     {
-      if (paraSimples)
-      	return para;
-      else
-      	return paraMultiplo;
-    }
+	    listaComandos = new ListaComandos ();
+	
+	    if (paraSimples) {
+	       listaComandos.insere(para.getAtribuicao());
+	       listaComandos.insere(para.getEnquanto());
+	    }
+	    else {
+	       LinkedList<Comando> atribuicoes = paraMultiplo.getAtribuicoes();
+	       for (int i = 0; i < atribuicoes.size(); i++)
+	       	listaComandos.insere(atribuicoes.get(i));
+	       listaComandos.insere(paraMultiplo.getEnquanto());
+	    }
+	    return listaComandos;
+	}
 }
 
 LinkedList<Expressao> paraSimples(Comando para, String variavel) : {
