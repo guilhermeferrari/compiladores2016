@@ -1057,7 +1057,7 @@ Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condi
    	<FIMENQUANTO>
 }
 
-Comando comandoPara() : {
+ListaComandos comandoPara() : {
     Token t=null;
     //Simbolo simbolo=null;
     Comando para = new Para ();
