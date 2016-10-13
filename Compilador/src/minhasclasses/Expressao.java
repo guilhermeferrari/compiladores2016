@@ -106,12 +106,12 @@ public class Expressao {
 		 * caso a última posição da lista esteja sendo ocupada por outra string, efetuaremos a concatenação
 		 * para otimização.
 		 */
-		if(item.getTipo().getValor() == 2 &&
+		/*if(item.getTipo().getValor() == 2 &&
 				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 2) {
 					String valor = this.listaExpressao.get(this.listaExpressao.size()-1).getValor() + item.getValor();
 					this.listaExpressao.get(this.listaExpressao.size()-1).setValor(valor);
 			
-		}
+		}*/
 		listaExpressao.add(item);
 	}
 	public void removeUltimo(){
