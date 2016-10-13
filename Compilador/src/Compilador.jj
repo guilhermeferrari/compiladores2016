@@ -599,8 +599,8 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
     }
 }
 
-void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
-  char tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();}
+LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
+  char tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();LinkedList<Comando> listaAtribuicoes = new LinkedList<Comando>();}
 {
     t = <NOMEVAR>
     {
@@ -677,15 +677,30 @@ void atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = 
                                    " não é do tipo " + tipoExp);
           	tabela.setInicializada(var.getValor());
          }
-         else {
-           //Variavel recebe expressao
-           	var.setValor(exp.getCodigoInfixo());
-           	//Salvar na lista de comandos
-           	//System.out.println("" + exp.getCodigoInfixo());
-           }
+
+         
         }
     }
-}
+    // Cria as instancias de atribuições para cada comando de atribuição
+     {
+        Tipo iVar1, iExp1;
+        Item var1;
+        Expressao exp1;
+        Iterator<Tipo> itExp1 = listaExpTipo.iterator();
+        Iterator<Expressao> iteExpressao1 = listaExpressoes.iterator();
+        for (Iterator<Item> itVar1 = listaVar.iterator(); itVar1.hasNext();) {
+            var1 = itVar1.next();
+            iExp1 = itExp1.next();
+            exp1 = iteExpressao1.next();
+            Atribuicao atribuicao= new Atribuicao(var1.valor,exp1);
+            listaAtribuicoes.add(atribuicao);
+       }
+         
+        }
+       {
+         return listaAtribuicoes;
+       }
+    }
 
 void leia() : {Token t=null, tVar; }
 {
