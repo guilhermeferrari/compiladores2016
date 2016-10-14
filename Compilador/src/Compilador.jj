@@ -1119,7 +1119,7 @@ ListaComandos comandoPara() : {
     //Simbolo simbolo=null;
     Comando para = new Para ();
     Comando paraMultiplo = new ParaMultiplo ();
-    ListaComandos listaComandos;
+    ListaComandos listaComandos = new ListaComandos();
     LinkedList<Expressao> listaExpressoes=null;
     Expressao expressaoFim;
     boolean paraSimples = false; }
@@ -1149,7 +1149,7 @@ ListaComandos comandoPara() : {
         expressaoFim = paraEspecial(paraMultiplo, t.image)
     )
 
-    listaComandos = listaComandos()
+    listaComandos(listaComandos)
     {
         String operadorMenorI = tokenImage[MENORIGUAL];
         String operadorMaiorI = tokenImage[MAIORIGUAL];

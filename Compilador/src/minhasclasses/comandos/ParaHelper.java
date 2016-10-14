@@ -126,8 +126,7 @@ public final class ParaHelper {
         //System.out.println("ExpressaoCondicional: "+expressaoCondicional.getCodigoInfixo());
         //System.out.println("ExpressaoPasso: "+expressaoPasso.getCodigoInfixo());
 
-        listaComandos.insere(new Atribuicao(variavel,expressaoPasso));
-        enquanto = new Enquanto(expressaoCondicional,listaComandos);  //Supondo existente!
+        enquanto = new Enquanto(expressaoCondicional,listaComandos);
         para.setEnquanto(enquanto);
     }
     
