@@ -30,4 +30,9 @@ public class Enquanto extends Comando {
 	public void setListaComandos(ListaComandos listaComandos) {
 		this.listaComandos = listaComandos;
 	}
+
+	@Override
+	public String toString() {
+		return this.condicao.toString();
+	}
 }

@@ -16,7 +16,7 @@ public class Compilador
 {
     static Tabela tabela = new Tabela();
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
-     static LinkedList <String> listaExp = new LinkedList<String>();
+    static LinkedList <String> listaExp = new LinkedList<String>();
     static boolean varWarning = false;
     public static void main (String args []) throws ParseException
     { 

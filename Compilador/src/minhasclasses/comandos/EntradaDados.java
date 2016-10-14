@@ -14,5 +14,11 @@ public class EntradaDados extends Comando{
 	public void setItem(Item ref1) {
 		this.ref1 = ref1;
 	}
+
+	@Override
+	public String toString() {
+		return this.ref1.toString();
+	}
+
 	
 }

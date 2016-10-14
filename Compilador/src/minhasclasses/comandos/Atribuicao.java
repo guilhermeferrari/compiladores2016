@@ -24,5 +24,9 @@ public class Atribuicao extends Comando{
 		this.expressao=expressao;
 		this.nomeVariavel=nomeVariavel;
 	}
+	@Override
+	public String toString() {
+		return this.expressao.toString();
+	}
 	
 }
