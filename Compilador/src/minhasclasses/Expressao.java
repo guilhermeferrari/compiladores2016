@@ -161,16 +161,20 @@ public class Expressao {
 		}
 		
 		/*
-		 * Analogamente, caso um item do tipo string esteja para ser adicionado na lista de itens,
-		 * caso a última posição da lista esteja sendo ocupada por outra string, efetuaremos a concatenação
-		 * para otimização.
+		 * Analogamente, caso os dois últimos itens da lista sejam strings e o item recém-lido seja o 
+		 * de concatenação (+), efetuaremos a concatenação das duas strings para otimização.
 		 */
-		/*if(item.getTipo().getValor() == 2 &&
-				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 2) {
-					String valor = this.listaExpressao.get(this.listaExpressao.size()-1).getValor() + item.getValor();
-					this.listaExpressao.get(this.listaExpressao.size()-1).setValor(valor);
-			
-		}*/
+		if(item.getValor() == "+" &&
+				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 2 &&
+				this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 2) {
+		
+					this.listaExpressao.get(this.listaExpressao.size()-1).setValor(
+							this.listaExpressao.get(this.listaExpressao.size()-1).getValor() + 
+							this.listaExpressao.get(this.listaExpressao.size()-2).getValor());
+					this.listaExpressao.remove(this.listaExpressao.size()-1);
+				
+					return;
+		}
 		listaExpressao.add(item);
 	}
 	public void removeUltimo(){
