@@ -26,8 +26,12 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo9.hue"));
-                compilador.inicio();
+                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
+
+				ListaComandos listaComandos = new ListaComandos();
+                compilador.inicio(listaComandos);
+                System.out.println(listaComandos.toString());
+
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
                 break;
@@ -151,32 +155,52 @@ TOKEN :
     |   < VIRG : "," >
 }
 
-void inicio() : {}
+void inicio(ListaComandos listaCom) : {}
 {
-    listaComandos() <EOF>
+    listaComandos(listaCom) <EOF>
 }
 
-ListaComandos listaComandos() : { ListaComandos listaComandos = null; }
+void listaComandos(ListaComandos listaCom) : { }
 {
-    (comando())*
-    {
-        return listaComandos;
-    }
+    (comando(listaCom))*
 }
 
-void comando() : {ListaComandos x; }
+void comando(ListaComandos listaCom) : {ListaComandos listaAuxiliar;                                        Comando comando;}
 {
-        atribVar()
+        listaAuxiliar = atribVar()
+        {
+           listaCom.insere(listaAuxiliar);        }
+
     |   declaraVar()
-    |   leia()
-    |   x = exibe() {
-      	
-      		System.out.println("passou " + x.toString() + " passou");
-    	} 
-    |   comandoSe()
-    |   comandoEscolha()
-    |   comandoEnquanto()
-    |   comandoPara()
+
+    |   listaAuxiliar = leia()
+        {
+           listaCom.insere(listaAuxiliar);
+        }
+
+    |   listaAuxiliar = exibe()
+        {
+           listaCom.insere(listaAuxiliar);
+        }
+    |   comando       = comandoSe()
+        {
+           listaCom.insere(comando);
+        }
+
+    |   comando		  = comandoEscolha()
+        {
+           listaCom.insere(comando);
+        }
+
+    |   comando       = comandoEnquanto()
+        {
+           listaCom.insere(comando);
+        }
+
+    |   listaAuxiliar = comandoPara()
+        {
+           listaCom.insere(comando);
+        }
 }
 
 Expressao expressao() : { Expressao expressao=new Expressao(); Item item=null;
