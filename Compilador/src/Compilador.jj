@@ -1079,7 +1079,6 @@ ListaComandos expOutros() : {ListaComandos listaComandos;}
 Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condicao; ListaComandos listaComandos;}
 {
     <ENQUANTO> <PARL>
-
     {
       varWarning = true;
     }
@@ -1107,11 +1106,10 @@ Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condi
     {
     	enquanto.setListaComandos(listaComandos);
     }
-    
+    <FIMENQUANTO>
     {
       return enquanto;
    	}
-   	<FIMENQUANTO>
 }
 
 ListaComandos comandoPara() : {
