@@ -14,8 +14,8 @@ public final class ParaHelper {
      */
     public static Expressao criaPassoUnitario (String variavel) {
         Expressao expressao = new Expressao();
-        expressao.addItem(new Item (Tipo.NUMERO, "1"));
-        expressao.addCodigoInfixo("1");
+        expressao.addItem(new Item (Tipo.NUMERO, String.valueOf(1)));
+        expressao.addCodigoInfixo(String.valueOf(1));
         expressao.addItem(new Item (Tipo.VARIAVEL, variavel));
         expressao.addItem(new Item (Tipo.OPERADOR, "+"));
         expressao.addCodigoInfixo("+ " + variavel);
