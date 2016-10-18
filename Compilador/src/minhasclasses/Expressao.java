@@ -59,11 +59,25 @@ public class Expressao {
 	}
 	
 	public void addItem(Item item){
-		if(item.getTipo().getValor() == 8) {
-			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 1 ||
-			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 1 ||
-			   this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 4 ||
-			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 4){
+		
+		// quest�o da prova simulada: otimiza o operador m�dulo
+		if(item.getTipo() == Tipo.OPERADOR &&
+		   item.getValor() == "@") {
+			if(this.listaExpressao.getLast().getTipo() == Tipo.NUMERO) {
+				double x = Double.parseDouble(this.listaExpressao.getLast().getValor());
+				if(x < 0) {
+					x = x * -1;
+					this.listaExpressao.getLast().setValor(String.valueOf(x));
+					return;
+				}
+			}
+		}
+	
+		if(item.getTipo() == Tipo.OPERADOR && this.listaExpressao.size() >= 2 ) {
+			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.NUMERO ||
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo() == Tipo.NUMERO ||
+			   this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.VARIAVEL ||
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo()== Tipo.VARIAVEL){
 				if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "1" || listaExpressao.get(this.listaExpressao.size()-1).getValor() == "1" || listaExpressao.get(this.listaExpressao.size()-2).getValor() == "0" || listaExpressao.get(this.listaExpressao.size()-1).getValor() == "0") {
 					String aux = "";
 					if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "0" && listaExpressao.get(this.listaExpressao.size()-1).getValor() != "0") {
@@ -127,9 +141,9 @@ public class Expressao {
 		 * O operador, nesse caso, não chega a ser adicionado à lista.
 		 * Exemplo: 2 3 + -> 5
 		 */
-		if(item.getTipo().getValor() == 8) {
-			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 1 &&
-					this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 1) {
+		if(item.getTipo() == Tipo.OPERADOR && this.listaExpressao.size() >= 2 ) {
+			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.NUMERO &&
+					this.listaExpressao.get(this.listaExpressao.size()-1).getTipo() == Tipo.NUMERO) {
 				float valor = 0;
 				switch(item.getValor()) {
 					case "+":
@@ -165,8 +179,8 @@ public class Expressao {
 		 * de concatenação (+), efetuaremos a concatenação das duas strings para otimização.
 		 */
 		if(item.getValor() == "+" &&
-				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().getValor() == 2 &&
-				this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().getValor() == 2) {
+				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo() == Tipo.STRING &&
+				this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.STRING) {
 		
 					this.listaExpressao.get(this.listaExpressao.size()-1).setValor(
 							this.listaExpressao.get(this.listaExpressao.size()-1).getValor() + 
@@ -190,4 +204,21 @@ public class Expressao {
 		
 		return message;
 	}
+	
+	// usado em verificacao sem�ntica tipo warning: expressoes 
+	// condicionais em laco formadas somente por constante
+	public boolean isSomenteConstanteNumerica() {
+		boolean soConstanteNumerica = true;
+		for (Item item : this.listaExpressao){
+			if(item.getTipo() != Tipo.NUMERO) {
+				soConstanteNumerica = false;
+				break;
+			}
+		}
+		return soConstanteNumerica;
+	}
+	
 }
+
+
+

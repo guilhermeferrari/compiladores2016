@@ -72,7 +72,6 @@ public class Compilador
             }
         }
     }
-
     static public void erroSemantico(String s)
     {
         System.out.println(s);
@@ -153,6 +152,12 @@ TOKEN :
     |   < FIMPARA : "fimPara" >
     |   < PTVIRG : ";" >
     |   < VIRG : "," >
+
+    // quetão 1 da prova simulada
+    |   < MODULO : "@" >
+    // questão 2 da prova simulada
+    |   < REPEAT : "repeat" >
+    |   < UNTIL  : "until" >
 }
 
 ListaComandos inicio() : {ListaComandos listaCom;}
@@ -206,6 +211,15 @@ void comando(ListaComandos listaCom) : {ListaComandos listaAux;                
         {
            listaCom.insere(listaAux);
         }
+
+    // quetão 2 da prova simulada
+    |   listaAux = comandoRepeatUntil()
+        {
+           listaCom.insere(listaAux);
+        }
+
+
+        
 }
 
 Expressao expressao() : { Expressao expressao=new Expressao(); Item item=null;
@@ -462,8 +476,7 @@ void termo4(Expressao expressao) : { Token t=null; Item item=null; }
     termo5(expressao)
     (
         t = <MULT>
-        {
-           
+        {   
             expressao.addCodigoInfixo(t.image);
         }
         termo5(expressao)
@@ -472,8 +485,17 @@ void termo4(Expressao expressao) : { Token t=null; Item item=null; }
             item = new Item (Tipo.OPERADOR,t.image);
             expressao.addItem(item);
         }
-      | t = <DIV>
+      |
+        t = <DIV>
+        {   
+            expressao.addCodigoInfixo(t.image);
+        }
         termo5(expressao)
+        {
+          
+            item = new Item (Tipo.OPERADOR,t.image);
+            expressao.addItem(item);
+        }
     )*
 }
 
@@ -501,7 +523,7 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
             cont++;
         }
     )*
-    fator(expressao)
+    termo7(expressao)
     {
         if(t!=null) {
           if((cont%2)==1) {
@@ -522,8 +544,24 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
            
         }
     }
-    
 }
+
+// questão 1 da prova simulada
+void termo7(Expressao expressao) : { Token t=null; int cont = 0;}
+{
+    (
+        t = <MODULO>
+        {
+            expressao.addCodigoInfixo(t.image);
+            cont++;
+        }
+    )*
+    fator(expressao)
+    {
+        if(cont >= 1)
+           expressao.addItem(new Item(Tipo.OPERADOR, t.image));     }
+}
+
 void fator(Expressao expressao) : { Token t=null; Token t1=null;
 Item item = null;}
 {
@@ -1282,3 +1320,26 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
 		return expressao;
   	} 
 }
+
+// questão 2 da prova simulada
+ListaComandos comandoRepeatUntil() :{ ListaComandos listaRepeatUntil;
+                                      ListaComandos listaCom = new ListaComandos();
+                                      Expressao exp;}{    < REPEAT >
+
+    listaRepeatUntil = listaComandos()
+
+	< UNTIL > < PARL > exp = expressao() < PARR >
+    {  		listaCom.insere(listaRepeatUntil);
+  		Item itemNot = new Item(Tipo.OPERADOR,"nao");
+  		exp.addItem(itemNot);
+  		Enquanto comandoEnquanto = new Enquanto(exp, listaRepeatUntil);
+  		listaCom.insere(comandoEnquanto);
+
+		// verificacao semantica de warning: expressao condicional constante
+		if(exp.isSomenteConstanteNumerica())
+		   erroSemantico("Erro semantico\n Expresao constante em repeat-until");    
+ 
+  		return listaCom;
+    }   
+}
+

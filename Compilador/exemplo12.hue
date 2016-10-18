@@ -1,6 +1,6 @@
 // teste simples de todos os comandos
 
-numero _num, _a, _b;
+numero _num, _a, _b, _i, _j, _k;
 string _str;
 
 _num = 4+1;
@@ -9,6 +9,7 @@ exibe _num, _str;
 
 leia "Digite: ", _a;
 
+_num = nao _a;
 _b = _num + _a * 2;
 exibe _b;
 
@@ -36,3 +37,15 @@ escolha ( _num )
   outros
      exibe "outro";
 fimEscolha
+
+para (_i, _j, _k  1 ate 3)
+    exibe "teste do para multiplo";
+fimPara
+
+// teste para a prova simulada
+_a = @@@-10;
+repeat
+    exibe "teste do repeat-until";
+    _a = _a + 1;
+until( 2 < 15)
+
