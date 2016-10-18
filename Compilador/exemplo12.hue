@@ -1,0 +1,38 @@
+// teste simples de todos os comandos
+
+numero _num, _a, _b;
+string _str;
+
+_num = 4+1;
+_str = "lin" + "guagem";
+exibe _num, _str;
+
+leia "Digite: ", _a;
+
+_b = _num + _a * 2;
+exibe _b;
+
+se(_a > 10)
+   exibe "maior";
+senao
+   exibe "menor";
+fimSe
+
+_b = 1;
+enquanto(_b < 3)
+   exibe _b;
+   _b = _b + 1;
+fimEnquanto
+
+para (_b 2 ate 4 passo 1)
+    exibe _b;
+fimPara
+
+escolha ( _num )
+  caso ( 1 )
+     exibe "primeiro";
+  caso ( 2 )
+     exibe "segundo";
+  outros
+     exibe "outro";
+fimEscolha

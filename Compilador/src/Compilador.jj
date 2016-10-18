@@ -26,11 +26,11 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo7.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo12.hue"));
 
-				ListaComandos listaComandos = new ListaComandos();
-                compilador.inicio(listaComandos);
-                System.out.println(listaComandos.toString());
+				ListaComandos listaComandosPrincipal;
+                listaComandosPrincipal = compilador.inicio();
+                System.out.println(listaComandosPrincipal.toString());
 
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -155,51 +155,56 @@ TOKEN :
     |   < VIRG : "," >
 }
 
-void inicio(ListaComandos listaCom) : {}
+ListaComandos inicio() : {ListaComandos listaCom;}
 {
-    listaComandos(listaCom) <EOF>
+    listaCom = listaComandos() <EOF>
+    {      return listaCom;
+    }
 }
 
-void listaComandos(ListaComandos listaCom) : { }
+ListaComandos listaComandos() : {ListaComandos listaCom = new ListaComandos(); }
 {
     (comando(listaCom))*
+    {
+      return listaCom;
+    }
 }
 
-void comando(ListaComandos listaCom) : {ListaComandos listaAuxiliar;                                        Comando comando;}
+void comando(ListaComandos listaCom) : {ListaComandos listaAux;                                        Comando com;}
 {
-        listaAuxiliar = atribVar()
+        listaAux = atribVar()
         {
-           listaCom.insere(listaAuxiliar);        }
+           listaCom.insere(listaAux);        }
 
     |   declaraVar()
 
-    |   listaAuxiliar = leia()
+    |   listaAux = leia()
         {
-           listaCom.insere(listaAuxiliar);
+           listaCom.insere(listaAux);
         }
 
-    |   listaAuxiliar = exibe()
+    |   listaAux = exibe()
         {
-           listaCom.insere(listaAuxiliar);
+           listaCom.insere(listaAux);
         }
-    |   comando       = comandoSe()
+    |   com = comandoSe()
         {
-           listaCom.insere(comando);
-        }
-
-    |   comando		  = comandoEscolha()
-        {
-           listaCom.insere(comando);
+           listaCom.insere(com);
         }
 
-    |   comando       = comandoEnquanto()
+    |   com = comandoEscolha()
         {
-           listaCom.insere(comando);
+           listaCom.insere(com);
         }
 
-    |   listaAuxiliar = comandoPara()
+    |   com = comandoEnquanto()
         {
-           listaCom.insere(comando);
+           listaCom.insere(com);
+        }
+
+    |   listaAux = comandoPara()
+        {
+           listaCom.insere(listaAux);
         }
 }
 
@@ -315,17 +320,8 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
        		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");
        		}
         }
-
-
-
-       /* System.out.println("Linha da expressao: "+expressao.getLinha());
-        System.out.println("Expressao infixa:\n"+expressao.getCodigoInfixo());
-        System.out.println("Expressao posfixa:\n"+expressao);*/
-        System.out.println(expressao);
         return expressao;
-    }
-
- 
+     }
 }
 
 void expressaoAuxiliar(Expressao expressao) : { Token t=null; Item item=null; }
@@ -603,7 +599,7 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
             simb.setTipo(tp);
             simb.setReferencia(tp); 
             tabela.inclui(simb);
-        } else {
+        } else {    
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " já foi inicializada");
         }
@@ -633,15 +629,16 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
     }
 }
 
-LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
-  char tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();LinkedList<Comando> listaAtribuicoes = new LinkedList<Comando>();}
+ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
+  char tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();
+  ListaComandos listaAtribuicoes = new ListaComandos();}
 {
     t = <NOMEVAR>
     {
       	listaExpTipo.clear();
         if(!tabela.isExiste(t.image)) {
-            erroSemantico("Erro semântico \n A variável "+t.image+
-                          " não foi inicializada");
+            erroSemantico("Erro semantico \n A variavel "+t.image+
+                          " nao foi inicializada");
         }
        	tipo = tabela.getTipoSimbolo(t.image);
         if(tipo=='n') {
@@ -724,7 +721,7 @@ LinkedList<Comando > atribVar() : { Simbolo simbolo; Token t=null; LinkedList <I
             exp1 = iteExpressao1.next();
 
             Atribuicao atribuicao= new Atribuicao(var1.getValor(),exp1);
-            listaAtribuicoes.add(atribuicao);
+            listaAtribuicoes.insere(atribuicao);
        }
          
         }
@@ -751,7 +748,7 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
     {
         if(!tabela.isExiste(tVar.image)) {
             erroSemantico("Erro semântico \n A variável "+tVar.image+
-                          " não foi inicializada");
+                          " não foi inicializada");                          
         } else
         {
 			tabela.setInicializada(tVar.image);
@@ -837,6 +834,8 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
             {
                 if(!tabela.isExiste(t.image))
                 {
+
+                  
                     erroSemantico("Erro semântico \n A variável "+t.image+
                                   " não foi inicializada");
                 } else
@@ -1079,21 +1078,14 @@ ListaComandos expOutros() : {ListaComandos listaComandos;}
 Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condicao; ListaComandos listaComandos;}
 {
     <ENQUANTO> <PARL>
-
     {
-      varWarning = true;
+      	varWarning = true;
     }
-
     condicao = expressao()
-
     {
     	enquanto.setCondicao(condicao);
+       	varWarning = false;
     }
-    
-    {
-      varWarning = false;
-    }
-
     try
     {
        <PARR>
@@ -1101,17 +1093,13 @@ Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condi
     catch(ParseException e) {
         erroSintaticoPanico("Fecha parenteses",PTVIRG);
     }
-
     listaComandos = listaComandos()
-
     {
     	enquanto.setListaComandos(listaComandos);
-    }
-    
-    {
-      return enquanto;
    	}
    	<FIMENQUANTO>
+   	{   	  return enquanto;
+   	}
 }
 
 ListaComandos comandoPara() : {
@@ -1119,7 +1107,7 @@ ListaComandos comandoPara() : {
     //Simbolo simbolo=null;
     Comando para = new Para ();
     Comando paraMultiplo = new ParaMultiplo ();
-    ListaComandos listaComandos = new ListaComandos();
+    ListaComandos listaCom = new ListaComandos();
     LinkedList<Expressao> listaExpressoes=null;
     Expressao expressaoFim;
     boolean paraSimples = false; }
@@ -1149,7 +1137,7 @@ ListaComandos comandoPara() : {
         expressaoFim = paraEspecial(paraMultiplo, t.image)
     )
 
-    listaComandos(listaComandos)
+    listaCom = listaComandos()
     {
         String operadorMenorI = tokenImage[MENORIGUAL];
         String operadorMaiorI = tokenImage[MAIORIGUAL];
@@ -1162,13 +1150,13 @@ ListaComandos comandoPara() : {
                                                       listaExpressoes.get(1) :
                                                       null,
                                                     expressaoFim,
-                                                    listaComandos,
+                                                    listaCom,
                                                     operadorMenorI,
                                                     operadorMaiorI);
         } else {
             ParaHelper.configuraLacoEnquantoMultiplo((ParaMultiplo)paraMultiplo,
                                                      expressaoFim,
-                                                     listaComandos,
+                                                     listaCom,
                                                      operadorMenorI,
                                                      operadorMaiorI);
         }
@@ -1177,19 +1165,19 @@ ListaComandos comandoPara() : {
     <FIMPARA>
 
     {
-	    listaComandos = new ListaComandos ();
+	    listaCom = new ListaComandos ();
 	
 	    if (paraSimples) {
-	       listaComandos.insere(((Para)para).getAtribuicao());
-	       listaComandos.insere(((Para)para).getEnquanto());
+	       listaCom.insere(((Para)para).getAtribuicao());
+	       listaCom.insere(((Para)para).getEnquanto());
 	    }
 	    else {
 	       LinkedList<Comando> atribuicoes = ((ParaMultiplo)paraMultiplo).getAtribuicoes();
 	       for (int i = 0; i < atribuicoes.size(); i++)
-	       	listaComandos.insere(atribuicoes.get(i));
-	       listaComandos.insere(((ParaMultiplo)paraMultiplo).getEnquanto());
+	       	  listaCom.insere(atribuicoes.get(i));
+	          listaCom.insere(((ParaMultiplo)paraMultiplo).getEnquanto());
 	    }
-	    return listaComandos;
+	    return listaCom;
 	}
 }
 

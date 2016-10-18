@@ -18,6 +18,11 @@ public class ListaComandos{
 		comandos.add(comando);
 	}
 	
+	// insere todos os elementos de 'lista'  
+	public void insere(ListaComandos lista) {
+		comandos.addAll(lista.comandos);
+	}
+	
 	public Comando removeUltimo(){
 		return comandos.removeLast();
 	}

@@ -35,6 +35,9 @@ public class Condicional extends Comando {
 
 	@Override
 	public String toString() {
-		return this.expressao.toString();
+		return "\nComando CONDICIONAL (condicao, lista verdadeiro, lista falso): "+
+	           "condicao: "+this.expressao.toString() + 
+	           ", lista verdadeiro: "+ this.verdadeiro +
+               ", lista falso: "     + this.falso;
 	}	
 }

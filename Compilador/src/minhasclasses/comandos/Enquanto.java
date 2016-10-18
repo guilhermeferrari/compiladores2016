@@ -33,6 +33,8 @@ public class Enquanto extends Comando {
 
 	@Override
 	public String toString() {
-		return this.condicao.toString();
+		return "\nComando ENQUANTO (condicao, lista comandos): "+
+		           "condicao: "+this.condicao.toString() + 
+		           "lista comandos: "+ this.listaComandos;
 	}
 }

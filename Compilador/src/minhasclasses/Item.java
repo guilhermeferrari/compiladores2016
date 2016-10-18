@@ -25,6 +25,6 @@ public class Item {
 	
 	@Override
 	public String toString(){
-		return "Tipo : " + this.tipo + " Valor : " + this.valor;
+		return "Tipo: " + this.tipo + " Valor: " + this.valor;
 	}
 }	

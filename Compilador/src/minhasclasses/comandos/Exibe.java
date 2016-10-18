@@ -24,6 +24,7 @@ public class Exibe extends Comando{
 	
 	@Override
 	public String toString(){
-		return this.item.toString();
+		return "\nComando EXIBE (item): "+
+	           this.item.toString();
 	}
 }

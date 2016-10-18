@@ -17,7 +17,8 @@ public class EntradaDados extends Comando{
 
 	@Override
 	public String toString() {
-		return this.ref1.toString();
+		return "\nComando ENTRADA (item): "+
+		       "item: "+this.ref1.toString();
 	}
 
 	
