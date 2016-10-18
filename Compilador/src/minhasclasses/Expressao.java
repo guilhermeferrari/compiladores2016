@@ -210,7 +210,7 @@ public class Expressao {
 	public boolean isSomenteConstanteNumerica() {
 		boolean soConstanteNumerica = true;
 		for (Item item : this.listaExpressao){
-			if(item.getTipo() != Tipo.NUMERO) {
+			if(item.getTipo() == Tipo.VARIAVEL) {
 				soConstanteNumerica = false;
 				break;
 			}

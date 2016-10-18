@@ -17,7 +17,6 @@ public class Compilador
     static Tabela tabela = new Tabela();
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
-    static boolean varWarning = false;
     public static void main (String args []) throws ParseException
     { 
         Compilador compilador = null;
@@ -315,24 +314,6 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
   	                               " compativeis: "+
   	                               expressao.getCodigoInfixo()+ "\n");
   	        }
-        }
-
-        if(varWarning)
-        {
-          	boolean aux = true;
-          	for (Item i : expressao.getListaExpressao())
-        	{
-				if(i.getTipo().getValor() == 4)
-				{
-					aux = false;
-					break;
-				}
-       		}
-
-       		if(aux)
-       		{
-       		  	System.out.println("Warning: expressao constante na linha " + expressao.getLinha() + ".");
-       		}
         }
         return expressao;
      }
@@ -705,7 +686,9 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
     )*
     <ATRIB>
     expressao = expressao()
-    {listaExpressoes.add(expressao); }
+    {
+      	listaExpressoes.add(expressao);
+    }
     (
         <VIRG> expressao = expressao()
         {
@@ -934,15 +917,12 @@ Condicional blocoSe() : {Condicional condicional = new Condicional(); Expressao 
 {
     <SE> <PARL>
 
-    {
-      varWarning = true;
-    }
-
     expressao = expressao()
-
     {
-      varWarning = false;
-    }
+      	if(expressao.isSomenteConstanteNumerica())
+      	{
+      	  	erroSemantico("Warning: expressao constante em condicional na linha " + expressao.getLinha() + ".");
+      	}    }
 
     try
     {
@@ -965,20 +945,16 @@ Condicional blocoSenaoSe() : {Condicional condicional = new Condicional(); Expre
 {
     <SENAOSE> <PARL>
 
-	{
-      varWarning = true;
-    }
-
     expressao = expressao()
 
     {
       	condicional.setExpressao(expressao);
+      	if(expressao.isSomenteConstanteNumerica())
+      	{
+      	  	erroSemantico("Warning: expressao constante em condicional na linha " + expressao.getLinha() + ".");
+      	}
     }
-    
-	{
-      varWarning = false;
-    }
-    
+
     try
     {
        <PARR>
@@ -1046,15 +1022,13 @@ Expressao expEscolha() : {Expressao expressao;}
 {
     <ESCOLHA> <PARL>
 
-    {
-      varWarning = true;
-    }
-
     expressao = expressao()
 
     {
-      varWarning = false;
-    }
+      	if(expressao.isSomenteConstanteNumerica())
+      	{
+      	  	erroSemantico("Warning: expressao constante em condicional na linha " + expressao.getLinha() + ".");
+      	}    }
 
     try
     {
@@ -1072,20 +1046,16 @@ Condicional expCaso(Expressao expressaoEscolha) : {Expressao expressao; ListaCom
 {
     <CASO> <PARL>
 
-    {
-      varWarning = true;
-    }
-
     expressao = expressao()
 
     {
       	Item item = new Item(Tipo.OPERADOR, "==");
       	expressao.addExpressao(expressaoEscolha);
       	expressao.addItem(item);
-    }
-
-    {
-      varWarning = false;
+      	if(expressao.isSomenteConstanteNumerica())
+      	{
+      	  	erroSemantico("Warning: expressao constante em condicional na linha " + expressao.getLinha() + ".");
+      	}
     }
 
     try
@@ -1116,13 +1086,14 @@ ListaComandos expOutros() : {ListaComandos listaComandos;}
 Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condicao; ListaComandos listaComandos;}
 {
     <ENQUANTO> <PARL>
-    {
-      	varWarning = true;
-    }
+
     condicao = expressao()
     {
     	enquanto.setCondicao(condicao);
-       	varWarning = false;
+       	if(condicao.isSomenteConstanteNumerica())
+      	{
+      	  	erroSemantico("Warning: expressao constante em laco enquanto na linha " + condicao.getLinha() + ".");
+      	}
     }
     try
     {
@@ -1223,21 +1194,18 @@ LinkedList<Expressao> paraSimples(Comando para, String variavel) : {
     Expressao expressao;
     LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>(); }
 {
-	{
-      varWarning = true;
-    }
 
     expressao = expressao()
     {
-      Comando atribuicao = new Atribuicao (variavel, expressao);
-      ((Para)para).setAtribuicao(atribuicao);
+		Comando atribuicao = new Atribuicao (variavel, expressao);
+		((Para)para).setAtribuicao(atribuicao);
     }
 
     <ATE>
 
     expressao = expressao()
     {
-      listaExpressoes.add(expressao);
+		listaExpressoes.add(expressao);
     }
 
     (
@@ -1249,10 +1217,6 @@ LinkedList<Expressao> paraSimples(Comando para, String variavel) : {
       }
     )?
 
-	{
-      varWarning = false;
-    }
-    
     try
     {
         <PARR>
@@ -1290,10 +1254,6 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
         }
     )+
 
-    {
-      varWarning = true;
-    }
-
     expressao = expressao()
     {
         for (int i = 0; i < listaVariaveis.size(); i++) { 
@@ -1305,9 +1265,6 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
     <ATE>
 
     expressao = expressao()
-    {
-        varWarning = false;
-    }
 
     try
     {
@@ -1337,7 +1294,9 @@ ListaComandos comandoRepeatUntil() :{ ListaComandos listaRepeatUntil;
 
 		// verificacao semantica de warning: expressao condicional constante
 		if(exp.isSomenteConstanteNumerica())
-		   erroSemantico("Erro semantico\n Expresao constante em repeat-until");    
+		{
+			erroSemantico("Warning: expressao constante em repeat until na linha " + exp.getLinha() + ".");
+		}    
  
   		return listaCom;
     }   
