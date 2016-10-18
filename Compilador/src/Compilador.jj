@@ -659,6 +659,8 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
             erroSemantico("Erro semantico \n A variavel "+t.image+
                           " nao foi inicializada");
         }
+        else {
+          	tabela.setInicializada(t.image);        }
        	tipo = tabela.getTipoSimbolo(t.image);
         if(tipo=='n') {
          	listaVar.add(new Item(Tipo.NUMERO, t.image));      
@@ -675,6 +677,9 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
             }
+            else {
+	          	tabela.setInicializada(t.image);
+	        }
 	       	tipo = tabela.getTipoSimbolo(t.image);
 		    if(tipo=='n') {
 		      	listaVar.add(new Item(Tipo.NUMERO, t.image));      
@@ -1131,7 +1136,7 @@ ListaComandos comandoPara() : {
                           " não foi inicializada");
         } else
         {
-          	//simbolo = tabela.getSimbolo(t.image);
+          	tabela.setInicializada(t.image);
 			tabela.setUtilizada(t.image);
        	} 
     }
@@ -1249,6 +1254,7 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
             } else
             {
                 listaVariaveis.add(t.image);
+                tabela.setInicializada(t.image);
                 tabela.setUtilizada(t.image);
            	} 
         }
