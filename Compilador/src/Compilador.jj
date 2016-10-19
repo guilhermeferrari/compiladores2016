@@ -152,9 +152,9 @@ TOKEN :
     |   < PTVIRG : ";" >
     |   < VIRG : "," >
 
-    // quetão 1 da prova simulada
+    // quetï¿½o 1 da prova simulada
     |   < MODULO : "@" >
-    // questão 2 da prova simulada
+    // questï¿½o 2 da prova simulada
     |   < REPEAT : "repeat" >
     |   < UNTIL  : "until" >
 }
@@ -211,7 +211,7 @@ void comando(ListaComandos listaCom) : {ListaComandos listaAux;                
            listaCom.insere(listaAux);
         }
 
-    // quetão 2 da prova simulada
+    // quetï¿½o 2 da prova simulada
     |   listaAux = comandoRepeatUntil()
         {
            listaCom.insere(listaAux);
@@ -527,7 +527,7 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
     }
 }
 
-// questão 1 da prova simulada
+// questï¿½o 1 da prova simulada
 void termo7(Expressao expressao) : { Token t=null; int cont = 0;}
 {
     (
@@ -757,14 +757,14 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
     }
 
 ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item item;
-				ListaComandos listaAux = new ListaComandos(); }
+				ListaComandos listaAux = new ListaComandos(); Exibe exibe;}
 {
     <LEIA>
     (
 	    tStr = <STRING>
 	    {
-			/*exibicao = new Exibicao();
-			listaAux.insere((Comando) exibicao);*/
+			exibe = new Exibe(Tipo.STRING,tStr.image);
+			listaAux.insere(exibe);
 	  	}
 		
 	    <VIRG>
@@ -805,8 +805,8 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
           |
           tStr = <STRING>
           {
-	            /*exibicao = new Exibicao();
-				listaAux.insere((Comando) exibicao);*/
+	            exibe = new Exibe(Tipo.STRING,tStr.image);
+				listaAux.insere(exibe);
           }
         )
     )*
@@ -1284,7 +1284,7 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
   	} 
 }
 
-// questão 2 da prova simulada
+// questï¿½o 2 da prova simulada
 ListaComandos comandoRepeatUntil() :{ ListaComandos listaRepeatUntil;
                                       ListaComandos listaCom = new ListaComandos();
                                       Expressao exp;}{    < REPEAT >
