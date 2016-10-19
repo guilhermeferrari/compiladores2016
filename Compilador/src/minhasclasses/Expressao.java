@@ -60,7 +60,7 @@ public class Expressao {
 	
 	public void addItem(Item item){
 		
-		// quest�o da prova simulada: otimiza o operador m�dulo
+		// quest�o da prova simulada: otimiza o operador m�dulo
 		if(item.getTipo() == Tipo.OPERADOR &&
 		   item.getValor() == "@") {
 			if(this.listaExpressao.getLast().getTipo() == Tipo.NUMERO) {
@@ -178,14 +178,20 @@ public class Expressao {
 		 * Analogamente, caso os dois últimos itens da lista sejam strings e o item recém-lido seja o 
 		 * de concatenação (+), efetuaremos a concatenação das duas strings para otimização.
 		 */
-		if(item.getValor() == "+" &&
+		if(item.getTipo() == Tipo.OPERADOR && item.getValor() == "+" &&
 				this.listaExpressao.get(this.listaExpressao.size()-1).getTipo() == Tipo.STRING &&
 				this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.STRING) {
-		
-					this.listaExpressao.get(this.listaExpressao.size()-1).setValor(
-							this.listaExpressao.get(this.listaExpressao.size()-1).getValor() + 
-							this.listaExpressao.get(this.listaExpressao.size()-2).getValor());
-					this.listaExpressao.remove(this.listaExpressao.size()-1);
+					/*
+					 * O detalhe aqui é que não podemos simplesmente concatenar as duas strings porquê
+					 * temos que considerar as aspas duplas na String. Ou seja, temos que remover a segunda
+					 * aspas do primeiro elemento e a primeira aspas do segundo, para que tenhamos "lekTravesso"
+					 * ao invés do indesejado "lek""travesso" com a concatenação.
+					 */
+					String inicio = this.listaExpressao.get(this.listaExpressao.size()-2).getValor().substring
+							(0, this.listaExpressao.get(this.listaExpressao.size()-2).getValor().length()-1);
+					String fim = this.listaExpressao.getLast().getValor().substring(1);	
+					this.listaExpressao.get(this.listaExpressao.size()-2).setValor(inicio + fim);
+					this.listaExpressao.removeLast();
 				
 					return;
 		}
@@ -205,7 +211,7 @@ public class Expressao {
 		return message;
 	}
 	
-	// usado em verificacao sem�ntica tipo warning: expressoes 
+	// usado em verificacao sem�ntica tipo warning: expressoes 
 	// condicionais em laco formadas somente por constante
 	public boolean isSomenteConstanteNumerica() {
 		boolean soConstanteNumerica = true;
