@@ -14,6 +14,10 @@ public class ListaComandos{
 		return comandos;
 	}
 	
+	public Comando getComando(int n) {
+		return this.comandos.get(n);
+	}
+	
 	public void insere(Comando comando){
 		comandos.add(comando);
 	}

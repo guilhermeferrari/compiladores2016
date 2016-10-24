@@ -60,7 +60,7 @@ public class Expressao {
 	
 	public void addItem(Item item){
 		
-		// quest�o da prova simulada: otimiza o operador m�dulo
+		// questao da prova simulada: otimiza o operador modulo
 		if(item.getTipo() == Tipo.OPERADOR &&
 		   item.getValor() == "@") {
 			if(this.listaExpressao.getLast().getTipo() == Tipo.NUMERO) {

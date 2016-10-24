@@ -1,0 +1,10 @@
+numero _a;
+leia _a;
+select(_a)
+   option(3)
+      exibe "um";
+   option(5 7)
+      exibe "dois";
+   option(10 20 30 40)
+      exibe "tres";      
+endSelect

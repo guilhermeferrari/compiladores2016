@@ -1,7 +1,9 @@
 package minhasclasses;
 
 public class Item {
-	// pode ser '1' (n√∫mero), '2' (string), '4' (vari√°vel) ou '8' (operador).
+	// pode ser '1' (numero), '2' (string), '4' (variavel) ou '8' (operador).
+	// usar preferencialmente a enumeraÁ„o Tipo:
+	// Tipo.NUMERO(1), Tipo.STRING(2), Tipo.VARIAVEL(4), Tipo.OPERADOR(8)
 	private Tipo tipo;
 
 	public String valor;
