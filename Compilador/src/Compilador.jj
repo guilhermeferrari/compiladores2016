@@ -537,7 +537,7 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
     }
 }
 
-// quest�o 1 da prova simulada
+// questao 1 da prova simulada
 void termo7(Expressao expressao) : { Token t=null; int cont = 0;}
 {
     (
@@ -1324,7 +1324,12 @@ ListaComandos comandoRepeatUntil() :{ ListaComandos listaRepeatUntil;
 // proximo comando condicional que equivale ao proximo option
 Comando comandoSelect() : { Token tVar;
   						    Comando comCondicional;
-  						    ListaComandos listaCondicionais = new ListaComandos(); }{	<SELECT> <PARL> tVar = <NOMEVAR> <PARR>
+  						    ListaComandos listaCondicionais = new ListaComandos(); }{	<SELECT> <PARL> tVar = <NOMEVAR>
+	// verifica se a variavel do select eh numerica
+	{
+	   if(tabela.getTipoSimbolo(tVar.image) != 'n')
+	      erroSemantico("Erro semantico: variavel do select nao eh numerica.");  	}
+	<PARR>
 	// pelo menos uma clausula option
 	(	   comCondicional = comandoOption(tVar.image)
 	   {
