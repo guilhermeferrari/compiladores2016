@@ -25,7 +25,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo13.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo15.hue"));
 
 				ListaComandos listaComandosPrincipal;
                 listaComandosPrincipal = compilador.inicio();

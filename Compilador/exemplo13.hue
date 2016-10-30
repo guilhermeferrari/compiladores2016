@@ -1,3 +1,5 @@
+// teste para a 1a prova
+
 numero _a;
 leia _a;
 select(_a)
