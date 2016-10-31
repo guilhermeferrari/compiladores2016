@@ -1,8 +1,15 @@
 package minhasclasses;
 
-public class Item {
+import java.io.Serializable;
+
+public class Item implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	// pode ser '1' (numero), '2' (string), '4' (variavel) ou '8' (operador).
-	// usar preferencialmente a enumeração Tipo:
+	// usar preferencialmente a enumeraï¿½ï¿½o Tipo:
 	// Tipo.NUMERO(1), Tipo.STRING(2), Tipo.VARIAVEL(4), Tipo.OPERADOR(8)
 	private Tipo tipo;
 

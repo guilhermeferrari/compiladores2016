@@ -1,8 +1,13 @@
 package minhasclasses;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class Expressao {
+public class Expressao implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private LinkedList <Item> listaExpressao;
 	private int linha;
 	private String codigoInfixo;

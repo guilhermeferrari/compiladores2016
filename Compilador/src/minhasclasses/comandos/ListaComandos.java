@@ -1,9 +1,14 @@
 package minhasclasses.comandos;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
-public class ListaComandos{ 
+public class ListaComandos implements Serializable{ 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private LinkedList<Comando> comandos;
 
 	public ListaComandos(){

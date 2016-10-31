@@ -25,11 +25,23 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo15.hue"));
+                compilador = new Compilador(new FileInputStream("exemplo14.hue"));
 
 				ListaComandos listaComandosPrincipal;
                 listaComandosPrincipal = compilador.inicio();
                 System.out.println(listaComandosPrincipal.toString());
+
+
+
+                ObjectOutputStream buffer = new ObjectOutputStream(new FileOutputStream("programaSalvo14.xxx"));
+                buffer.writeObject(listaComandosPrincipal);
+                buffer.flush();
+                buffer.close();
+                ObjectInputStream input = new ObjectInputStream(new FileInputStream("programaSalvo14.xxx"));
+				System.out.println("****");
+
+                System.out.println(input.readObject());
+                
 
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
@@ -51,6 +63,13 @@ public class Compilador
                  System.out.println("Erro sintatico\n" + e.getMessage());
                  break;
             }
+            catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
 

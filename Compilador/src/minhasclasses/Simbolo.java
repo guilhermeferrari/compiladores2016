@@ -1,6 +1,12 @@
 package minhasclasses;
 
-public class Simbolo {
+import java.io.Serializable;
+
+public class Simbolo implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String nome;      // nome do identificador
     private int referencia;   // é uma referência usada na geração do código destino
     private static int marcador = 1; // armazena a última referência incluída na tabela
