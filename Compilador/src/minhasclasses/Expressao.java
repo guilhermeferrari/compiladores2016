@@ -216,7 +216,7 @@ public class Expressao implements Serializable{
 		return message;
 	}
 	
-	// usado em verificacao sem�ntica tipo warning: expressoes 
+	// usado em verificacao semantica tipo warning: expressoes 
 	// condicionais em laco formadas somente por constante
 	public boolean isSomenteConstanteNumerica() {
 		boolean soConstanteNumerica = true;
@@ -227,6 +227,11 @@ public class Expressao implements Serializable{
 			}
 		}
 		return soConstanteNumerica;
+	}
+	
+	public String geraCodigoExpressao(){
+		String codigoExpressao="";
+		return codigoExpressao;
 	}
 	
 }

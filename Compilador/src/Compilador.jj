@@ -33,14 +33,10 @@ public class Compilador
 
 
 
-                ObjectOutputStream buffer = new ObjectOutputStream(new FileOutputStream("programaSalvo14.xxx"));
-                buffer.writeObject(listaComandosPrincipal);
-                buffer.flush();
-                buffer.close();
-                ObjectInputStream input = new ObjectInputStream(new FileInputStream("programaSalvo14.xxx"));
-				System.out.println("****");
-
-                System.out.println(input.readObject());
+                ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("programaSalvo14.int"));
+                output.writeObject(listaComandosPrincipal);
+                output.flush();
+                output.close();
                 
 
                 compilador.warning();
