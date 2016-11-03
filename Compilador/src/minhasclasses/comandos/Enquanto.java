@@ -30,6 +30,10 @@ public class Enquanto extends Comando {
 	public void setListaComandos(ListaComandos listaComandos) {
 		this.listaComandos = listaComandos;
 	}
+	
+	public String geraCodigoDestino(){
+		return "";
+	}
 
 	@Override
 	public String toString() {

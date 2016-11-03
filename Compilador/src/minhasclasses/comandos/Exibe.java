@@ -22,6 +22,10 @@ public class Exibe extends Comando{
 		this.item = item;
 	}
 	
+	public String geraCodigoDestino(){
+		return "";
+	}
+	
 	@Override
 	public String toString(){
 		return "\nComando EXIBE (item): "+

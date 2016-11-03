@@ -36,4 +36,8 @@ public class ParaMultiplo extends Comando {
 		message += "--------------------------\n";
 		return message;
 	}
+	
+	public String geraCodigoDestino(){
+		return "";
+	}
 }

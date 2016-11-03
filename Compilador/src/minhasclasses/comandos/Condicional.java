@@ -32,6 +32,10 @@ public class Condicional extends Comando {
 	public void setFalso(ListaComandos falso) {
 		this.falso = falso;
 	}
+	
+	public String geraCodigoDestino(){
+		return "";
+	}
 
 	@Override
 	public String toString() {

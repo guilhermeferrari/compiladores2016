@@ -11,9 +11,9 @@ import minhasclasses.*;
 import minhasclasses.comandos.*;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 public class Compilador
 {
+  	static String nomeArquivoFonte = "exemplo12";
     static Tabela tabela = new Tabela();
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
@@ -25,22 +25,20 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-                compilador = new Compilador(new FileInputStream("exemplo14.hue"));
+                compilador = new Compilador(new FileInputStream(nomeArquivoFonte +".hue"));
 
 				ListaComandos listaComandosPrincipal;
                 listaComandosPrincipal = compilador.inicio();
                 System.out.println(listaComandosPrincipal.toString());
-
-
-
-                ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("programaSalvo14.int"));
+                compilador.warning();
+                System.out.println("\nEnd of compilation.\n");
+                ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(nomeArquivoFonte+".int"));
                 output.writeObject(listaComandosPrincipal);
                 output.flush();
                 output.close();
-                
 
-                compilador.warning();
-                System.out.println("\nEnd of compilation.\n");
+                //geracao codigo destino
+                GeradorCodigoDestino.geraCodigoAssembler(listaComandosPrincipal);
                 break;
             }
             catch(FileNotFoundException e)
@@ -60,9 +58,6 @@ public class Compilador
                  break;
             }
             catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -167,15 +162,18 @@ TOKEN :
     |   < PTVIRG : ";" >
     |   < VIRG : "," >
 
-    // quetao 1 da prova simulada
+    // quet�o 1 da prova simulada
     |   < MODULO : "@" >
-    // questao 2 da prova simulada
+    // quest�o 2 da prova simulada
     |   < REPEAT : "repeat" >
     |   < UNTIL  : "until" >
-    // 1a prova
-    |   < SELECT : "select" >
-    |   < OPTION : "option" >
-    |   < ENDSELECT : "endSelect" >  
+
+    // PROVA
+    //
+  	| 	< SELECT : "select" >
+  	| 	< OPTION : "option" >
+  	| 	< ENDSELECT : "endSelect" >
+  	 
 }
 
 ListaComandos inicio() : {ListaComandos listaCom;}
@@ -230,19 +228,18 @@ void comando(ListaComandos listaCom) : {ListaComandos listaAux;                
            listaCom.insere(listaAux);
         }
 
-    // quetao 2 da prova simulada
+    // quet�o 2 da prova simulada
     |   listaAux = comandoRepeatUntil()
         {
            listaCom.insere(listaAux);
         }
-    // 1a prova
-    |   com = comandoSelect()
-        {
+
+	//PROVA
+	//
+	|	com = comandoSelect()
+		{
            listaCom.insere(com);
-        }
-
-
-
+    	}
         
 }
 
@@ -292,7 +289,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
                   listaExpTipo.add(Tipo.STRING);
                 } else if(valor==Tipo.VARIAVEL) {
                     if (!tabela.isInicializada(ii.getValor()))
-                        System.out.println("Erro semantico \nVariavel nao"+
+                        System.out.println("Erro semântico \nVariável não"+
                                            "inicializada: " + ii.getValor());
                     if(tabela.getTipoSimbolo(ii.getValor())=='n') {
                         valor = Tipo.NUMERO;
@@ -307,25 +304,25 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
             {
                 if(ii.getTipo()==Tipo.VARIAVEL) {
                     if (!tabela.isInicializada(ii.getValor()))
-                        System.out.println("Erro semantico \nVariavel nao"+
+                        System.out.println("Erro semântico \nVariável não"+
                                            " inicializada: " + ii.getValor());
                     if(tabela.getTipoSimbolo(ii.getValor())=='n') {
                         if(valor!=Tipo.NUMERO) {
-                            System.out.println("Erro semantico, expressoes"+
-                                               " nao compativeis: "+
+                            System.out.println("Erro semântico, expressões"+
+                                               " não compativeis: "+
                                                expressao.getCodigoInfixo()+
                                                "\n");
                         }
                     } else {
                         if(valor!=Tipo.STRING) {
-                            System.out.println("Erro semantico, expressoes"+
-                                               " nao compativeis: "+
+                            System.out.println("Erro semântico, expressões"+
+                                               " não compativeis: "+
                                                expressao.getCodigoInfixo()+
                                                "\n");
                         }
                     }
                 } else {
-                    System.out.println("Erro semantico, expressoes nao"+
+                    System.out.println("Erro semântico, expressões não"+
                                        " compativeis: "+
                                        expressao.getCodigoInfixo()+ "\n");
                 }
@@ -335,11 +332,12 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
                 (ii.getValor() != "+") &&
                 (valor==Tipo.STRING))
   	        {
-  	            System.out.println("Erro semantico, expressoes nao"+
+  	            System.out.println("Erro semântico, expressões não"+
   	                               " compativeis: "+
   	                               expressao.getCodigoInfixo()+ "\n");
   	        }
         }
+        expressao.calculoPilha();
         return expressao;
      }
 }
@@ -552,7 +550,7 @@ void termo6(Expressao expressao) : { Token t=null; int cont=0; }
     }
 }
 
-// questao 1 da prova simulada
+// quest�o 1 da prova simulada
 void termo7(Expressao expressao) : { Token t=null; int cont = 0;}
 {
     (
@@ -601,8 +599,8 @@ Item item = null;}
         expressao.addItem(new Item(Tipo.VARIAVEL, t.image));
             
         if(!tabela.isExiste(t.image)) {
-            erroSemantico("Erro semantico \n A variavel "+t.image+
-                          " nao foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " não foi inicializada");
         } else {
             if (expressao.getTipoDados()==null) {
                 char tipo = tabela.getTipoSimbolo(t.image);
@@ -644,8 +642,8 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
             simb.setReferencia(tp); 
             tabela.inclui(simb);
         } else {    
-            erroSemantico("Erro semantico \n A variavel "+t.image+
-                          " ja foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " já foi inicializada");
         }
     }
     (
@@ -658,8 +656,8 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
                 simb.setReferencia(tp); 
                 tabela.inclui(simb);
             } else {
-                erroSemantico("Erro semantico \n A variavel "+t.image+
-                              " ja foi inicializada");
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " já foi inicializada");
             }     
         }
     )*
@@ -699,8 +697,8 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
         t = <NOMEVAR>
         {
             if(!tabela.isExiste(t.image)) {
-                erroSemantico("Erro semantico \n A variavel "+t.image+
-                              " nao foi inicializada");
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " não foi inicializada");
             }
             else {
 	          	tabela.setInicializada(t.image);
@@ -750,9 +748,9 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
                 tipoExp = "string";
             if (iVar != iExp)
             { 
-                System.out.println("Erro semantico \nVariavel " +
+                System.out.println("Erro semântico \nVariável " +
                                    var.getValor() +
-                                   " nao eh do tipo " + tipoExp);
+                                   " não é do tipo " + tipoExp);
           	tabela.setInicializada(var.getValor());
          }
 
@@ -798,8 +796,8 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
     tVar = <NOMEVAR>
     {
         if(!tabela.isExiste(tVar.image)) {
-            erroSemantico("Erro semantico \n A variavel "+tVar.image+
-                          " nao foi inicializada");                          
+            erroSemantico("Erro semântico \n A variável "+tVar.image+
+                          " não foi inicializada");                          
         } else
         {
 			tabela.setInicializada(tVar.image);
@@ -816,8 +814,8 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
             tVar = <NOMEVAR>
             {
                 if(!tabela.isExiste(tVar.image)) {
-                    erroSemantico("Erro semantico \n A variavel "+
-                                  tVar.image+ " nao foi inicializada");
+                    erroSemantico("Erro semântico \n A variável "+
+                                  tVar.image+ " não foi inicializada");
                 } else
 		        {
 					tabela.setInicializada(tVar.image);
@@ -861,8 +859,8 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
       | t = <NOMEVAR>
         {
             if(!tabela.isExiste(t.image)) {
-                erroSemantico("Erro semantico \n A variavel "+t.image+
-                              " nao foi inicializada");
+                erroSemantico("Erro semântico \n A variável "+t.image+
+                              " não foi inicializada");
             } else
 	        {
 				tabela.setUtilizada(t.image);
@@ -887,8 +885,8 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
                 {
 
                   
-                    erroSemantico("Erro semantico \n A variavel "+t.image+
-                                  " nao foi inicializada");
+                    erroSemantico("Erro semântico \n A variável "+t.image+
+                                  " não foi inicializada");
                 } else
 		        {
 					tabela.setUtilizada(t.image);
@@ -1157,8 +1155,8 @@ ListaComandos comandoPara() : {
     {
         if(t!=null && !tabela.isExiste(t.image))
         {
-            erroSemantico("Erro semantico \n A variavel "+t.image+
-                          " nao foi inicializada");
+            erroSemantico("Erro semântico \n A variável "+t.image+
+                          " não foi inicializada");
         } else
         {
           	tabela.setInicializada(t.image);
@@ -1309,7 +1307,7 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
   	} 
 }
 
-// questao 2 da prova simulada
+// quest�o 2 da prova simulada
 ListaComandos comandoRepeatUntil() :{ ListaComandos listaRepeatUntil;
                                       ListaComandos listaCom = new ListaComandos();
                                       Expressao exp;}{    < REPEAT >
@@ -1333,83 +1331,92 @@ ListaComandos comandoRepeatUntil() :{ ListaComandos listaRepeatUntil;
     }   
 }
 
-// 1a prova
-// o comando select-option-endSelect sera transformado em apenas um comando condicional
-// onde cada bloco de comandos da parte FALSO de uma condicional sera composto pelo
-// proximo comando condicional que equivale ao proximo option
-Comando comandoSelect() : { Token tVar;
-  						    Comando comCondicional;
-  						    ListaComandos listaCondicionais = new ListaComandos(); }{	<SELECT> <PARL> tVar = <NOMEVAR>
-	// verifica se a variavel do select eh numerica
+// PROVA
+//
+Condicional comandoSelect () : {Token v = null; Token n = null; ListaComandos listaVerdadeiro; Expressao condicao = new Expressao();
+						LinkedList<Condicional> condicionais = new LinkedList<Condicional>();
+						Condicional condicionalFinal = new Condicional();}
+{	<SELECT> <PARL>
+
+	v = <NOMEVAR>
 	{
-	   if(tabela.getTipoSimbolo(tVar.image) != 'n')
-	      erroSemantico("Erro semantico: variavel do select nao eh numerica.");  	}
-	<PARR>
-	// pelo menos uma clausula option
-	(	   comCondicional = comandoOption(tVar.image)
-	   {
-	      // alimenta a lista de condicionais: todos ainda de forma separada
-	      listaCondicionais.insere(comCondicional);	   }
+        if (!tabela.isExiste(v.image)) {
+            erroSemantico("Erro semantico: A variavel "+v.image+
+                          " nao foi declarada");
+        }
+        else {
+          	if (!tabela.isInicializada(v.image))
+          		erroSemantico("Erro semantico: A variavel "+v.image+
+                          " nao foi inicializada");
+            else           	{
+	            tabela.setUtilizada(v.image);
+		        if (tabela.getTipoSimbolo(v.image) != 'n')
+		        	erroSemantico("Erro semantico: A variavel "+v.image+
+		                          " deve ser do tipo numero");
+		     }
+	    }
+    }
+    
+	try
+    {
+       <PARR>
+    }
+    catch(ParseException e) {
+        erroSintaticoPanico("Fecha parenteses",PTVIRG);
+    }
+
+	(
+	  	<OPTION> <PARL>
+
+	  	n = <NUMERO>
+	  	{
+	  	    condicao.addItem(new Item (Tipo.VARIAVEL, v.image));
+	  	  	condicao.addItem(new Item (Tipo.NUMERO, n.image));
+	  	  	condicao.addItem(new Item (Tipo.OPERADOR, "=="));
+	 	}
+
+	  	(
+	  	  	<VIRG>
+
+		  	n = <NUMERO>
+		  	{	  	  
+		  		condicao.addItem(new Item (Tipo.VARIAVEL, v.image));
+		  		condicao.addItem(new Item (Tipo.NUMERO, n.image));
+		  		condicao.addItem(new Item (Tipo.OPERADOR, "=="));
+		  		condicao.addItem(new Item (Tipo.OPERADOR, "ou"));
+		 	}
+
+	  	)*
+
+	  	try
+	    {
+	       <PARR>
+	    }
+	    catch(ParseException e) {
+	        erroSintaticoPanico("Fecha parenteses",PTVIRG);
+	    }
+
+	  	listaVerdadeiro = listaComandos()
+
+	  	{
+	  	  Condicional condicional = new Condicional ();	  	  condicional.setExpressao(condicao);
+	  	  condicional.setVerdadeiro(listaVerdadeiro);
+	  	  condicionais.add(condicional);
+	  	  condicao = new Expressao ();
+	  	}
 	)+
+
+	{	  for (int i = condicionais.size()-2; i >= 0; i--)	  {
+	    ListaComandos listaFalso = new ListaComandos ();	    Condicional penultima = condicionais.get(i);
+	    Condicional ultima = condicionais.get(i+1);
+	    listaFalso.insere(ultima);
+	  	penultima.setFalso(listaFalso);
+	  }	
+	  condicionalFinal = condicionais.get(0);
+	}
+
 	<ENDSELECT>
-	{       // faz o encadeamento das condicionais: a lista falso do atual eh o prox comando condicional
-       for(int i=0; i<listaCondicionais.getComandos().size()-1; i++)       {          Comando comAtual = listaCondicionais.getComando(i);
-          Comando comProx  = listaCondicionais.getComando(i+1);
-          ListaComandos listaFalso = new ListaComandos();
-          listaFalso.insere(comProx);
-          ((Condicional)comAtual).setFalso(listaFalso);
-	   }
-	   // apos o encadeamento, retorna apenas o primeiro comando condicional da lista
-	   return listaCondicionais.getComando(0);
+
+	{	   return condicionalFinal;
 	}
 }
-
-// 1a prova
-// metodo que representa apenas um option
-Comando comandoOption(String nomeVar) : { Token tVar, tSub, tNum;
-			                              Expressao expOption = new Expressao();
-                                          ListaComandos blocoComandos;
-                                          Comando comCondicional = new Condicional();
-  			                            }
-{
-	{
-	  tSub = null;
-	}	  
-    <OPTION> <PARL> (<ADD> | tSub=<SUB>)? tNum = <NUMERO> 
-    {
-      // monta o posfixo para o primeiro numero: variavel valor operador
-      expOption.addItem(new Item(Tipo.VARIAVEL, nomeVar));
-      if(tSub != null)
-         expOption.addItem(new Item(Tipo.NUMERO, "-"+tNum.image)); 
-      else
-         expOption.addItem(new Item(Tipo.NUMERO, tNum.image)); 
-      expOption.addItem(new Item(Tipo.OPERADOR, "=="));
-    }
-	// os outros numeros da clausula option sao opcionais
-	(
-	    {
-	       tSub = null;
-	    }
-		(<ADD> | tSub=<SUB>)? tNum = <NUMERO>
-	    {
-    		// monta o posfixo para os outros numeros: variavel valor operador OR
-      		expOption.addItem(new Item(Tipo.VARIAVEL, nomeVar)); 
-            if(tSub != null)
-               expOption.addItem(new Item(Tipo.NUMERO, "-"+tNum.image)); 
-            else
-               expOption.addItem(new Item(Tipo.NUMERO, tNum.image)); 
-      		expOption.addItem(new Item(Tipo.OPERADOR, "=="));
-      		expOption.addItem(new Item(Tipo.OPERADOR, "ou"));
-    	}
-	)*
-	<PARR>
-    blocoComandos = listaComandos()
-    {
-	   ((Condicional)comCondicional).setExpressao(expOption);
-	   ((Condicional)comCondicional).setVerdadeiro(blocoComandos);
-	   ((Condicional)comCondicional).setFalso(null);	   
-	   return comCondicional;
-    }
-}
-
-

@@ -14,6 +14,10 @@ public class EntradaDados extends Comando{
 	public void setItem(Item ref1) {
 		this.ref1 = ref1;
 	}
+	
+	public String geraCodigoDestino(){
+		return "";
+	}
 
 	@Override
 	public String toString() {

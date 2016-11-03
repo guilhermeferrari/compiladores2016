@@ -24,6 +24,11 @@ public class Atribuicao extends Comando{
 		this.expressao=expressao;
 		this.nomeVariavel=nomeVariavel;
 	}
+	
+	public String geraCodigoDestino(){
+		return "";
+	}
+	
 	@Override
 	public String toString() {
 		return "\nComando ATRIBUICAO (variavel, expressao): "+

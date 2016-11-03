@@ -11,9 +11,43 @@ public class Expressao implements Serializable{
 	private LinkedList <Item> listaExpressao;
 	private int linha;
 	private String codigoInfixo;
-
+	private int tamPilha;
+	private static int maxPilha;
 	private Tipo tipoDados;
 	
+	public void calculoPilha(){
+		
+		int auxMax=0;
+		for(Item item : this.listaExpressao){
+			if((item.getTipo() == Tipo.NUMERO) || (item.getTipo()==Tipo.VARIAVEL)){
+				auxMax+=2;
+				if(auxMax>this.tamPilha){
+					this.tamPilha = auxMax;
+				}
+			}
+			if(item.getTipo()==Tipo.OPERADOR){
+				auxMax--;
+			}
+		}
+		if(this.tamPilha>Expressao.maxPilha){
+			Expressao.maxPilha = this.tamPilha;
+		}
+	}
+	
+	
+	
+	public static int getMaxPilha() {
+		return maxPilha;
+	}
+
+
+
+	public static void setMaxPilha(int maxPilha) {
+		Expressao.maxPilha = maxPilha;
+	}
+
+
+
 	public Expressao(){
 		codigoInfixo = "";
 		listaExpressao = new LinkedList<Item>();
@@ -231,6 +265,20 @@ public class Expressao implements Serializable{
 	
 	public String geraCodigoExpressao(){
 		String codigoExpressao="";
+		for(Item item : this.listaExpressao){
+			if(item.getTipo() == Tipo.NUMERO){
+				
+			}
+			else if(item.getTipo() == Tipo.OPERADOR){
+				
+			}
+			else if(item.getTipo() == Tipo.STRING){
+				
+			}
+			else if(item.getTipo() == Tipo.VARIAVEL){
+				
+			}
+		}
 		return codigoExpressao;
 	}
 	
