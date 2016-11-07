@@ -3,8 +3,6 @@ package minhasclasses;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import minhasclasses.comandos.Comando;
 import minhasclasses.comandos.ListaComandos;
