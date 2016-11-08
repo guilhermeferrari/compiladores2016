@@ -2,6 +2,7 @@ package minhasclasses;
 
 import java.io.Serializable;
 import java.util.LinkedList;
+import minhasclasses.Tabela;
 
 public class Expressao implements Serializable{
 	/**
@@ -263,7 +264,7 @@ public class Expressao implements Serializable{
 		return soConstanteNumerica;
 	}
 	
-	public String geraCodigoExpressao(){
+	public String geraCodigoExpressao(Tabela tabela){
 		String codigoExpressao="";
 		for(Item item : this.listaExpressao){
 			if(item.getTipo() == Tipo.NUMERO){
@@ -276,7 +277,9 @@ public class Expressao implements Serializable{
 				
 			}
 			else if(item.getTipo() == Tipo.VARIAVEL){
-				
+				String nomeDaVariavel = item.getValor();
+				int referenciaDaVariavel = tabela.consultaReferencia(nomeDaVariavel); 
+                codigoExpressao += "dload " + referenciaDaVariavel + "\r\n";
 			}
 		}
 		return codigoExpressao;
