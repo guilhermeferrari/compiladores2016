@@ -271,6 +271,18 @@ public class Expressao implements Serializable{
 				
 			}
 			else if(item.getTipo() == Tipo.OPERADOR){
+				if((item.getValor().equals("+")) && (this.getTipoDados() == Tipo.NUMERO)){
+					codigoExpressao+="dadd\r\n";
+				}
+				else if(item.getValor().equals("-")){
+					codigoExpressao+="dsub\r\n";
+				}
+				else if(item.getValor().equals("*")){
+					codigoExpressao+="dmul\r\n";
+				}
+				else if(item.getValor().equals("/")){
+					codigoExpressao+="ddiv\r\n";
+				}
 				
 			}
 			else if(item.getTipo() == Tipo.STRING){
