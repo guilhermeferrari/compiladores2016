@@ -268,11 +268,27 @@ public class Expressao implements Serializable{
 		String codigoExpressao="";
 		for(Item item : this.listaExpressao){
 			if(item.getTipo() == Tipo.NUMERO){
-				
+				codigoExpressao += "ldc2_w " + item.getValor() + "\r\n";
 			}
+			
 			else if(item.getTipo() == Tipo.OPERADOR){
-				if((item.getValor().equals("+")) && (this.getTipoDados() == Tipo.NUMERO)){
-					codigoExpressao+="dadd\r\n";
+				if((item.getValor().equals("+"))){
+					if((this.getTipoDados() == Tipo.NUMERO)){
+						codigoExpressao+="dadd\r\n";
+					} else if(this.getTipoDados() == Tipo.STRING){
+						
+						codigoExpressao += "astore_"+(Simbolo.getMarcador()+1) +" \r\n";
+						codigoExpressao += "astore_"+(Simbolo.getMarcador()) +" \r\n";
+						codigoExpressao += "new java/lang/StringBuilder \r\n";
+						codigoExpressao += "dup \r\n";
+						codigoExpressao += "invokespecial java/lang/StringBuilder/<init>()V \r\n";
+						codigoExpressao += "aload_"+(Simbolo.getMarcador()) +" \r\n";
+						codigoExpressao += "invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder \r\n";
+						codigoExpressao += "aload_"+(Simbolo.getMarcador()+1) +" \r\n";
+						codigoExpressao += "invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder \r\n";
+						codigoExpressao += "invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String \r\n";
+						
+					}
 				}
 				else if(item.getValor().equals("-")){
 					codigoExpressao+="dsub\r\n";
@@ -283,10 +299,10 @@ public class Expressao implements Serializable{
 				else if(item.getValor().equals("/")){
 					codigoExpressao+="ddiv\r\n";
 				}
-				
 			}
-			else if(item.getTipo() == Tipo.STRING){
 				
+			else if(item.getTipo() == Tipo.STRING){
+				codigoExpressao += "ldc " + item.getValor() + "\r\n";
 			}
 			else if(item.getTipo() == Tipo.VARIAVEL){
 				String nomeDaVariavel = item.getValor();
