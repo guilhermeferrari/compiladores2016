@@ -299,6 +299,9 @@ public class Expressao implements Serializable{
 				else if(item.getValor().equals("/")){
 					codigoExpressao+="ddiv\r\n";
 				}
+				else if(item.getValor().equals("e")){
+					codigoExpressao+="iand\r\n";
+				}
 			}
 				
 			else if(item.getTipo() == Tipo.STRING){
