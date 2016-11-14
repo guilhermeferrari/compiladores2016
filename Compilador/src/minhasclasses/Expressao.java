@@ -302,6 +302,9 @@ public class Expressao implements Serializable{
 				else if(item.getValor().equals("e")){
 					codigoExpressao+="iand\r\n";
 				}
+				else if(item.getValor().equals("ou")){
+					codigoExpressao+="ior\r\n";
+				}
 			}
 				
 			else if(item.getTipo() == Tipo.STRING){
