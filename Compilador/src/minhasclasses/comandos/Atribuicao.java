@@ -1,6 +1,7 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
+import minhasclasses.Tabela;
 public class Atribuicao extends Comando{
 		
 	
@@ -25,8 +26,12 @@ public class Atribuicao extends Comando{
 		this.nomeVariavel=nomeVariavel;
 	}
 	
-	public String geraCodigoDestino(){
-		return "";
+	public String geraCodigoDestinoAtribuicao(Tabela tabela){
+		String codigoDestino="";
+		Integer referencia = tabela.consultaReferencia(nomeVariavel);
+		codigoDestino+=this.expressao.geraCodigoExpressao(tabela);
+		codigoDestino+="dstore_"+ referencia.toString();	
+		return codigoDestino;
 	}
 	
 	@Override
@@ -34,6 +39,11 @@ public class Atribuicao extends Comando{
 		return "\nComando ATRIBUICAO (variavel, expressao): "+
 	           "variavel: " + this.nomeVariavel + 
 	           ", expressao: "+this.expressao.toString();
+	}
+	@Override
+	public String geraCodigoDestino() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
