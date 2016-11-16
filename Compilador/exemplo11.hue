@@ -3,6 +3,6 @@
 numero _teste;
 _teste = 20;
 
-se ( (_teste+5 > 23) OU (_teste+5 > 26) )
+se ( (_teste+5!=23) OU (_teste+5 > 26) )
    exibe "teste = ", _teste;
 fimSe

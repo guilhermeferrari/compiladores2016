@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import minhasclasses.Tabela;
 
 public class Expressao implements Serializable{
+	
 	/**
 	 * 
 	 */
@@ -15,6 +16,7 @@ public class Expressao implements Serializable{
 	private int tamPilha;
 	private static int maxPilha;
 	private Tipo tipoDados;
+	private static Integer contLabel = 0;
 	
 	public void calculoPilha(){
 		
@@ -265,6 +267,8 @@ public class Expressao implements Serializable{
 	}
 	
 	public String geraCodigoExpressao(Tabela tabela){
+		
+			
 		String codigoExpressao="";
 		for(Item item : this.listaExpressao){
 			if(item.getTipo() == Tipo.NUMERO){
@@ -304,6 +308,29 @@ public class Expressao implements Serializable{
 				}
 				else if(item.getValor().equals("ou")){
 					codigoExpressao+="ior\r\n";
+				}
+				else if(item.getValor().equals("==")){
+					
+					codigoExpressao+="dcmpg\r\n";
+					//Caso os numeros sejam iguais faz um desvio para o LABEL
+					//e armazena 1 na pilha.
+					codigoExpressao+="ifgt LABEL_0"+contLabel.toString()+ "\r\n";
+					codigoExpressao+="dconst_0\r\n";
+					codigoExpressao+= ("LABEL_0"+contLabel.toString() + ":\r\n");
+					codigoExpressao+="dconst_1\r\n";				
+					contLabel++;
+					
+
+				}
+				else if(item.getValor().equals("!=")){
+					codigoExpressao+="dcmpg\r\n";
+					//Caso os numeros sejam diferentes armazena 1 na pilha.
+					codigoExpressao+="ifgt LABEL_0"+contLabel.toString()+ "\r\n";
+					codigoExpressao+="dconst_1\r\n";
+					codigoExpressao+= ("LABEL_0"+contLabel.toString() + ":\r\n");
+					codigoExpressao+="dconst_0\r\n";					
+					contLabel++;
+				
 				}
 			}
 				
