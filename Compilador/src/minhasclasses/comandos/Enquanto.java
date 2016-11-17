@@ -1,14 +1,17 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
+import minhasclasses.Tabela;
 import minhasclasses.comandos.ListaComandos;
 
 public class Enquanto extends Comando {
-	
 	private Expressao condicao;
 	private ListaComandos listaComandos;
+	static private int contagemEnquanto=0;
 	
-	public Enquanto() {}
+
+	public Enquanto() {
+	}
 	
 	public Enquanto(Expressao expressao, ListaComandos listaComandos){
 		this.condicao = expressao;
@@ -31,8 +34,26 @@ public class Enquanto extends Comando {
 		this.listaComandos = listaComandos;
 	}
 	
-	public String geraCodigoDestino(){
-		return "";
+	@Override
+	public String geraCodigoDestino(Tabela tabela){
+		String saida = new String();
+		int numLabel = contagemEnquanto;
+		contagemEnquanto ++;
+
+		saida += "RotuloInicio_Enquanto"+(numLabel)+": \r\n";
+
+		saida += condicao.geraCodigoExpressao(tabela);
+		saida += "dconst_1 \r\n";
+		saida += "dcmpg \r\n";		
+		saida += "ifeq RotuloFim_Enquanto"+(numLabel)+" \r\n";
+		
+		for(Comando com : listaComandos.getComandos()){
+			saida += com.geraCodigoDestino() +" \r\n";
+		}
+		
+		saida += "goto RotuloInicio_Enquanto"+(numLabel)+" \r\n";
+		saida += "RotuloFim_Enquanto"+(numLabel)+": \r\n";
+		return saida;
 	}
 
 	@Override
