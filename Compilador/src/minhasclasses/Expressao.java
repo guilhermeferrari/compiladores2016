@@ -116,28 +116,40 @@ public class Expressao implements Serializable{
 		}
 	
 		if(item.getTipo() == Tipo.OPERADOR && this.listaExpressao.size() >= 2 ) {
-			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.NUMERO ||
-			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo() == Tipo.NUMERO ||
-			   this.listaExpressao.get(this.listaExpressao.size()-2).getTipo() == Tipo.VARIAVEL ||
-			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo()== Tipo.VARIAVEL){
-				if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "1" || listaExpressao.get(this.listaExpressao.size()-1).getValor() == "1" || listaExpressao.get(this.listaExpressao.size()-2).getValor() == "0" || listaExpressao.get(this.listaExpressao.size()-1).getValor() == "0") {
-					String aux = "";
-					if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "0" && listaExpressao.get(this.listaExpressao.size()-1).getValor() != "0") {
+			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.NUMERO) ||
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.NUMERO) ||
+			   this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.VARIAVEL) ||
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.VARIAVEL)){				
+				
+				if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("1") || listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("1") 
+						|| listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0") || listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
+					String aux="";
+					
+					if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0") && !listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
+						System.out.println("TESTE");
 						switch(item.getValor()) {
 							case "+":
+								aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
+								break;
+							case "-":
 								aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
 								break;
 							case "*":
 								aux = "0";
 								break;
 							case "/":
+								System.out.println("Caso Divisao1");
 								aux = "0";	
 								break;
 						}
 		
 					}	
-					if (listaExpressao.get(this.listaExpressao.size()-1).getValor() == "0") {
-						switch(item.getValor()) {
+					if (listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
+						aux = String.valueOf(1).toString();
+						String valor = item.getValor();
+					
+						switch(valor.toString()){
+						
 							case "+":
 								aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 								break;
@@ -145,13 +157,12 @@ public class Expressao implements Serializable{
 								aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 								break;
 							case "*":
-								aux = "0";
-								break;	
+								aux = String.valueOf(0).toString();
+								break;
 						}
-					}
-					if (listaExpressao.get(this.listaExpressao.size()-2).getValor() != "0" && listaExpressao.get(this.listaExpressao.size()-1).getValor() != "0") {
-					
-						if (listaExpressao.get(this.listaExpressao.size()-1).getValor() == "1") {
+					}	
+					if (!listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0")  && !listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
+						if (listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("1")) {
 							switch(item.getValor()) {
 								case "*":
 									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
@@ -162,16 +173,92 @@ public class Expressao implements Serializable{
 								case "^":
 									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 							}
-						}
-						if (listaExpressao.get(this.listaExpressao.size()-2).getValor() == "1" && item.getValor()== "*"){
+						} 
+						if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("1") && item.getValor().equals("*")){
 							aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
 						}
 					}
-				this.listaExpressao.get(this.listaExpressao.size()-2).setValor(aux);
-				this.listaExpressao.remove(this.listaExpressao.size()-1);
-				return;	
+				if(aux.length()>0){
+					
+					if(this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.VARIAVEL)){
+						
+						if(this.listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0")){
+							if(item.getValor().equals("*")){
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+							}
+							else if(item.getValor().equals("/")){
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+							}
+							else
+								this.listaExpressao.remove(this.listaExpressao.size()-2);
+						}
+						else{
+							this.listaExpressao.remove(this.listaExpressao.size()-2);
+
+						}
+					}
+					else if (this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.VARIAVEL)) {
+						if(this.listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")){
+							
+							if(item.getValor().equals("*")){
+								
+								this.listaExpressao.remove(this.listaExpressao.size()-2);
+							}
+							else if(item.getValor().equals("/")){
+								
+								this.listaExpressao.remove(this.listaExpressao.size()-2);
+							}
+							else if(item.getValor().equals("^")){
+								
+								this.listaExpressao.remove(this.listaExpressao.size()-2);
+								this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf("1"));
+							}
+							else
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+						}
+						else{
+							this.listaExpressao.remove(this.listaExpressao.size()-1);
+
+						}
+					}
+					else{
+						if(this.listaExpressao.get(this.listaExpressao.size()-1).equals("0")){
+							;
+							if(item.getValor().equals("+")){
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+							}
+							
+						}
+						else{ 
+							
+							if(item.getValor().equals("+")){
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+							}
+							if(item.getValor().equals("*")){
+								this.listaExpressao.remove(this.listaExpressao.size()-2);
+							}
+							if(item.getValor().equals("-")){
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+							}
+							if(item.getValor().equals("/")){
+								this.listaExpressao.remove(this.listaExpressao.size()-1);
+							}
+							
+						}
+						
+						System.out.println(this.listaExpressao.get(this.listaExpressao.size()-1));
+						this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf(aux));	
+						//System.out.println(this.listaExpressao.get(this.listaExpressao.size()-2));
+						
+					}
+					return;
+				}
+				
+					
 				}	
+				
 			}
+			
 		}
 		
 		/*
