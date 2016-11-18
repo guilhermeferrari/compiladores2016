@@ -1370,6 +1370,7 @@ Condicional comandoSelect () : {Token v = null; Token n = null; ListaComandos li
 
 	  	n = <NUMERO>
 	  	{
+	  	    condicao.setTipoDados(Tipo.NUMERO);
 	  	    condicao.addItem(new Item (Tipo.VARIAVEL, v.image));
 	  	  	condicao.addItem(new Item (Tipo.NUMERO, n.image));
 	  	  	condicao.addItem(new Item (Tipo.OPERADOR, "=="));
