@@ -1,6 +1,7 @@
 package minhasclasses.comandos;
 import minhasclasses.Tipo;
 import minhasclasses.Item;
+import minhasclasses.Tabela;
 import minhasclasses.comandos.Exibe;
 
 public class EntradaDados extends Comando{
@@ -31,7 +32,7 @@ public class EntradaDados extends Comando{
 		this.ref1 = ref1;
 	}
 	
-	public String geraCodigoDestino(){
+	public String geraCodigoDestino(Tabela tabela){
 		String codigoLeia ="";
 		if(item.getTipo() == Tipo.STRING){
 			codigoLeia += "new java/util/Scanner \r\n";

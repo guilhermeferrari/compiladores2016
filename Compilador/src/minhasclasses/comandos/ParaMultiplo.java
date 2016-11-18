@@ -2,6 +2,8 @@ package minhasclasses.comandos;
 
 import java.util.LinkedList;
 
+import minhasclasses.Tabela;
+
 public class ParaMultiplo extends Comando {
 	
 	private LinkedList<Comando> atribuicoes;
@@ -37,7 +39,9 @@ public class ParaMultiplo extends Comando {
 		return message;
 	}
 	
-	public String geraCodigoDestino(){
-		return "";
+	@Override
+	public String geraCodigoDestino(Tabela tabela) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

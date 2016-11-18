@@ -1,5 +1,7 @@
 package minhasclasses.comandos;
 
+import minhasclasses.Tabela;
+
 public class Para extends Comando {
 	
 	private Comando atribuicao, enquanto;
@@ -30,7 +32,10 @@ public class Para extends Comando {
 		message += "--------------------------\n";
 		return message;
 	}
-	public String geraCodigoDestino(){
+
+	@Override
+	public String geraCodigoDestino(Tabela tabela) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

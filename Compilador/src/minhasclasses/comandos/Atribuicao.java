@@ -26,7 +26,7 @@ public class Atribuicao extends Comando{
 		this.nomeVariavel=nomeVariavel;
 	}
 	
-	public String geraCodigoDestinoAtribuicao(Tabela tabela){
+	public String geraCodigoDestino(Tabela tabela){
 		String codigoDestino="";
 		Integer referencia = tabela.consultaReferencia(nomeVariavel);
 		codigoDestino+=this.expressao.geraCodigoExpressao(tabela);
@@ -40,10 +40,4 @@ public class Atribuicao extends Comando{
 	           "variavel: " + this.nomeVariavel + 
 	           ", expressao: "+this.expressao.toString();
 	}
-	@Override
-	public String geraCodigoDestino() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

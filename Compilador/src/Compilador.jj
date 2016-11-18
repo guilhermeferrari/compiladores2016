@@ -38,7 +38,7 @@ public class Compilador
                 output.close();
 
                 //geracao codigo destino
-                GeradorCodigoDestino.geraCodigoAssembler(listaComandosPrincipal);
+                GeradorCodigoDestino.geraCodigoAssembler(listaComandosPrincipal,tabela);
                 break;
             }
             catch(FileNotFoundException e)

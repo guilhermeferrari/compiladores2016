@@ -44,10 +44,4 @@ public class Exibe extends Comando{
 		return "\nComando EXIBE (item): "+
 	           this.item.toString();
 	}
-
-	@Override
-	public String geraCodigoDestino() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

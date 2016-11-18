@@ -34,7 +34,6 @@ public class Enquanto extends Comando {
 		this.listaComandos = listaComandos;
 	}
 	
-	@Override
 	public String geraCodigoDestino(Tabela tabela){
 		String saida = new String();
 		int numLabel = contagemEnquanto;
@@ -48,7 +47,7 @@ public class Enquanto extends Comando {
 		saida += "ifeq RotuloFim_Enquanto"+(numLabel)+" \r\n";
 		
 		for(Comando com : listaComandos.getComandos()){
-			saida += com.geraCodigoDestino() +" \r\n";
+			saida += com.geraCodigoDestino(tabela) +" \r\n";
 		}
 		
 		saida += "goto RotuloInicio_Enquanto"+(numLabel)+" \r\n";

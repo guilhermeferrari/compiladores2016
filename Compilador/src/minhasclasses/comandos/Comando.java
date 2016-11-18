@@ -2,6 +2,8 @@ package minhasclasses.comandos;
 
 import java.io.Serializable;
 
+import minhasclasses.Tabela;
+
 public abstract class Comando implements Serializable{
 	/**
 	 * 
@@ -10,5 +12,5 @@ public abstract class Comando implements Serializable{
 
 	public abstract String toString();
 	
-	public abstract String geraCodigoDestino();
+	public abstract String geraCodigoDestino(Tabela tabela);
 }

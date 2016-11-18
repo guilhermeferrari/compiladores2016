@@ -1,6 +1,7 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
+import minhasclasses.Tabela;
 
 public class Condicional extends Comando {
 	private Expressao expressao;
@@ -33,9 +34,29 @@ public class Condicional extends Comando {
 		this.falso = falso;
 	}
 	
-	public String geraCodigoDestino(){
-		return "";
+	public String geraCodigoDestino(Tabela tabela){
+		int labelElse = tabela.getLabelCondicional(); // Label usada caso a expressão do if resulte em false.
+		tabela.incLabelCondicional();
+		String comandoIf ="";
+		
+		comandoIf += expressao.geraCodigoExpressao(tabela);//Código da expressão de análise do if();
+		comandoIf += "dconst_0 \r\n";
+		comandoIf += "dcmpg \r\n";
+		comandoIf += "ifeq CONDICIONAL_"+ labelElse + "\r\n";//Se der false, vá para else, se não, execute o código do if.
+		//Código do if
+    	for(Comando com : verdadeiro.getComandos()){
+    		comandoIf += com.geraCodigoDestino(tabela);
+    	}
+    	comandoIf += "goto CONDICIONALEND_"+tabela.getLabelCondicionalEnd()+"\r\n";//Terminou o if, vá para depois do código do else;
+    	comandoIf += "CONDICIONAL_"+labelElse +":\r\n";
+    	for(Comando com : falso.getComandos()){
+    		comandoIf += com.geraCodigoDestino(tabela);
+    	}
+    	comandoIf += "CONDICIONALEND_"+tabela.getLabelCondicionalEnd()+":\r\n";
+    	tabela.incLabelCondicionalEnd();
+		return comandoIf;
 	}
+	
 
 	@Override
 	public String toString() {

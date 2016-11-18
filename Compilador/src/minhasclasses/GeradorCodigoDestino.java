@@ -4,11 +4,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import minhasclasses.Tabela;
 import minhasclasses.comandos.Comando;
 import minhasclasses.comandos.ListaComandos;
 
 public class GeradorCodigoDestino {
-	public static void geraCodigoAssembler(ListaComandos listaComandos){
+	public static void geraCodigoAssembler(ListaComandos listaComandos, Tabela tabela){
 		BufferedWriter arqSaida;
 		try{
 			arqSaida = new BufferedWriter(new FileWriter("codigo_assembler.j"));
@@ -25,7 +26,7 @@ public class GeradorCodigoDestino {
             arqSaida.write(".method public static main([Ljava/lang/String;)V\r\n");
             arqSaida.write(".limit stack "+Expressao.getMaxPilha()+"\r\n");
             arqSaida.write(".limit locals "+(Simbolo.getMarcador()+1)+"\r\n"); //o +1 se deve ao fato de ter de adicionar o this, todo programa deve possui-lo
-            arqSaida.write(processaListaComandos(listaComandos));
+            arqSaida.write(processaListaComandos(listaComandos,tabela));
             arqSaida.write("return\r\n");
             arqSaida.write(".end method\r\n");
             arqSaida.close();
@@ -37,10 +38,10 @@ public class GeradorCodigoDestino {
 
       }
 	}
-    static String processaListaComandos(ListaComandos listaComandos){
+    static String processaListaComandos(ListaComandos listaComandos, Tabela tabela){
     	String saida ="";
     	for(Comando com : listaComandos.getComandos()){
-    		saida += com.geraCodigoDestino();
+    		saida += com.geraCodigoDestino(tabela);
     		
     	}
     	
