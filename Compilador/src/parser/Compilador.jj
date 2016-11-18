@@ -6,6 +6,8 @@ options
 
 PARSER_BEGIN(Compilador)
 
+package parser;
+
 import java.io.*;
 import minhasclasses.*;
 import minhasclasses.comandos.*;
