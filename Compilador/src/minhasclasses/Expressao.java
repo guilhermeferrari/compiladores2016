@@ -396,9 +396,12 @@ public class Expressao implements Serializable{
 				else if(item.getValor().equals("ou")){
 					codigoExpressao+="ior\r\n";
 				}
+				else if(item.getValor().equals("nao")){
+					//codigoExpressao+="inot\r\n";
+				}
 				else if(item.getValor().equals("==")){
 					
-					codigoExpressao+="dcmpg\r\n";
+					codigoExpressao+="dcmpg\r\n";//True: Push 0; False: Push 1 or -1;
 					//Caso os numeros sejam iguais faz um desvio para o LABEL
 					//e armazena 1 na pilha.
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
@@ -412,7 +415,7 @@ public class Expressao implements Serializable{
 
 				}
 				else if(item.getValor().equals("!=")){
-					codigoExpressao+="dcmpg\r\n";
+					codigoExpressao+="dcmpg\r\n";//True: Push 1 or -1; False: Push 0;
 					//Caso os numeros sejam diferentes armazena 1 na pilha.
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
@@ -423,8 +426,30 @@ public class Expressao implements Serializable{
 					contLabel+=2;
 				
 				}
+				else if(item.getValor().equals(">")){
+					codigoExpressao+="dcmpg\r\n"; //True: Push 1; False: Push 0 or -1;
+					//Caso o primeiro numero seja maior, armazena 1 na pilha.
+					codigoExpressao+="ifgt LABEL_0"+contLabel.toString()+ "\r\n";
+					codigoExpressao+="dconst_0\r\n";
+					codigoExpressao+="goto LABEL_0"+contLabel+1 +":\r\n";
+					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
+					codigoExpressao+="dconst_1\r\n";
+					codigoExpressao+="LABEL_0"+contLabel+1 + ":\r\n";
+					contLabel += 2;
+				}
+				else if(item.getValor().equals(">=")){
+					codigoExpressao+="dcmpg\r\n"; //True: Push 1 or 0; False: Push -1;
+					//Caso o primeiro numero seja maior ou igual, armazena 1 na pilha.
+					codigoExpressao+="ifge LABEL_0"+contLabel.toString()+ "\r\n";
+					codigoExpressao+="dconst_0\r\n";
+					codigoExpressao+="goto LABEL_0"+contLabel+1 +":\r\n";
+					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
+					codigoExpressao+="dconst_1\r\n";
+					codigoExpressao+="LABEL_0"+contLabel+1 + ":\r\n";
+					contLabel += 2;
+				}
 				else if(item.getValor().equals("<")){
-					codigoExpressao+="dcmpg\r\n";
+					codigoExpressao+="dcmpg\r\n"; //True: Push -1; False: Push 1 or 0;
 					//Caso o primeiro numero seja menor, armazena 1 na pilha.
 					codigoExpressao+="ifge LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
@@ -435,7 +460,7 @@ public class Expressao implements Serializable{
 					contLabel += 2;
 				}
 				else if(item.getValor().equals("<=")){
-					codigoExpressao+="dcmpg\r\n";
+					codigoExpressao+="dcmpg\r\n"; //True: Push 0 or -1 or 0; False: Push 1;
 					//Caso o primeiro numero seja menor ou igual, armazena 1
 					//na pilha.
 					codigoExpressao+="ifgt LABEL_0"+contLabel+ "\r\n";
