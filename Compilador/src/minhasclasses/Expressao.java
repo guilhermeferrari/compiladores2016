@@ -433,10 +433,10 @@ public class Expressao implements Serializable{
 					//Caso o primeiro numero seja maior, armazena 1 na pilha.
 					codigoExpressao+="ifgt LABEL_0"+contLabel.toString()+ "\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="goto LABEL_0"+contLabel+1 +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
 					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="LABEL_0"+contLabel+1 + ":\r\n";
+					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
 					contLabel += 2;
 				}
 				else if(item.getValor().equals(">=")){
@@ -444,14 +444,14 @@ public class Expressao implements Serializable{
 					//Caso o primeiro numero seja maior ou igual, armazena 1 na pilha.
 					codigoExpressao+="ifge LABEL_0"+contLabel.toString()+ "\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="goto LABEL_0"+contLabel+1 +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
 					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="LABEL_0"+contLabel+1 + ":\r\n";
+					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
 					contLabel += 2;
 				}
 				else if(item.getValor().equals("<")){
-					codigoExpressao+="dcmpg\r\n"; //True: Push -1; False: Push 1 or 0;
+					codigoExpressao+="dcmpg\r\n";
 					//Caso o primeiro numero seja menor, armazena 1 na pilha.
 					codigoExpressao+="ifge LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
@@ -462,9 +462,8 @@ public class Expressao implements Serializable{
 					contLabel += 2;
 				}
 				else if(item.getValor().equals("<=")){
-					codigoExpressao+="dcmpg\r\n"; //True: Push 0 or -1 or 0; False: Push 1;
-					//Caso o primeiro numero seja menor ou igual, armazena 1
-					//na pilha.
+					codigoExpressao+="dcmpg\r\n";
+					//Caso o primeiro numero seja menor ou igual, armazena 1 na pilha.
 					codigoExpressao+="ifgt LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
