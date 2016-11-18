@@ -397,11 +397,13 @@ public class Expressao implements Serializable{
 					codigoExpressao+="ior\r\n";
 				}
 				else if(item.getValor().equals("nao")){
-					//codigoExpressao+="inot\r\n";
+					codigoExpressao+="dneg\r\n"; //Complemento de 2 (NEG)
+					codigoExpressao+="dconst_1\r\n";
+					codigoExpressao+="dsub\r\n"; //Complemento de 1 (NOT)
 				}
 				else if(item.getValor().equals("==")){
 					
-					codigoExpressao+="dcmpg\r\n";//True: Push 0; False: Push 1 or -1;
+					codigoExpressao+="dcmpg\r\n";
 					//Caso os numeros sejam iguais faz um desvio para o LABEL
 					//e armazena 1 na pilha.
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
@@ -415,7 +417,7 @@ public class Expressao implements Serializable{
 
 				}
 				else if(item.getValor().equals("!=")){
-					codigoExpressao+="dcmpg\r\n";//True: Push 1 or -1; False: Push 0;
+					codigoExpressao+="dcmpg\r\n";
 					//Caso os numeros sejam diferentes armazena 1 na pilha.
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
