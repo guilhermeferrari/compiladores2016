@@ -2,6 +2,8 @@ package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
 import minhasclasses.Tabela;
+import parser.*;
+
 public class Atribuicao extends Comando{
 		
 	
@@ -26,10 +28,10 @@ public class Atribuicao extends Comando{
 		this.nomeVariavel=nomeVariavel;
 	}
 	
-	public String geraCodigoDestino(Tabela tabela){
+	public String geraCodigoDestino(){
 		String codigoDestino="";
-		Integer referencia = tabela.consultaReferencia(nomeVariavel);
-		codigoDestino+=this.expressao.geraCodigoExpressao(tabela);
+		Integer referencia = Compilador.tabela.consultaReferencia(nomeVariavel);
+		codigoDestino+=this.expressao.geraCodigoExpressao();
 		codigoDestino+="dstore_"+ referencia.toString();	
 		return codigoDestino;
 	}

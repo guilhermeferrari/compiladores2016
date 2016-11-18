@@ -3,6 +3,7 @@ package minhasclasses.comandos;
 import minhasclasses.Expressao;
 import minhasclasses.Tabela;
 import minhasclasses.comandos.ListaComandos;
+import parser.*;
 
 public class Enquanto extends Comando {
 	private Expressao condicao;
@@ -34,20 +35,20 @@ public class Enquanto extends Comando {
 		this.listaComandos = listaComandos;
 	}
 	
-	public String geraCodigoDestino(Tabela tabela){
+	public String geraCodigoDestino(){
 		String saida = new String();
 		int numLabel = contagemEnquanto;
 		contagemEnquanto ++;
 
 		saida += "RotuloInicio_Enquanto"+(numLabel)+": \r\n";
 
-		saida += condicao.geraCodigoExpressao(tabela);
+		saida += condicao.geraCodigoExpressao();
 		saida += "dconst_1 \r\n";
 		saida += "dcmpg \r\n";		
 		saida += "ifeq RotuloFim_Enquanto"+(numLabel)+" \r\n";
 		
 		for(Comando com : listaComandos.getComandos()){
-			saida += com.geraCodigoDestino(tabela) +" \r\n";
+			saida += com.geraCodigoDestino() +" \r\n";
 		}
 		
 		saida += "goto RotuloInicio_Enquanto"+(numLabel)+" \r\n";

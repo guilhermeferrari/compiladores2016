@@ -12,5 +12,5 @@ public abstract class Comando implements Serializable{
 
 	public abstract String toString();
 	
-	public abstract String geraCodigoDestino(Tabela tabela);
+	public abstract String geraCodigoDestino();
 }

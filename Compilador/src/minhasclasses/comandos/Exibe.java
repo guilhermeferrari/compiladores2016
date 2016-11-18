@@ -3,6 +3,7 @@ package minhasclasses.comandos;
 import minhasclasses.Item;
 import minhasclasses.Tabela;
 import minhasclasses.Tipo;
+import parser.*;
 
 public class Exibe extends Comando{
 	private Item item;
@@ -23,7 +24,7 @@ public class Exibe extends Comando{
 		this.item = item;
 	}
 	
-	public String geraCodigoDestino(Tabela tabela){
+	public String geraCodigoDestino(){
 		String codigoExibicao="";
 		if(item.getTipo() == Tipo.NUMERO){
 			codigoExibicao += "ldc2_w " + item.getValor() + "\r\n";
@@ -33,7 +34,7 @@ public class Exibe extends Comando{
 		}
 		else if(item.getTipo() == Tipo.VARIAVEL){
 			String nomeVar = item.getValor();
-			int referencia = tabela.consultaReferencia(nomeVar); 
+			int referencia = Compilador.tabela.consultaReferencia(nomeVar); 
             codigoExibicao += "dload " + referencia + "\r\n";
 		}
 		return codigoExibicao;

@@ -15,8 +15,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 public class Compilador
 {
+    public static Tabela tabela = new Tabela();
+    public static ListaComandos listaComandosPrincipal;
+
   	static String nomeArquivoFonte = "exemplo12";
-    static Tabela tabela = new Tabela();
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
     public static void main (String args []) throws ParseException
@@ -28,19 +30,17 @@ public class Compilador
             try
             {
                 compilador = new Compilador(new FileInputStream(nomeArquivoFonte +".hue"));
-
-				ListaComandos listaComandosPrincipal;
-                listaComandosPrincipal = compilador.inicio();
-                System.out.println(listaComandosPrincipal.toString());
+                Compilador.listaComandosPrincipal = compilador.inicio();
+                System.out.println(Compilador.listaComandosPrincipal.toString());
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
                 ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(nomeArquivoFonte+".int"));
-                output.writeObject(listaComandosPrincipal);
+                output.writeObject(Compilador.listaComandosPrincipal);
                 output.flush();
                 output.close();
 
                 //geracao codigo destino
-                GeradorCodigoDestino.geraCodigoAssembler(listaComandosPrincipal,tabela);
+                GeradorCodigoDestino.geraCodigoAssembler();
                 break;
             }
             catch(FileNotFoundException e)
@@ -90,7 +90,7 @@ public class Compilador
 
     public static void warning()
     {
-        tabela.warningVar();
+        Compilador.tabela.warningVar();
     }
       
 }
@@ -290,10 +290,10 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
                 if (valor==Tipo.STRING) {
                   listaExpTipo.add(Tipo.STRING);
                 } else if(valor==Tipo.VARIAVEL) {
-                    if (!tabela.isInicializada(ii.getValor()))
+                    if (!Compilador.tabela.isInicializada(ii.getValor()))
                         System.out.println("Erro semântico \nVariável não"+
                                            "inicializada: " + ii.getValor());
-                    if(tabela.getTipoSimbolo(ii.getValor())=='n') {
+                    if(Compilador.tabela.getTipoSimbolo(ii.getValor())=='n') {
                         valor = Tipo.NUMERO;
                         listaExpTipo.add(Tipo.NUMERO);     
                     } else {
@@ -305,10 +305,10 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
                         (valor!=ii.getTipo()) )
             {
                 if(ii.getTipo()==Tipo.VARIAVEL) {
-                    if (!tabela.isInicializada(ii.getValor()))
+                    if (!Compilador.tabela.isInicializada(ii.getValor()))
                         System.out.println("Erro semântico \nVariável não"+
                                            " inicializada: " + ii.getValor());
-                    if(tabela.getTipoSimbolo(ii.getValor())=='n') {
+                    if(Compilador.tabela.getTipoSimbolo(ii.getValor())=='n') {
                         if(valor!=Tipo.NUMERO) {
                             System.out.println("Erro semântico, expressões"+
                                                " não compativeis: "+
@@ -600,18 +600,18 @@ Item item = null;}
         expressao.addCodigoInfixo(t.image);
         expressao.addItem(new Item(Tipo.VARIAVEL, t.image));
             
-        if(!tabela.isExiste(t.image)) {
+        if(!Compilador.tabela.isExiste(t.image)) {
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " não foi inicializada");
         } else {
             if (expressao.getTipoDados()==null) {
-                char tipo = tabela.getTipoSimbolo(t.image);
+                char tipo = Compilador.tabela.getTipoSimbolo(t.image);
                 
                 expressao.setTipoDados(tipo=='n'?
                                        Tipo.NUMERO :
                                        Tipo.STRING );
             }
-            tabela.setUtilizada(t.image);
+            Compilador.tabela.setUtilizada(t.image);
         }
     }
     
@@ -638,11 +638,11 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
     ( <TIPONUM> {tp='n';} | <TIPOSTRING> {tp='s';} )
     t = <NOMEVAR>
     {
-        if(!tabela.isExiste(t.image)) {
+        if(!Compilador.tabela.isExiste(t.image)) {
             simb = new Simbolo(t.image); 
             simb.setTipo(tp);
             simb.setReferencia(tp); 
-            tabela.inclui(simb);
+            Compilador.tabela.inclui(simb);
         } else {    
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " já foi inicializada");
@@ -652,11 +652,11 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
         <VIRG>
         t = <NOMEVAR>
         {
-            if(!tabela.isExiste(t.image)) { 
+            if(!Compilador.tabela.isExiste(t.image)) { 
                 simb = new Simbolo(t.image); 
                 simb.setTipo(tp);
                 simb.setReferencia(tp); 
-                tabela.inclui(simb);
+                Compilador.tabela.inclui(simb);
             } else {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " já foi inicializada");
@@ -680,13 +680,13 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
     t = <NOMEVAR>
     {
       	listaExpTipo.clear();
-        if(!tabela.isExiste(t.image)) {
+        if(!Compilador.tabela.isExiste(t.image)) {
             erroSemantico("Erro semantico \n A variavel "+t.image+
                           " nao foi inicializada");
         }
         else {
-          	tabela.setInicializada(t.image);        }
-       	tipo = tabela.getTipoSimbolo(t.image);
+          	Compilador.tabela.setInicializada(t.image);        }
+       	tipo = Compilador.tabela.getTipoSimbolo(t.image);
         if(tipo=='n') {
          	listaVar.add(new Item(Tipo.NUMERO, t.image));      
         }
@@ -698,14 +698,14 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
         <VIRG>
         t = <NOMEVAR>
         {
-            if(!tabela.isExiste(t.image)) {
+            if(!Compilador.tabela.isExiste(t.image)) {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
             }
             else {
-	          	tabela.setInicializada(t.image);
+	          	Compilador.tabela.setInicializada(t.image);
 	        }
-	       	tipo = tabela.getTipoSimbolo(t.image);
+	       	tipo = Compilador.tabela.getTipoSimbolo(t.image);
 		    if(tipo=='n') {
 		      	listaVar.add(new Item(Tipo.NUMERO, t.image));      
 		    }
@@ -753,7 +753,7 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
                 System.out.println("Erro semântico \nVariável " +
                                    var.getValor() +
                                    " não é do tipo " + tipoExp);
-          	tabela.setInicializada(var.getValor());
+          	Compilador.tabela.setInicializada(var.getValor());
          }
 
          
@@ -797,12 +797,12 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
 
     tVar = <NOMEVAR>
     {
-        if(!tabela.isExiste(tVar.image)) {
+        if(!Compilador.tabela.isExiste(tVar.image)) {
             erroSemantico("Erro semântico \n A variável "+tVar.image+
                           " não foi inicializada");                          
         } else
         {
-			tabela.setInicializada(tVar.image);
+			Compilador.tabela.setInicializada(tVar.image);
 			entradaDados = new EntradaDados();
 			item = new Item(Tipo.VARIAVEL,tVar.image);
 			entradaDados.setItem(item);
@@ -815,12 +815,12 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
         (
             tVar = <NOMEVAR>
             {
-                if(!tabela.isExiste(tVar.image)) {
+                if(!Compilador.tabela.isExiste(tVar.image)) {
                     erroSemantico("Erro semântico \n A variável "+
                                   tVar.image+ " não foi inicializada");
                 } else
 		        {
-					tabela.setInicializada(tVar.image);
+					Compilador.tabela.setInicializada(tVar.image);
 					entradaDados = new EntradaDados();
 					item = new Item(Tipo.VARIAVEL,tVar.image);
 					entradaDados.setItem(item);
@@ -860,12 +860,12 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
         }
       | t = <NOMEVAR>
         {
-            if(!tabela.isExiste(t.image)) {
+            if(!Compilador.tabela.isExiste(t.image)) {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
             } else
 	        {
-				tabela.setUtilizada(t.image);
+				Compilador.tabela.setUtilizada(t.image);
 	       	}
 	       	exibir.insere(new Exibe(Tipo.VARIAVEL,t.image)); 
         }
@@ -883,7 +883,7 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
           	}
           | t = <NOMEVAR>
             {
-                if(!tabela.isExiste(t.image))
+                if(!Compilador.tabela.isExiste(t.image))
                 {
 
                   
@@ -891,7 +891,7 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
                                   " não foi inicializada");
                 } else
 		        {
-					tabela.setUtilizada(t.image);
+					Compilador.tabela.setUtilizada(t.image);
 		       	}
 		       	exibir.insere(new Exibe(Tipo.VARIAVEL,t.image));
             }
@@ -1144,8 +1144,8 @@ Comando comandoEnquanto() : {Enquanto enquanto = new Enquanto(); Expressao condi
 ListaComandos comandoPara() : {
     Token t=null;
     //Simbolo simbolo=null;
-    Comando para = new Para ();
-    Comando paraMultiplo = new ParaMultiplo ();
+    Para para = new Para ();
+    ParaMultiplo paraMultiplo = new ParaMultiplo ();
     ListaComandos listaCom = new ListaComandos();
     LinkedList<Expressao> listaExpressoes=null;
     Expressao expressaoFim;
@@ -1155,14 +1155,14 @@ ListaComandos comandoPara() : {
 
     t = <NOMEVAR>
     {
-        if(t!=null && !tabela.isExiste(t.image))
+        if(t!=null && !Compilador.tabela.isExiste(t.image))
         {
             erroSemantico("Erro semântico \n A variável "+t.image+
                           " não foi inicializada");
         } else
         {
-          	tabela.setInicializada(t.image);
-			tabela.setUtilizada(t.image);
+          	Compilador.tabela.setInicializada(t.image);
+			Compilador.tabela.setUtilizada(t.image);
        	} 
     }
     
@@ -1184,7 +1184,7 @@ ListaComandos comandoPara() : {
         operadorMaiorI = operadorMaiorI.substring(1,operadorMaiorI.length()-1);
         
         if (paraSimples) {
-            ParaHelper.configuraLacoEnquantoSimples((Para)para,
+            ParaHelper.configuraLacoEnquantoSimples(para,
                                                     listaExpressoes.size()>1 ?
                                                       listaExpressoes.get(1) :
                                                       null,
@@ -1193,7 +1193,7 @@ ListaComandos comandoPara() : {
                                                     operadorMenorI,
                                                     operadorMaiorI);
         } else {
-            ParaHelper.configuraLacoEnquantoMultiplo((ParaMultiplo)paraMultiplo,
+            ParaHelper.configuraLacoEnquantoMultiplo(paraMultiplo,
                                                      expressaoFim,
                                                      listaCom,
                                                      operadorMenorI,
@@ -1211,16 +1211,16 @@ ListaComandos comandoPara() : {
 	       listaCom.insere(((Para)para).getEnquanto());
 	    }
 	    else {
-	       LinkedList<Comando> atribuicoes = ((ParaMultiplo)paraMultiplo).getAtribuicoes();
+	       LinkedList<Comando> atribuicoes = paraMultiplo.getAtribuicoes();
 	       for (int i = 0; i < atribuicoes.size(); i++)
 	       	  listaCom.insere(atribuicoes.get(i));
-	          listaCom.insere(((ParaMultiplo)paraMultiplo).getEnquanto());
+	          listaCom.insere(paraMultiplo.getEnquanto());
 	    }
 	    return listaCom;
 	}
 }
 
-LinkedList<Expressao> paraSimples(Comando para, String variavel) : {
+LinkedList<Expressao> paraSimples(Para para, String variavel) : {
     Expressao expressao;
     LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>(); }
 {
@@ -1260,7 +1260,7 @@ LinkedList<Expressao> paraSimples(Comando para, String variavel) : {
     }
 }
 
-Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
+Expressao paraEspecial(ParaMultiplo paraMultiplo, String variavel) : {
     Token t=null;
     Expressao expressao;
     LinkedList<String> listaVariaveis = new LinkedList<String>(); }
@@ -1272,15 +1272,15 @@ Expressao paraEspecial(Comando paraMultiplo, String variavel) : {
     (
         <VIRG> t = <NOMEVAR>
         {
-            if(t!=null && !tabela.isExiste(t.image))
+            if(t!=null && !Compilador.tabela.isExiste(t.image))
             {
                 erroSemantico("Erro semântico \n A variável "+t.image+
                               " não foi inicializada");
             } else
             {
                 listaVariaveis.add(t.image);
-                tabela.setInicializada(t.image);
-                tabela.setUtilizada(t.image);
+                Compilador.tabela.setInicializada(t.image);
+                Compilador.tabela.setUtilizada(t.image);
            	} 
         }
     )+
@@ -1342,17 +1342,17 @@ Condicional comandoSelect () : {Token v = null; Token n = null; ListaComandos li
 
 	v = <NOMEVAR>
 	{
-        if (!tabela.isExiste(v.image)) {
+        if (!Compilador.tabela.isExiste(v.image)) {
             erroSemantico("Erro semantico: A variavel "+v.image+
                           " nao foi declarada");
         }
         else {
-          	if (!tabela.isInicializada(v.image))
+          	if (!Compilador.tabela.isInicializada(v.image))
           		erroSemantico("Erro semantico: A variavel "+v.image+
                           " nao foi inicializada");
             else           	{
-	            tabela.setUtilizada(v.image);
-		        if (tabela.getTipoSimbolo(v.image) != 'n')
+	            Compilador.tabela.setUtilizada(v.image);
+		        if (Compilador.tabela.getTipoSimbolo(v.image) != 'n')
 		        	erroSemantico("Erro semantico: A variavel "+v.image+
 		                          " deve ser do tipo numero");
 		     }

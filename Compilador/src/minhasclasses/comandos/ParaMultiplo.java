@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import minhasclasses.Tabela;
 
-public class ParaMultiplo extends Comando {
+public class ParaMultiplo  {
 	
 	private LinkedList<Comando> atribuicoes;
 	private Comando enquanto;
@@ -38,10 +38,5 @@ public class ParaMultiplo extends Comando {
 		message += "--------------------------\n";
 		return message;
 	}
-	
-	@Override
-	public String geraCodigoDestino(Tabela tabela) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 }

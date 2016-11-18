@@ -3,6 +3,7 @@ package minhasclasses;
 import java.io.Serializable;
 import java.util.LinkedList;
 import minhasclasses.Tabela;
+import parser.*;
 
 public class Expressao implements Serializable{
 	
@@ -353,7 +354,7 @@ public class Expressao implements Serializable{
 		return soConstanteNumerica;
 	}
 	
-	public String geraCodigoExpressao(Tabela tabela){
+	public String geraCodigoExpressao() {
 		
 			
 		String codigoExpressao="";
@@ -478,7 +479,7 @@ public class Expressao implements Serializable{
 			}
 			else if(item.getTipo() == Tipo.VARIAVEL){
 				String nomeDaVariavel = item.getValor();
-				int referenciaDaVariavel = tabela.consultaReferencia(nomeDaVariavel); 
+				int referenciaDaVariavel = Compilador.tabela.consultaReferencia(nomeDaVariavel); 
                 codigoExpressao += "dload " + referenciaDaVariavel + "\r\n";
 			}
 		}
