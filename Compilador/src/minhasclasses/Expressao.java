@@ -426,27 +426,23 @@ public class Expressao implements Serializable{
 				else if(item.getValor().equals("<")){
 					codigoExpressao+="dcmpg\r\n";
 					//Caso os numeros sejam diferentes armazena 1 na pilha.
-					codigoExpressao+="ifge LABEL_0"+contLabel.toString()+ "\r\n";
-					codigoExpressao+="pop2\r\n";
+					codigoExpressao+="ifge LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="goto LABEL_0"+contLabel+1 +":\r\n";
-					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
-					codigoExpressao+="pop2\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="LABEL_0"+contLabel + ":\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="LABEL_0"+contLabel+1 + ":\r\n";
+					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
 					contLabel += 2;
 				}
 				else if(item.getValor().equals("<=")){
 					codigoExpressao+="dcmpg\r\n";
 					//Caso os numeros sejam diferentes armazena 1 na pilha.
-					codigoExpressao+="ifgt LABEL_0"+contLabel.toString()+ "\r\n";
-					codigoExpressao+="pop2\r\n";
+					codigoExpressao+="ifgt LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="goto LABEL_0"+contLabel+1 +":\r\n";
-					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
-					codigoExpressao+="pop2\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="LABEL_0"+contLabel + ":\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="LABEL_0"+contLabel+1 + ":\r\n";
+					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
 					contLabel += 2;
 				}
 			}
