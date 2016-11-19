@@ -35,7 +35,7 @@ public class Exibe extends Comando{
 		else if(item.getTipo() == Tipo.VARIAVEL){
 			String nomeVar = item.getValor();
 			int referencia = Compilador.tabela.consultaReferencia(nomeVar); 
-            codigoExibicao += "dload " + referencia + "\r\n";
+            codigoExibicao += "dload " + referencia + "\r\n\r\n";
 		}
 		return codigoExibicao;
 	}

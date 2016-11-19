@@ -48,11 +48,11 @@ public class Enquanto extends Comando {
 		saida += "ifeq RotuloFim_Enquanto"+(numLabel)+" \r\n";
 		
 		for(Comando com : listaComandos.getComandos()){
-			saida += com.geraCodigoDestino() +" \r\n";
+			saida += com.geraCodigoDestino();
 		}
 		
 		saida += "goto RotuloInicio_Enquanto"+(numLabel)+" \r\n";
-		saida += "RotuloFim_Enquanto"+(numLabel)+": \r\n";
+		saida += "RotuloFim_Enquanto"+(numLabel)+": \r\n\r\n";
 		return saida;
 	}
 

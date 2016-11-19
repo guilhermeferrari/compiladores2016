@@ -26,16 +26,16 @@ public class EntradaDados extends Comando{
 			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream \r\n";
 			codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
 			codigoLeia += "invokevirtual java/util/Scanner/nextLine()S \r\n";
-			codigoLeia += "dstore_1";
+			codigoLeia += "dstore_1\r\n\r\n";
 		}
 		else 
 		{
 			codigoLeia += "new java/util/Scanner \r\n";
 			codigoLeia += "dup \r\n";
-			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream";
+			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream\r\n";
 			codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
 			codigoLeia += "invokevirtual java/util/Scanner/nextDouble()D \r\n";
-			codigoLeia += "dstore_1";
+			codigoLeia += "dstore_1\r\n\r\n";
 		}	
 		
 		return codigoLeia;

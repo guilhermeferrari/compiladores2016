@@ -32,7 +32,7 @@ public class Atribuicao extends Comando{
 		String codigoDestino="";
 		Integer referencia = Compilador.tabela.consultaReferencia(nomeVariavel);
 		codigoDestino+=this.expressao.geraCodigoExpressao();
-		codigoDestino+="dstore_"+ referencia.toString();	
+		codigoDestino+="dstore_"+ referencia.toString()+"\r\n\r\n";	
 		return codigoDestino;
 	}
 	

@@ -10,6 +10,7 @@ import minhasclasses.comandos.ListaComandos;
 import parser.*;
 
 public class GeradorCodigoDestino {
+	
 	public static void geraCodigoAssembler(){
 		BufferedWriter arqSaida;
 		try{
@@ -23,10 +24,10 @@ public class GeradorCodigoDestino {
             arqSaida.write("aload_0\r\n");
             arqSaida.write("invokespecial java/lang/Object/<init>()V\r\n");
             arqSaida.write("return\r\n");
-            arqSaida.write(".end method\r\n");
+            arqSaida.write(".end method\r\n\r\n");
             arqSaida.write(".method public static main([Ljava/lang/String;)V\r\n");
             arqSaida.write(".limit stack "+Expressao.getMaxPilha()+"\r\n");
-            arqSaida.write(".limit locals "+(Simbolo.getMarcador()+1)+"\r\n"); //o +1 se deve ao fato de ter de adicionar o this, todo programa deve possui-lo
+            arqSaida.write(".limit locals "+(Simbolo.getMarcador()+1)+"\r\n\r\n"); //o +1 se deve ao fato de ter de adicionar o this, todo programa deve possui-lo
             arqSaida.write(processaListaComandos(Compilador.listaComandosPrincipal));
             arqSaida.write("return\r\n");
             arqSaida.write(".end method\r\n");
@@ -35,8 +36,9 @@ public class GeradorCodigoDestino {
 			e.printStackTrace();
 		}catch(Exception e) {
             System.out.println(e.getMessage());
-      }
+        }
 	}
+	
     static String processaListaComandos(ListaComandos listaComandos){
     	String saida ="";
     	for(Comando com : listaComandos.getComandos()){

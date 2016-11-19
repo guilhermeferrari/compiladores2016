@@ -53,7 +53,7 @@ public class Condicional extends Comando {
     	for(Comando com : falso.getComandos()){
     		comandoIf += com.geraCodigoDestino();
     	}
-    	comandoIf += "CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+":\r\n";
+    	comandoIf += "CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+":\r\n\r\n";
     	Compilador.tabela.incLabelCondicionalEnd();
 		return comandoIf;
 	}
