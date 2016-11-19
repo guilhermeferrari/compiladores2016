@@ -35,6 +35,7 @@ public class Compilador
                 compilador.warning();
                 System.out.println("\nEnd of compilation.\n");
                 ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(nomeArquivoFonte+".int"));
+                output.writeObject(Compilador.tabela);
                 output.writeObject(Compilador.listaComandosPrincipal);
                 output.flush();
                 output.close();
