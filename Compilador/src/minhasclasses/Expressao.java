@@ -480,7 +480,12 @@ public class Expressao implements Serializable{
 			else if(item.getTipo() == Tipo.VARIAVEL){
 				String nomeDaVariavel = item.getValor();
 				int referenciaDaVariavel = Compilador.tabela.consultaReferencia(nomeDaVariavel); 
-                codigoExpressao += "dload " + referenciaDaVariavel + "\r\n";
+                if( referenciaDaVariavel < 4 ){
+                	codigoExpressao += "dload_" + referenciaDaVariavel + "\r\n";
+                }
+                else{
+                	codigoExpressao += "dload " + referenciaDaVariavel + "\r\n";
+                }
 			}
 		}
 		return codigoExpressao;
