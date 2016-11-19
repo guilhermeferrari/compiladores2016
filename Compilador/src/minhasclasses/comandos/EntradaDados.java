@@ -7,35 +7,20 @@ import parser.*;
 
 public class EntradaDados extends Comando{
 	private Item ref1;
-	
-	Exibe exibe;
-	Item item;
-	
-	public Exibe getExibe() {
-		return exibe;
-	}
-
-	public void setExibe(Exibe exibe) {
-		this.exibe = exibe;
-	}
-
-	public Item getItem() {
-		return item;
-	}
 
 	public EntradaDados(){}
-	
-	public Item getListaComandos() {
-		return ref1;
-	}
 
 	public void setItem(Item ref1) {
 		this.ref1 = ref1;
 	}
 	
+	public Item getItem() {
+		return ref1;
+	}
+	
 	public String geraCodigoDestino(){
 		String codigoLeia ="";
-		if(item.getTipo() == Tipo.STRING){
+		if(ref1.getTipo() == Tipo.STRING){
 			codigoLeia += "new java/util/Scanner \r\n";
 			codigoLeia += "dup \r\n";
 			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream \r\n";
