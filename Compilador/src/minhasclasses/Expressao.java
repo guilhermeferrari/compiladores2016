@@ -360,7 +360,11 @@ public class Expressao implements Serializable{
 		String codigoExpressao="";
 		for(Item item : this.listaExpressao){
 			if(item.getTipo() == Tipo.NUMERO){
-				codigoExpressao += "ldc2_w " + item.getValor() + "\r\n";
+				if(item.getValor().contains(".")){
+					codigoExpressao += "ldc2_w " + item.getValor() + "\r\n";
+				} else {
+					codigoExpressao += "ldc2_w " + item.getValor() + ".0\r\n";
+				}
 			}
 			
 			else if(item.getTipo() == Tipo.OPERADOR){
