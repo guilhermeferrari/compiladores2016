@@ -25,7 +25,7 @@ public class EntradaDados extends Comando{
 			codigoLeia += "dup \r\n";
 			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream \r\n";
 			codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
-			codigoLeia += "invokevirtual java/util/Scanner/nextLine()S \r\n";
+			codigoLeia += "invokevirtual java/util/Scanner/nextLine()String \r\n";
 			codigoLeia += "dstore_1\r\n\r\n";
 		}
 		else 
@@ -34,7 +34,7 @@ public class EntradaDados extends Comando{
 			codigoLeia += "dup \r\n";
 			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream\r\n";
 			codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
-			codigoLeia += "invokevirtual java/util/Scanner/nextDouble()D \r\n";
+			codigoLeia += "invokevirtual java/util/Scanner/nextDouble()Double \r\n";
 			codigoLeia += "dstore_1\r\n\r\n";
 		}	
 		
