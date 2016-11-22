@@ -1,6 +1,7 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Item;
+import minhasclasses.Simbolo;
 import minhasclasses.Tabela;
 import minhasclasses.Tipo;
 import parser.*;
@@ -27,15 +28,24 @@ public class Exibe extends Comando{
 	public String geraCodigoDestino(){
 		String codigoExibicao="";
 		if(item.getTipo() == Tipo.NUMERO){
-			codigoExibicao += "ldc2_w " + item.getValor() + "\r\n";
+			if(Simbolo.getMarcador()==0) codigoExibicao+="dstore_0\r\n";
+			else if(Simbolo.getMarcador()==1) codigoExibicao+="dstore_1\r\n";
+			else if(Simbolo.getMarcador()==2) codigoExibicao+="dstore_2\r\n";
+			else if(Simbolo.getMarcador()==3) codigoExibicao+="dstore_3\r\n";
+			else codigoExibicao+="dstore "+(Simbolo.getMarcador())+"\r\n";
+			
+			codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
+			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
 		}
 		else if(item.getTipo() == Tipo.STRING){
-			codigoExibicao += "ldc " + item.getValor() + "\r\n";
-		}
-		else if(item.getTipo() == Tipo.VARIAVEL){
-			String nomeVar = item.getValor();
-			int referencia = Compilador.tabela.consultaReferencia(nomeVar); 
-            codigoExibicao += "dload " + referencia + "\r\n\r\n";
+			if(Simbolo.getMarcador()==0) codigoExibicao+="astore_0\r\n";
+			else if(Simbolo.getMarcador()==1) codigoExibicao+="astore_1\r\n";
+			else if(Simbolo.getMarcador()==2) codigoExibicao+="astore_2\r\n";
+			else if(Simbolo.getMarcador()==3) codigoExibicao+="astore_3\r\n";
+			else codigoExibicao+="astore "+(Simbolo.getMarcador())+"\r\n";
+			
+			codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
+			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
 		}
 		return codigoExibicao;
 	}
