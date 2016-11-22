@@ -434,9 +434,14 @@ public class Expressao implements Serializable{
 					codigoExpressao+="final:\r\n";
 				}
 				else if(item.getValor().equals("nao")){
-					codigoExpressao+="dneg\r\n"; //Complemento de 2 (NEG)
+					codigoExpressao+="ifeq topoZero\r\n";
+					//se for diferente de zero 
+					codigoExpressao+="dconst_0\r\n";	
+					codigoExpressao+="goto final\r\n";
+					//se for igual a zero		
+					codigoExpressao+="topoZero:\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="dsub\r\n"; //Complemento de 1 (NOT)
+					codigoExpressao+="final:\r\n";
 				}
 				else if(item.getValor().equals("==")){
 					
