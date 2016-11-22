@@ -6,9 +6,9 @@ import minhasclasses.Tabela;
 import parser.*;
 
 public class Expressao implements Serializable{
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private LinkedList <Item> listaExpressao;
@@ -18,9 +18,9 @@ public class Expressao implements Serializable{
 	private static int maxPilha;
 	private Tipo tipoDados;
 	private static Integer contLabel = 0;
-	
+
 	public void calculoPilha(){
-		
+
 		int auxMax=0;
 		for(Item item : this.listaExpressao){
 			if((item.getTipo() == Tipo.NUMERO) || (item.getTipo()==Tipo.VARIAVEL)){
@@ -37,9 +37,9 @@ public class Expressao implements Serializable{
 			Expressao.maxPilha = this.tamPilha;
 		}
 	}
-	
-	
-	
+
+
+
 	public static int getMaxPilha() {
 		return maxPilha;
 	}
@@ -56,7 +56,7 @@ public class Expressao implements Serializable{
 		codigoInfixo = "";
 		listaExpressao = new LinkedList<Item>();
 	}
-	
+
 	public LinkedList<Item> getListaExpressao() {
 		return listaExpressao;
 	}
@@ -76,19 +76,19 @@ public class Expressao implements Serializable{
 	public void setCodigoInfixo(String codigoInfixo) {
 		this.codigoInfixo = codigoInfixo;
 	}
-	
+
 	public void addCodigoInfixo(String elemento) {
 		codigoInfixo += elemento + " ";
 	}
-	
+
 	public void addExpressao(Expressao exp) {
 		LinkedList<Item> listaExpressao = exp.getListaExpressao();
 		addCodigoInfixo( exp.getCodigoInfixo() );
-		
+
 		for(int i=0; i<listaExpressao.size(); i++){
 			addItem( listaExpressao.get(i) );
 		}
-		
+
 		setLinha( exp.getLinha() );
 		setTipoDados( exp.getTipoDados() );
 	}
@@ -100,9 +100,9 @@ public class Expressao implements Serializable{
 	public void setTipoDados(Tipo tipo) {
 		this.tipoDados = tipo;
 	}
-	
+
 	public void addItem(Item item){
-		
+
 		// questao da prova simulada: otimiza o operador modulo
 		if(item.getTipo() == Tipo.OPERADOR &&
 		   item.getValor() == "@") {
@@ -115,17 +115,17 @@ public class Expressao implements Serializable{
 				}
 			}
 		}
-	
+
 		if(item.getTipo() == Tipo.OPERADOR && this.listaExpressao.size() >= 2 ) {
 			if(this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.NUMERO) ||
 			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.NUMERO) ||
 			   this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.VARIAVEL) ||
-			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.VARIAVEL)){				
-				
-				if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("1") || listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("1") 
+			   this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.VARIAVEL)){
+
+				if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("1") || listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("1")
 						|| listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0") || listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
 					String aux="";
-					
+
 					if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0") && !listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
 						System.out.println("TESTE");
 						switch(item.getValor()) {
@@ -140,17 +140,17 @@ public class Expressao implements Serializable{
 								break;
 							case "/":
 								System.out.println("Caso Divisao1");
-								aux = "0";	
+								aux = "0";
 								break;
 						}
-		
-					}	
+
+					}
 					if (listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
 						aux = String.valueOf(1).toString();
 						String valor = item.getValor();
-					
+
 						switch(valor.toString()){
-						
+
 							case "+":
 								aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 								break;
@@ -161,7 +161,7 @@ public class Expressao implements Serializable{
 								aux = String.valueOf(0).toString();
 								break;
 						}
-					}	
+					}
 					if (!listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0")  && !listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
 						if (listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("1")) {
 							switch(item.getValor()) {
@@ -169,20 +169,20 @@ public class Expressao implements Serializable{
 									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 									break;
 								case "/":
-									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();	
+									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 									break;
 								case "^":
 									aux = listaExpressao.get(this.listaExpressao.size()-2).getValor();
 							}
-						} 
+						}
 						if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("1") && item.getValor().equals("*")){
 							aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
 						}
 					}
 				if(aux.length()>0){
-					
+
 					if(this.listaExpressao.get(this.listaExpressao.size()-1).getTipo().equals(Tipo.VARIAVEL)){
-						
+
 						if(this.listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0")){
 							if(item.getValor().equals("*")){
 								this.listaExpressao.remove(this.listaExpressao.size()-1);
@@ -200,17 +200,17 @@ public class Expressao implements Serializable{
 					}
 					else if (this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.VARIAVEL)) {
 						if(this.listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")){
-							
+
 							if(item.getValor().equals("*")){
-								
+
 								this.listaExpressao.remove(this.listaExpressao.size()-2);
 							}
 							else if(item.getValor().equals("/")){
-								
+
 								this.listaExpressao.remove(this.listaExpressao.size()-2);
 							}
 							else if(item.getValor().equals("^")){
-								
+
 								this.listaExpressao.remove(this.listaExpressao.size()-2);
 								this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf("1"));
 							}
@@ -228,10 +228,10 @@ public class Expressao implements Serializable{
 							if(item.getValor().equals("+")){
 								this.listaExpressao.remove(this.listaExpressao.size()-1);
 							}
-							
+
 						}
-						else{ 
-							
+						else{
+
 							if(item.getValor().equals("+")){
 								this.listaExpressao.remove(this.listaExpressao.size()-1);
 							}
@@ -244,24 +244,24 @@ public class Expressao implements Serializable{
 							if(item.getValor().equals("/")){
 								this.listaExpressao.remove(this.listaExpressao.size()-1);
 							}
-							
+
 						}
-						
+
 						System.out.println(this.listaExpressao.get(this.listaExpressao.size()-1));
-						this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf(aux));	
+						this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf(aux));
 						//System.out.println(this.listaExpressao.get(this.listaExpressao.size()-2));
-						
+
 					}
 					return;
 				}
-				
-					
-				}	
-				
+
+
+				}
+
 			}
-			
+
 		}
-		
+
 		/*
 		 * A título de otimizar as constantes, o código que adiciona itena à lista de Itens antes verifica
 		 * se o Item a ser então adicionado se trata de um operador.
@@ -296,16 +296,16 @@ public class Expressao implements Serializable{
 						valor = (float) Math.pow((double)Float.valueOf(listaExpressao.get(this.listaExpressao.size()-2).getValor()),
 									(double)Float.valueOf(listaExpressao.get(this.listaExpressao.size()-1).getValor()));
 						break;
-						
+
 				}
 				this.listaExpressao.get(this.listaExpressao.size()-2).setValor(String.valueOf(valor));
 				this.listaExpressao.remove(this.listaExpressao.size()-1);
 				return;
 			}
 		}
-		
+
 		/*
-		 * Analogamente, caso os dois últimos itens da lista sejam strings e o item recém-lido seja o 
+		 * Analogamente, caso os dois últimos itens da lista sejam strings e o item recém-lido seja o
 		 * de concatenação (+), efetuaremos a concatenação das duas strings para otimização.
 		 */
 		if(item.getTipo() == Tipo.OPERADOR && item.getValor() == "+" &&
@@ -319,10 +319,10 @@ public class Expressao implements Serializable{
 					 */
 					String inicio = this.listaExpressao.get(this.listaExpressao.size()-2).getValor().substring
 							(0, this.listaExpressao.get(this.listaExpressao.size()-2).getValor().length()-1);
-					String fim = this.listaExpressao.getLast().getValor().substring(1);	
+					String fim = this.listaExpressao.getLast().getValor().substring(1);
 					this.listaExpressao.get(this.listaExpressao.size()-2).setValor(inicio + fim);
 					this.listaExpressao.removeLast();
-				
+
 					return;
 		}
 		listaExpressao.add(item);
@@ -333,15 +333,15 @@ public class Expressao implements Serializable{
 	@Override
 	public String toString(){
 		String message = "";
-		
+
 		for (int i=0; i<listaExpressao.size(); i++){
 			message += listaExpressao.get(i).getValor() + " ";
 		}
-		
+
 		return message;
 	}
-	
-	// usado em verificacao semantica tipo warning: expressoes 
+
+	// usado em verificacao semantica tipo warning: expressoes
 	// condicionais em laco formadas somente por constante
 	public boolean isSomenteConstanteNumerica() {
 		boolean soConstanteNumerica = true;
@@ -353,10 +353,10 @@ public class Expressao implements Serializable{
 		}
 		return soConstanteNumerica;
 	}
-	
+
 	public String geraCodigoExpressao() {
-		
-			
+
+
 		String codigoExpressao="";
 		for(Item item : this.listaExpressao){
 			if(item.getTipo() == Tipo.NUMERO){
@@ -366,13 +366,13 @@ public class Expressao implements Serializable{
 					codigoExpressao += "ldc2_w " + item.getValor() + ".0\r\n";
 				}
 			}
-			
+
 			else if(item.getTipo() == Tipo.OPERADOR){
 				if((item.getValor().equals("+"))){
 					if((this.getTipoDados() == Tipo.NUMERO)){
 						codigoExpressao+="dadd\r\n";
 					} else if(this.getTipoDados() == Tipo.STRING){
-						
+
 						codigoExpressao += "astore_"+(Simbolo.getMarcador()+1) +" \r\n";
 						codigoExpressao += "astore_"+(Simbolo.getMarcador()) +" \r\n";
 						codigoExpressao += "new java/lang/StringBuilder \r\n";
@@ -383,7 +383,7 @@ public class Expressao implements Serializable{
 						codigoExpressao += "aload_"+(Simbolo.getMarcador()+1) +" \r\n";
 						codigoExpressao += "invokevirtual java/lang/StringBuilder/append(Ljava/lang/String;)Ljava/lang/StringBuilder \r\n";
 						codigoExpressao += "invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String \r\n";
-						
+
 					}
 				}
 				else if(item.getValor().equals("-")){
@@ -396,7 +396,33 @@ public class Expressao implements Serializable{
 					codigoExpressao+="ddiv\r\n";
 				}
 				else if(item.getValor().equals("e")){
-					codigoExpressao+="iand\r\n";
+					codigoExpressao += "dconst_1\r\n";
+					codigoExpressao += "dcmpg\r\n";
+					// Verifico se o topo é igual à 1
+					codigoExpressao += "ifeq topoUm\r\n";
+
+					// Se o topo da pilha for zero, logo o resultado será sempre 0, já que
+					// 0 * (0 | 1) é sempre zero. Retiramos então o topo da pilha, empilhamos 0
+					// e partimos para a label final.
+					codigoExpressao += "pop2\r\n";
+					codigoExpressao += "dconst_0\r\n";
+					codigoExpressao += "goto final\r\n";
+
+					// Caso o topo seja igual à 1, entra aqui. Empilho 1 e comparo o topo com o
+					// próximo, a fim de verificar se são iguais ou não.
+					codigoExpressao += "topoUm:\r\n";
+					codigoExpressao += "dconst_1\r\n";
+					codigoExpressao += "dcmpg\r\n";
+					// Caso seja igual à um, a resposta será um e desvia para a label 1. Senão, a operação
+					// de and irá dar zero, portanto empilharemos 0.
+					codigoExpressao += "ifeq um\r\n";
+					codigoExpressao += "dconst_0\r\n";
+					codigoExpressao += "goto final\r\n";
+					// Agora, tendo desempilhado 1, segue para a label 'um' e o empilhamos 1, já que 1x1 == 1.
+					codigoExpressao += "um:\r\n";
+					codigoExpressao += "dconst_1\r\n";
+					codigoExpressao += "final:\r\n";
+					
 				}
 				else if(item.getValor().equals("ou")){
 					//É necessário empilhar zero para utilizar o dcmpg e testar se o topo é zero
@@ -404,7 +430,7 @@ public class Expressao implements Serializable{
 					codigoExpressao+="dcmpg\r\n";
 					//verifica se o topo é igual a 0
 					codigoExpressao+="ifeq topoZero\r\n";
-					
+
 					//Entra aqui se o topo for 1. 1 ou qualquer coisa = 1
 					//retira o topo da pilha
 					codigoExpressao+="pop2\r\n";
@@ -412,14 +438,14 @@ public class Expressao implements Serializable{
 					codigoExpressao+="dconst_1\r\n";
 					//vai para o label final
 					codigoExpressao+="goto final\r\n";
-					
+
 					//Entra aqui se o topo for 0. O resultado de ifeq tem que empilhar 0
 					codigoExpressao+="topoZero:\r\n";
 					//empilha zero para poder utilizar o dcmpg
 					codigoExpressao+="dconst_0\r\n";
 					//compara o topo e o proximo
 					codigoExpressao+="dcmpg\r\n";
-					//ser for zero vai pro label zero 
+					//ser for zero vai pro label zero
 					codigoExpressao+="ifeq zero\r\n";
 					//entra aqui se o resultado nao for zero. empilha 1 pois 0 ou 1 = 1
 					codigoExpressao+="dconst_1\r\n";
@@ -429,22 +455,22 @@ public class Expressao implements Serializable{
 					codigoExpressao+="zero:\r\n";
 					//empilha 0 pois 0 ou 0 = 0
 					codigoExpressao+="dconst_0\r\n";
-					
+
 					//label final
 					codigoExpressao+="final:\r\n";
 				}
 				else if(item.getValor().equals("nao")){
 					codigoExpressao+="ifeq topoZero\r\n";
-					//se for diferente de zero 
-					codigoExpressao+="dconst_0\r\n";	
+					//se for diferente de zero
+					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="goto final\r\n";
-					//se for igual a zero		
+					//se for igual a zero
 					codigoExpressao+="topoZero:\r\n";
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="final:\r\n";
 				}
 				else if(item.getValor().equals("==")){
-					
+
 					codigoExpressao+="dcmpg\r\n";
 					//Caso os numeros sejam iguais faz um desvio para o LABEL
 					//e armazena 1 na pilha.
@@ -452,10 +478,10 @@ public class Expressao implements Serializable{
 					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
 					codigoExpressao+= ("LABEL_0"+contLabel + ":\r\n");
-					codigoExpressao+="dconst_1\r\n";				
+					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
 					contLabel+=2;
-					
+
 
 				}
 				else if(item.getValor().equals("!=")){
@@ -465,10 +491,10 @@ public class Expressao implements Serializable{
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
 					codigoExpressao+= ("LABEL_0"+contLabel + ":\r\n");
-					codigoExpressao+="dconst_0\r\n";	
+					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
 					contLabel+=2;
-				
+
 				}
 				else if(item.getValor().equals(">")){
 					codigoExpressao+="dcmpg\r\n"; //True: Push 1; False: Push 0 or -1;
@@ -520,7 +546,7 @@ public class Expressao implements Serializable{
 			}
 			else if(item.getTipo() == Tipo.VARIAVEL){
 				String nomeDaVariavel = item.getValor();
-				int referenciaDaVariavel = Compilador.tabela.consultaReferencia(nomeDaVariavel); 
+				int referenciaDaVariavel = Compilador.tabela.consultaReferencia(nomeDaVariavel);
                 if( referenciaDaVariavel < 4 ){
                 	codigoExpressao += "dload_" + referenciaDaVariavel + "\r\n";
                 }
@@ -531,8 +557,5 @@ public class Expressao implements Serializable{
 		}
 		return codigoExpressao;
 	}
-	
+
 }
-
-
-
