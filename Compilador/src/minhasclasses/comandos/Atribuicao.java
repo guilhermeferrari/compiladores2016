@@ -1,7 +1,6 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
-import minhasclasses.Tabela;
 import parser.*;
 
 public class Atribuicao extends Comando{
@@ -30,9 +29,28 @@ public class Atribuicao extends Comando{
 	
 	public String geraCodigoDestino(){
 		String codigoDestino="";
+		
 		Integer referencia = Compilador.tabela.consultaReferencia(nomeVariavel);
 		codigoDestino+=this.expressao.geraCodigoExpressao();
-		codigoDestino+="dstore_"+ referencia.toString()+"\r\n\r\n";	
+		if(Compilador.tabela.getTipoSimbolo(nomeVariavel)=='s'){
+			if(referencia <= 3){
+				codigoDestino+="astore_"+ referencia.toString()+"\r\n";
+			}
+			else{
+				
+				codigoDestino+="astore "+ referencia.toString()+"\r\n";
+			}
+		
+		}
+		else{
+			if(referencia <= 3){
+				codigoDestino+="dstore_"+ referencia.toString()+"\r\n";
+			}
+			else{
+				
+				codigoDestino+="dstore "+ referencia.toString()+"\r\n";
+			}
+		}
 		return codigoDestino;
 	}
 	
