@@ -460,12 +460,14 @@ public class Expressao implements Serializable{
 					codigoExpressao+="final:\r\n";
 				}
 				else if(item.getValor().equals("nao")){
-					codigoExpressao+="ifeq topoZero\r\n";
-					//se for diferente de zero
+					codigoExpressao+="dconst_0\r\n";
+					codigoExpressao+="dcmpg\r\n";
+					codigoExpressao+="ifeq notDeZero\r\n";
+					//se for diferente de zero a reposta é zero
 					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="goto final\r\n";
-					//se for igual a zero
-					codigoExpressao+="topoZero:\r\n";
+					//se for igual a zero a resposta é 1
+					codigoExpressao+="notDeZero:\r\n";
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="final:\r\n";
 				}
