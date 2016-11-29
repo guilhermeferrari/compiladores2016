@@ -18,7 +18,7 @@ public class Compilador
     public static Tabela tabela = new Tabela();
     public static ListaComandos listaComandosPrincipal;
 
-  	static String nomeArquivoFonte = "exemplo12";
+  	static String nomeArquivoFonte = "teste01";
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
     public static void main (String args []) throws ParseException
@@ -41,7 +41,33 @@ public class Compilador
                 output.close();
 
                 //geracao codigo destino
-                GeradorCodigoDestino.geraCodigoAssembler();
+                GeradorCodigoDestino.geraCodigoAssembler(nomeArquivoFonte);
+
+				// execução do código destino
+				System.out.println("Arquivo do código destino "+nomeArquivoFonte+".j criado com sucesso!");
+	        	System.out.println("Para criar o arquivo executável em java (.class) use o montador Jasmin:");
+	     		System.out.println("   Copie o arquivo jasmin.jar para o mesmo diretório de "+nomeArquivoFonte+".j e execute o montador:");
+	     		System.out.println("   prompt> java -jar jasmin.jar "+nomeArquivoFonte+".j");
+	     		
+				// Executando automaticamente o jasmin
+	     		System.out.println("\nExecutando o montador Jasmin automaticamente");
+         		Process p = Runtime.getRuntime().exec("java -jar jasmin.jar  "+nomeArquivoFonte+".j");
+				// le as mensagens geradas pelo jasmin
+         		BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+         		BufferedReader err=new BufferedReader(new InputStreamReader(p.getErrorStream()));
+         		String line="";
+         		int countErros = 0;
+         		while ((line = input.readLine()) != null || (line = err.readLine()) !=null ) {
+           			System.out.println(line);
+           			countErros++;
+         		}
+         		err.close();
+         		input.close();
+				if(countErros > 0) 					System.out.println("Codigo não montado - com erros.");
+				else { 					System.out.println("Codigo montado com sucesso!");
+					System.out.println("Execute o código montado "+nomeArquivoFonte+".class com o comando:");
+	     			System.out.println("   prompt> java "+nomeArquivoFonte);
+ 				} 
                 break;
             }
             catch(FileNotFoundException e)

@@ -11,10 +11,10 @@ import parser.*;
 
 public class GeradorCodigoDestino {
 	
-	public static void geraCodigoAssembler(){
+	public static void geraCodigoAssembler(String nomeArquivoFonte){
 		BufferedWriter arqSaida;
 		try{
-			arqSaida = new BufferedWriter(new FileWriter("codigo_assembler.j"));
+			arqSaida = new BufferedWriter(new FileWriter(nomeArquivoFonte + ".j"));
 			arqSaida.write(".source prog_destino.java\r\n");
             arqSaida.write(".class public prog_destino\r\n");
             arqSaida.write(".super java/lang/Object\r\n");
