@@ -395,6 +395,80 @@ public class Expressao implements Serializable{
 				else if(item.getValor().equals("/")){
 					codigoExpressao+="ddiv\r\n";
 				}
+				else if(item.getValor().equals("^")){
+					codigoExpressao+="dstore_1\r\n";//Desempilha a base e o coloca em mem[1]
+					codigoExpressao+="dup\r\n"; //Duplica o topo (expoente)
+					codigoExpressao+="dconst_0\r\n"; //Empilha 0.0
+					codigoExpressao+="dcmpg\r\n"; //Desempilha e compara expoente e zero
+					codigoExpressao+="ifne DiferenteZero\r\n";
+/*exp = 0*/       	//Se o exponte é zero:
+					codigoExpressao+="pop2\r\n"; //Desempilha expoente
+					codigoExpressao+="dconst_1\r\n";
+					codigoExpressao+="goto Fim\r\n";
+
+/*exp != 0*/       	Se o expoente é diferente de zero
+					codigoExpressao+="DiferenteZero:\r\n";
+
+					//Otimização (Base = 0):
+					codigoExpressao+="dload_1\r\n";//Empilha a base
+					codigoExpressao+="dup\r\n"; //Duplica o topo (base)
+					codigoExpressao+="dconst_0\r\n"; //Empilha 0.0
+					codigoExpressao+="dcmpg\r\n"; //Desempilha e compara base e zero
+					codigoExpressao+="ifne goto BaseDiferenteZero\r\n";
+/*base = 0*/       	codigoExpressao+="pop2\r\n"; //Desempilha base
+					codigoExpressao+="pop2\r\n"; //Desempilha expoente
+					codigoExpressao+="dconst_0\r\n"; //Empilha 0.0
+					codigoExpressao+="goto Fim\r\n";
+
+/*base != 0*/       codigoExpressao+="BaseDiferenteZero:\r\n";
+					codigoExpressao+="pop2\r\n"; //Desempilha base (ela já está em mem[1])
+					codigoExpressao+="dup\r\n"; //Duplica o topo (expoente)
+					codigoExpressao+="dconst_0\r\n"; //Empilha 0.0
+					codigoExpressao+="dcmpg\r\n"; //Desempilha e compara expoente e zero
+					codigoExpressao+="ifgt ExpPositivo\r\n";
+
+/*exp < 0*/       	//Expoente Negativo:
+					codigoExpressao+="dstore_2\r\n";//Desempilha o expoente e o coloca em mem[2]
+					codigoExpressao+="dload_1\r\n";//Empilha a base
+					codigoExpressao+="LoopExpNegativo:\r\n";
+					codigoExpressao+="dload_1\r\n";//Empilha a base
+					codigoExpressao+="dmul\r\n"; //Base * Base
+					codigoExpressao+="dload_2\r\n";//Empilha o expoente
+					codigoExpressao+="dconst_1\r\n"; //Empilha 1.0
+					codigoExpressao+="dadd\r\n"; //Expoente + 1
+					codigoExpressao+="dstore_2\r\n";//Desempilha o expoente e o coloca em mem[2]
+					codigoExpressao+="dload_2\r\n";//Empilha o expoente
+					codigoExpressao+="dconst_1\r\n"; //Empilha 1.0
+					codigoExpressao+="dcmpg\r\n"; //Desempilha e compara expoente e 1
+					codigoExpressao+="ifeq goto Fim2\r\n";
+					codigoExpressao+="goto LoopExpNegativo\r\n";
+
+/*exp > 0*/       	//Expoente Positivo:
+					codigoExpressao+="ExpPositivo:\r\n";
+					codigoExpressao+="dstore_2\r\n";//Desempilha o expoente e o coloca em mem[2]
+					codigoExpressao+="dload_1\r\n";//Empilha a base
+					codigoExpressao+="LoopExpPositivo:\r\n";
+					codigoExpressao+="dload_1\r\n";//Empilha a base
+					codigoExpressao+="dmul\r\n"; //Base * Base
+					codigoExpressao+="dload_2\r\n";//Empilha o expoente
+					codigoExpressao+="dconst_1\r\n"; //Empilha 1.0
+					codigoExpressao+="dsub\r\n"; //Expoente - 1
+					codigoExpressao+="dstore_2\r\n";//Desempilha o expoente e o coloca em mem[2]
+					codigoExpressao+="dload_2\r\n";//Empilha o expoente
+					codigoExpressao+="dconst_1\r\n"; //Empilha 1.0
+					codigoExpressao+="dcmpg\r\n"; //Desempilha e compara expoente e 1
+					codigoExpressao+="ifeq goto Fim\r\n";
+					codigoExpressao+="goto LoopExpPositivo\r\n";
+
+					//Se o Expoente é Negativo devemos inverter o valor:
+					codigoExpressao+="Fim2:\r\n";
+					codigoExpressao+="dstore_1\r\n";//Desempilha o resultado invertido e o coloca em mem[1]
+					codigoExpressao+="dconst_1\r\n"; //Empilha 1.0
+					codigoExpressao+="dload_1\r\n";//Empilha o resultado invertido
+					codigoExpressao+="ddiv\r\n"; // resultado certo = 1/resultado invertido
+
+					codigoExpressao+="Fim:\r\n";
+				}
 				else if(item.getValor().equals("e")){
 					codigoExpressao += "dconst_1\r\n";
 					codigoExpressao += "dcmpg\r\n";
