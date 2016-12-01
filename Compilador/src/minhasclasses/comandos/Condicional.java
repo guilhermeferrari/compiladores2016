@@ -45,7 +45,7 @@ public class Condicional extends Comando {
 		comandoIf += "dcmpg \r\n";
 		comandoIf += "ifeq CONDICIONAL_"+ labelElse + "\r\n";//Se der false, vá para else, se não, execute o código do if.
 		//Código do if
-    	for(Comando com : verdadeiro.getComandos()){
+ /*   	for(Comando com : verdadeiro.getComandos()){
     		comandoIf += com.geraCodigoDestino();
     	}
     	comandoIf += "goto CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+"\r\n";//Terminou o if, vá para depois do código do else;
@@ -53,7 +53,7 @@ public class Condicional extends Comando {
     	for(Comando com : falso.getComandos()){
     		comandoIf += com.geraCodigoDestino();
     	}
-    	comandoIf += "CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+":\r\n\r\n";
+*/    	comandoIf += "CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+":\r\n\r\n";
     	Compilador.tabela.incLabelCondicionalEnd();
 		return comandoIf;
 	}

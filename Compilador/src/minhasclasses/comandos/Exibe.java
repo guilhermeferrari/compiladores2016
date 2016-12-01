@@ -32,6 +32,9 @@ public class Exibe extends Comando implements Serializable{
 		String codigoExibicao="";
 		int referencia = Compilador.tabela.consultaReferencia(item.getValor());
 		Tipo tipo = Compilador.tabela.getTipoSimbolo(item.getValor());		
+
+		codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
+		
 		if(tipo == Tipo.NUMERO){
 			if(referencia==0) codigoExibicao+="dload_0\r\n";
 			else if(referencia==1) codigoExibicao+="dload_1\r\n";
@@ -39,7 +42,6 @@ public class Exibe extends Comando implements Serializable{
 			else if(referencia==3) codigoExibicao+="dload_3\r\n";
 			else codigoExibicao+="dload "+referencia+"\r\n";
 			
-			codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
 			codigoExibicao+="invokevirtual java/io/PrintStream/println(D)V\r\n";
 		}
 		else if(tipo == Tipo.STRING){
@@ -49,7 +51,6 @@ public class Exibe extends Comando implements Serializable{
 			else if(referencia==3) codigoExibicao+="aload_3\r\n";
 			else codigoExibicao+="aload "+(Simbolo.getMarcador())+"\r\n";
 			
-			codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
 			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
 		}
 		else

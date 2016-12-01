@@ -497,7 +497,7 @@ public class Expressao implements Serializable{
 					codigoExpressao += "dconst_1\r\n";
 					codigoExpressao += "final_"+contAnd+":\r\n";
 					contAnd++;
-					System.out.println(codigoExpressao);
+					//System.out.println(codigoExpressao);
 				}
 				else if(item.getValor().equals("ou")){
 					//É necessário empilhar zero para utilizar o dcmpg e testar se o topo é zero

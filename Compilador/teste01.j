@@ -19,8 +19,8 @@ dload_1
 ldc2_w 3.0
 dadd
 dstore_3
-dload_3
 getstatic java/lang/System/out Ljava/io/PrintStream;
+dload_3
 invokevirtual java/io/PrintStream/println(D)V
 return
 .end method

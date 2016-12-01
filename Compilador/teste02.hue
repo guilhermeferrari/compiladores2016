@@ -1,0 +1,13 @@
+numero _a, _b;
+_a = 1+1;
+_b = _a + 3;
+
+se(2)
+   exibe _b;
+fimSe
+
+/*
+se(_a == 2 e _b == 5)
+   exibe _b;
+fimSe
+*/
