@@ -1,12 +1,15 @@
 package minhasclasses.comandos;
 
+import java.io.Serializable;
+
 import minhasclasses.Item;
 import minhasclasses.Simbolo;
-import minhasclasses.Tabela;
 import minhasclasses.Tipo;
-import parser.*;
+import parser.Compilador;
 
-public class Exibe extends Comando{
+public class Exibe extends Comando implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	private Item item;
 	
 	public Exibe(Item item){

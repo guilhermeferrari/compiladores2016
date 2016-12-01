@@ -2,8 +2,8 @@ package minhasclasses;
 
 import java.io.Serializable;
 import java.util.LinkedList;
-import minhasclasses.Tabela;
-import parser.*;
+
+import parser.Compilador;
 
 public class Expressao implements Serializable{
 
@@ -18,6 +18,8 @@ public class Expressao implements Serializable{
 	private static int maxPilha;
 	private Tipo tipoDados;
 	private static Integer contLabel = 0;
+	private static Integer contAnd = 1;
+	private static Integer contOr = 1;
 
 	public void calculoPilha(){
 
@@ -471,37 +473,38 @@ public class Expressao implements Serializable{
 					codigoExpressao += "dconst_1\r\n";
 					codigoExpressao += "dcmpg\r\n";
 					// Verifico se o topo é igual à 1
-					codigoExpressao += "ifeq topoUm\r\n";
+					codigoExpressao += "ifeq topoUm_"+contAnd+"\r\n";
 
 					// Se o topo da pilha for zero, logo o resultado será sempre 0, já que
 					// 0 * (0 | 1) é sempre zero. Retiramos então o topo da pilha, empilhamos 0
 					// e partimos para a label final.
 					codigoExpressao += "pop2\r\n";
 					codigoExpressao += "dconst_0\r\n";
-					codigoExpressao += "goto final\r\n";
+					codigoExpressao += "goto final_"+contAnd+"\r\n";
 
 					// Caso o topo seja igual à 1, entra aqui. Empilho 1 e comparo o topo com o
 					// próximo, a fim de verificar se são iguais ou não.
-					codigoExpressao += "topoUm:\r\n";
+					codigoExpressao += "topoUm_"+contAnd+":\r\n";
 					codigoExpressao += "dconst_1\r\n";
 					codigoExpressao += "dcmpg\r\n";
 					// Caso seja igual à um, a resposta será um e desvia para a label 1. Senão, a operação
 					// de and irá dar zero, portanto empilharemos 0.
-					codigoExpressao += "ifeq um\r\n";
+					codigoExpressao += "ifeq um_"+contAnd+"\r\n";
 					codigoExpressao += "dconst_0\r\n";
-					codigoExpressao += "goto final\r\n";
+					codigoExpressao += "goto final_"+contAnd+"\r\n";
 					// Agora, tendo desempilhado 1, segue para a label 'um' e o empilhamos 1, já que 1x1 == 1.
-					codigoExpressao += "um:\r\n";
+					codigoExpressao += "um_"+contAnd+":\r\n";
 					codigoExpressao += "dconst_1\r\n";
-					codigoExpressao += "final:\r\n";
-					
+					codigoExpressao += "final_"+contAnd+":\r\n";
+					contAnd++;
+					System.out.println(codigoExpressao);
 				}
 				else if(item.getValor().equals("ou")){
 					//É necessário empilhar zero para utilizar o dcmpg e testar se o topo é zero
 					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="dcmpg\r\n";
 					//verifica se o topo é igual a 0
-					codigoExpressao+="ifeq topoZero\r\n";
+					codigoExpressao+="ifeq topoZero_"+contOr+"\r\n";
 
 					//Entra aqui se o topo for 1. 1 ou qualquer coisa = 1
 					//retira o topo da pilha
@@ -509,27 +512,29 @@ public class Expressao implements Serializable{
 					//empilha 1
 					codigoExpressao+="dconst_1\r\n";
 					//vai para o label final
-					codigoExpressao+="goto final\r\n";
+					codigoExpressao+="goto final_"+contOr+"\r\n";
 
 					//Entra aqui se o topo for 0. O resultado de ifeq tem que empilhar 0
-					codigoExpressao+="topoZero:\r\n";
+					codigoExpressao+="topoZero_"+contOr+":\r\n";
 					//empilha zero para poder utilizar o dcmpg
 					codigoExpressao+="dconst_0\r\n";
 					//compara o topo e o proximo
 					codigoExpressao+="dcmpg\r\n";
 					//ser for zero vai pro label zero
-					codigoExpressao+="ifeq zero\r\n";
+					codigoExpressao+="ifeq zero_"+contOr+"\r\n";
 					//entra aqui se o resultado nao for zero. empilha 1 pois 0 ou 1 = 1
 					codigoExpressao+="dconst_1\r\n";
 					//vai pro final
-					codigoExpressao+="goto final\r\n";
+					codigoExpressao+="goto final_"+contOr+"\r\n";
 					//label zero
-					codigoExpressao+="zero:\r\n";
+					codigoExpressao+="zero_"+contOr+":\r\n";
 					//empilha 0 pois 0 ou 0 = 0
 					codigoExpressao+="dconst_0\r\n";
 
 					//label final
-					codigoExpressao+="final:\r\n";
+					codigoExpressao+="final_"+contOr+":\r\n";
+					contOr++;
+					System.out.println("and:"+codigoExpressao);
 				}
 				else if(item.getValor().equals("nao")){
 					codigoExpressao+="dconst_0\r\n";
