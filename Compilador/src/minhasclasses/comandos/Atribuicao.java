@@ -1,6 +1,7 @@
 package minhasclasses.comandos;
 
 import minhasclasses.Expressao;
+import minhasclasses.Tipo;
 import parser.*;
 
 public class Atribuicao extends Comando{
@@ -32,7 +33,7 @@ public class Atribuicao extends Comando{
 		
 		Integer referencia = Compilador.tabela.consultaReferencia(nomeVariavel);
 		codigoDestino+=this.expressao.geraCodigoExpressao();
-		if(Compilador.tabela.getTipoSimbolo(nomeVariavel)=='s'){
+		if(Compilador.tabela.getTipoSimbolo(nomeVariavel)==Tipo.STRING){
 			if(referencia <= 3){
 				codigoDestino+="astore_"+ referencia.toString()+"\r\n";
 			}

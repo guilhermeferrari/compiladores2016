@@ -36,7 +36,7 @@ public class Tabela implements Serializable{
 		return ((Simbolo)this.tab.get(_chave)).getReferencia();
 	}
 	
-	public char getTipoSimbolo(String _chave){
+	public Tipo getTipoSimbolo(String _chave){
 		return ((Simbolo)this.tab.get(_chave)).getTipo();
 	}
 	

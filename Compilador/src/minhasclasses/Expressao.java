@@ -406,7 +406,7 @@ public class Expressao implements Serializable{
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="goto Fim\r\n";
 
-/*exp != 0*/       	Se o expoente é diferente de zero
+/*exp != 0*/       	// Se o expoente é diferente de zero
 					codigoExpressao+="DiferenteZero:\r\n";
 
 					//Otimização (Base = 0):

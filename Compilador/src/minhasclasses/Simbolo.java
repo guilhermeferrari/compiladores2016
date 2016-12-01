@@ -8,16 +8,20 @@ public class Simbolo implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String nome;      // nome do identificador
-    private int referencia;   // é uma referência usada na geração do código destino
-    private static int marcador = 1; // armazena a última referência incluída na tabela
-    private char tipo;
+    private int referencia;   // referencia usada na geracao do codigo destino
+    private static int marcador = 1; // armazena a ultima referencia incluida na tabela
+    private Tipo tipo;
     private boolean inicializada; //Identifica se uma variavel foi inicializada
     private boolean utilizada; //Identifica se uma variavel foi utilizada
 
-    public Simbolo(String _nome) {
+    public Simbolo(String _nome, Tipo _tipo) {
           this.nome = _nome;
           this.referencia = Simbolo.marcador;
-          Simbolo.marcador += 2;
+          this.tipo = _tipo;
+          if(_tipo == Tipo.NUMERO)
+        	  Simbolo.marcador += 2;
+          else 
+        	  Simbolo.marcador += 1; // se for STRING
           this.inicializada = false;
           this.utilizada = false;
     }
@@ -31,7 +35,7 @@ public class Simbolo implements Serializable{
     }
 
     public String toString() {
-          return "Nome:"+this.getNome() + " / " + "Referência:"+this.getReferencia() + "\n";
+          return "Nome:"+this.getNome() + " / " + "Referencia:"+this.getReferencia() + "\n";
     }
 
 	public static int getMarcador() {
@@ -50,12 +54,12 @@ public class Simbolo implements Serializable{
 		this.referencia = referencia;
 	}
 
-	public char getTipo() {
-		return tipo;
+	public Tipo getTipo() {
+		return this.tipo;
 	}
 
-	public void setTipo(char tipo) {
-		this.tipo = tipo;
+	public void setTipo(Tipo _tipo) {
+		this.tipo = _tipo;
 	}
 	
 	public boolean getInicializada(){

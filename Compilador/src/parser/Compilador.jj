@@ -29,27 +29,41 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
+				// define o arquivo do c�digo fonte
                 compilador = new Compilador(new FileInputStream(nomeArquivoFonte +".hue"));
+				// executa o compilador
                 Compilador.listaComandosPrincipal = compilador.inicio();
-                System.out.println(Compilador.listaComandosPrincipal.toString());
+
+                // verifica existencia de warnings
                 compilador.warning();
+
                 System.out.println("\nEnd of compilation.\n");
+
+				// exibe tabela de simbolos 
+                System.out.println("\nTABELA DE SIMBOLOS:");
+                System.out.println(Compilador.tabela);
+
+				// exibe o codigo intermedi�rio 
+                System.out.println("\nCODIGO INTERMEDIARIO:");
+                System.out.println(Compilador.listaComandosPrincipal.toString());
+                
+                // grava a tabela e o codigo intermediario em arquivo
                 ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(nomeArquivoFonte+".int"));
                 output.writeObject(Compilador.tabela);
                 output.writeObject(Compilador.listaComandosPrincipal);
                 output.flush();
                 output.close();
 
-                //geracao codigo destino
+                //gera codigo destino
                 GeradorCodigoDestino.geraCodigoAssembler(nomeArquivoFonte);
+				System.out.println("\nArquivo do c�digo destino "+nomeArquivoFonte+".j criado com sucesso!");
 
-				// execu��o do c�digo destino
-				System.out.println("Arquivo do c�digo destino "+nomeArquivoFonte+".j criado com sucesso!");
-	        	System.out.println("Para criar o arquivo execut�vel em java (.class) use o montador Jasmin:");
+				// instrucoes para execucao 
+	        	System.out.println("\nPara criar o arquivo execut�vel em java (.class) use o montador Jasmin:");
 	     		System.out.println("   Copie o arquivo jasmin.jar para o mesmo diret�rio de "+nomeArquivoFonte+".j e execute o montador:");
 	     		System.out.println("   prompt> java -jar jasmin.jar "+nomeArquivoFonte+".j");
 	     		
-				// Executando automaticamente o jasmin
+				// executa automaticamente o montador jasmin
 	     		System.out.println("\nExecutando o montador Jasmin automaticamente");
          		Process p = Runtime.getRuntime().exec("java -jar jasmin.jar  "+nomeArquivoFonte+".j");
 				// le as mensagens geradas pelo jasmin
@@ -65,6 +79,7 @@ public class Compilador
          		input.close();
 				if(countErros > 0) 					System.out.println("Codigo n�o montado - com erros.");
 				else { 					System.out.println("Codigo montado com sucesso!");
+					// instrucoes para execucao do codigo destino montado
 					System.out.println("Execute o c�digo montado "+nomeArquivoFonte+".class com o comando:");
 	     			System.out.println("   prompt> java "+nomeArquivoFonte);
  				} 
@@ -320,7 +335,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
                     if (!Compilador.tabela.isInicializada(ii.getValor()))
                         System.out.println("Erro semântico \nVariável não"+
                                            "inicializada: " + ii.getValor());
-                    if(Compilador.tabela.getTipoSimbolo(ii.getValor())=='n') {
+                    if(Compilador.tabela.getTipoSimbolo(ii.getValor())==Tipo.NUMERO) {
                         valor = Tipo.NUMERO;
                         listaExpTipo.add(Tipo.NUMERO);     
                     } else {
@@ -335,7 +350,7 @@ Token t=null; expressao.setLinha(getToken(1).beginLine);}
                     if (!Compilador.tabela.isInicializada(ii.getValor()))
                         System.out.println("Erro semântico \nVariável não"+
                                            " inicializada: " + ii.getValor());
-                    if(Compilador.tabela.getTipoSimbolo(ii.getValor())=='n') {
+                    if(Compilador.tabela.getTipoSimbolo(ii.getValor())==Tipo.NUMERO) {
                         if(valor!=Tipo.NUMERO) {
                             System.out.println("Erro semântico, expressões"+
                                                " não compativeis: "+
@@ -618,9 +633,7 @@ Item item = null;}
     {
         expressao.addCodigoInfixo(t.image);
         expressao.addItem(new Item(Tipo.STRING, t.image));
-        
-        if (expressao.getTipoDados()==null)
-            expressao.setTipoDados(Tipo.STRING);
+        expressao.setTipoDados(Tipo.STRING);
     }
   | t = <NOMEVAR>
     {
@@ -628,15 +641,12 @@ Item item = null;}
         expressao.addItem(new Item(Tipo.VARIAVEL, t.image));
             
         if(!Compilador.tabela.isExiste(t.image)) {
-            erroSemantico("Erro semântico \n A variável "+t.image+
-                          " não foi inicializada");
+            erroSemantico("Erro sema�ntico \n A variavel "+t.image+
+                          " nao foi inicializada");
         } else {
             if (expressao.getTipoDados()==null) {
-                char tipo = Compilador.tabela.getTipoSimbolo(t.image);
-                
-                expressao.setTipoDados(tipo=='n'?
-                                       Tipo.NUMERO :
-                                       Tipo.STRING );
+                Tipo tipo = Compilador.tabela.getTipoSimbolo(t.image);
+                expressao.setTipoDados(tipo);
             }
             Compilador.tabela.setUtilizada(t.image);
         }
@@ -660,19 +670,17 @@ Item item = null;}
     }
 }
 
-void declaraVar() : {Simbolo simb; Token t=null; char tp;}
+void declaraVar() : {Simbolo simb; Token t=null; Tipo tp;}
 {
-    ( <TIPONUM> {tp='n';} | <TIPOSTRING> {tp='s';} )
+    ( <TIPONUM> {tp=Tipo.NUMERO;} | <TIPOSTRING> {tp=Tipo.STRING;} )
     t = <NOMEVAR>
     {
         if(!Compilador.tabela.isExiste(t.image)) {
-            simb = new Simbolo(t.image); 
-            simb.setTipo(tp);
-            simb.setReferencia(tp); 
+            simb = new Simbolo(t.image, tp); 
             Compilador.tabela.inclui(simb);
         } else {    
-            erroSemantico("Erro semântico \n A variável "+t.image+
-                          " já foi inicializada");
+            erroSemantico("Erro semantico \n A variavel "+t.image+
+                          " ja foi inicializada");
         }
     }
     (
@@ -680,13 +688,11 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
         t = <NOMEVAR>
         {
             if(!Compilador.tabela.isExiste(t.image)) { 
-                simb = new Simbolo(t.image); 
-                simb.setTipo(tp);
-                simb.setReferencia(tp); 
+                simb = new Simbolo(t.image, tp); 
                 Compilador.tabela.inclui(simb);
             } else {
-                erroSemantico("Erro semântico \n A variável "+t.image+
-                              " já foi inicializada");
+            erroSemantico("Erro semantico \n A variavel "+t.image+
+                          " ja foi inicializada");
             }     
         }
     )*
@@ -701,7 +707,7 @@ void declaraVar() : {Simbolo simb; Token t=null; char tp;}
 }
 
 ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> listaVar = new LinkedList<Item>();
-  char tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();
+  Tipo tipo;Expressao expressao=new Expressao();LinkedList<Expressao> listaExpressoes = new LinkedList<Expressao>();
   ListaComandos listaAtribuicoes = new ListaComandos();}
 {
     t = <NOMEVAR>
@@ -714,7 +720,7 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
         else {
           	Compilador.tabela.setInicializada(t.image);        }
        	tipo = Compilador.tabela.getTipoSimbolo(t.image);
-        if(tipo=='n') {
+        if(tipo==Tipo.NUMERO) {
          	listaVar.add(new Item(Tipo.NUMERO, t.image));      
         }
         else {
@@ -726,14 +732,14 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
         t = <NOMEVAR>
         {
             if(!Compilador.tabela.isExiste(t.image)) {
-                erroSemantico("Erro semântico \n A variável "+t.image+
-                              " não foi inicializada");
+                erroSemantico("Erro semantico \n A variavel "+t.image+
+                              " nao foi inicializada");
             }
             else {
 	          	Compilador.tabela.setInicializada(t.image);
 	        }
 	       	tipo = Compilador.tabela.getTipoSimbolo(t.image);
-		    if(tipo=='n') {
+		    if(tipo==Tipo.NUMERO) {
 		      	listaVar.add(new Item(Tipo.NUMERO, t.image));      
 		    }
 		    else {
@@ -777,16 +783,16 @@ ListaComandos atribVar() : { Simbolo simbolo; Token t=null; LinkedList <Item> li
                 tipoExp = "string";
             if (iVar != iExp)
             { 
-                System.out.println("Erro semântico \nVariável " +
+                System.out.println("Erro semantico \nVariavel " +
                                    var.getValor() +
-                                   " não é do tipo " + tipoExp);
+                                   " nao eh do tipo " + tipoExp);
           	Compilador.tabela.setInicializada(var.getValor());
          }
 
          
         }
     }
-    // Cria as instancias de atribuições para cada comando de atribuição
+    // Cria as instancias de atribuicoes para cada comando de atribuicao
      {
         Tipo iVar1, iExp1;
         Item var1;
@@ -825,8 +831,8 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
     tVar = <NOMEVAR>
     {
         if(!Compilador.tabela.isExiste(tVar.image)) {
-            erroSemantico("Erro semântico \n A variável "+tVar.image+
-                          " não foi inicializada");                          
+            erroSemantico("Erro semantico \n A variavel "+tVar.image+
+                          " nao foi inicializada");                          
         } else
         {
 			Compilador.tabela.setInicializada(tVar.image);
@@ -843,8 +849,8 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
             tVar = <NOMEVAR>
             {
                 if(!Compilador.tabela.isExiste(tVar.image)) {
-                    erroSemantico("Erro semântico \n A variável "+
-                                  tVar.image+ " não foi inicializada");
+                    erroSemantico("Erro sema�ntico \n A variavel "+
+                                  tVar.image+ " nao foi inicializada");
                 } else
 		        {
 					Compilador.tabela.setInicializada(tVar.image);
@@ -888,8 +894,8 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
       | t = <NOMEVAR>
         {
             if(!Compilador.tabela.isExiste(t.image)) {
-                erroSemantico("Erro semântico \n A variável "+t.image+
-                              " não foi inicializada");
+                erroSemantico("Erro semntico \n A variavel "+t.image+
+                              " nao foi inicializada");
             } else
 	        {
 				Compilador.tabela.setUtilizada(t.image);
@@ -914,8 +920,8 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
                 {
 
                   
-                    erroSemantico("Erro semântico \n A variável "+t.image+
-                                  " não foi inicializada");
+                    erroSemantico("Erro sema�ntico \n A variavel "+t.image+
+                                  " nao foi inicializada");
                 } else
 		        {
 					Compilador.tabela.setUtilizada(t.image);
@@ -1184,8 +1190,8 @@ ListaComandos comandoPara() : {
     {
         if(t!=null && !Compilador.tabela.isExiste(t.image))
         {
-            erroSemantico("Erro semântico \n A variável "+t.image+
-                          " não foi inicializada");
+            erroSemantico("Erro semantico \n A variavel "+t.image+
+                          " nao foi inicializada");
         } else
         {
           	Compilador.tabela.setInicializada(t.image);
@@ -1301,8 +1307,8 @@ Expressao paraEspecial(ParaMultiplo paraMultiplo, String variavel) : {
         {
             if(t!=null && !Compilador.tabela.isExiste(t.image))
             {
-                erroSemantico("Erro semântico \n A variável "+t.image+
-                              " não foi inicializada");
+                erroSemantico("Erro semantico \n A variavel "+t.image+
+                              " nao foi inicializada");
             } else
             {
                 listaVariaveis.add(t.image);
@@ -1379,7 +1385,7 @@ Condicional comandoSelect () : {Token v = null; Token n = null; ListaComandos li
                           " nao foi inicializada");
             else           	{
 	            Compilador.tabela.setUtilizada(v.image);
-		        if (Compilador.tabela.getTipoSimbolo(v.image) != 'n')
+		        if (Compilador.tabela.getTipoSimbolo(v.image) != Tipo.NUMERO)
 		        	erroSemantico("Erro semantico: A variavel "+v.image+
 		                          " deve ser do tipo numero");
 		     }
