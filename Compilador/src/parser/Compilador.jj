@@ -77,7 +77,7 @@ public class Compilador
          		}
          		err.close();
          		input.close();
-				if(countErros > 0) 					System.out.println("Codigo não montado - com erros.");
+         		if(countErros > 1) 					System.out.println("Codigo não montado - com erros.");
 				else { 					System.out.println("Codigo montado com sucesso!");
 					// instrucoes para execucao do codigo destino montado
 					System.out.println("Execute o código montado "+nomeArquivoFonte+".class com o comando:");

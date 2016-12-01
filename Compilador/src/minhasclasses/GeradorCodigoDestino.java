@@ -15,8 +15,8 @@ public class GeradorCodigoDestino {
 		BufferedWriter arqSaida;
 		try{
 			arqSaida = new BufferedWriter(new FileWriter(nomeArquivoFonte + ".j"));
-			arqSaida.write(".source prog_destino.java\r\n");
-            arqSaida.write(".class public prog_destino\r\n");
+			arqSaida.write(".source "+nomeArquivoFonte+".java\r\n");
+            arqSaida.write(".class public "+nomeArquivoFonte+"\r\n");
             arqSaida.write(".super java/lang/Object\r\n");
             arqSaida.write(".method public <init>()V\r\n");
             arqSaida.write(".limit stack 1\r\n");

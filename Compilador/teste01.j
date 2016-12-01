@@ -1,5 +1,5 @@
-.source prog_destino.java
-.class public prog_destino
+.source teste01.java
+.class public teste01
 .super java/lang/Object
 .method public <init>()V
 .limit stack 1
@@ -19,6 +19,8 @@ dload_1
 ldc2_w 3.0
 dadd
 dstore_3
-erro no comando exibicao - tipo nao identificado
+dload_3
+getstatic java/lang/System/out Ljava/io/PrintStream;
+invokevirtual java/io/PrintStream/println(D)V
 return
 .end method

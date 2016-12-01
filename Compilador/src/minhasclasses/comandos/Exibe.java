@@ -28,23 +28,23 @@ public class Exibe extends Comando{
 	public String geraCodigoDestino(){
 		String codigoExibicao="";
 		int referencia = Compilador.tabela.consultaReferencia(item.getValor());
-				
-		if(this.item.getTipo() == Tipo.NUMERO){
-			if(referencia==0) codigoExibicao+="dstore_0\r\n";
-			else if(referencia==1) codigoExibicao+="dstore_1\r\n";
-			else if(referencia==2) codigoExibicao+="dstore_2\r\n";
-			else if(referencia==3) codigoExibicao+="dstore_3\r\n";
-			else codigoExibicao+="dstore "+referencia+"\r\n";
+		Tipo tipo = Compilador.tabela.getTipoSimbolo(item.getValor());		
+		if(tipo == Tipo.NUMERO){
+			if(referencia==0) codigoExibicao+="dload_0\r\n";
+			else if(referencia==1) codigoExibicao+="dload_1\r\n";
+			else if(referencia==2) codigoExibicao+="dload_2\r\n";
+			else if(referencia==3) codigoExibicao+="dload_3\r\n";
+			else codigoExibicao+="dload "+referencia+"\r\n";
 			
 			codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
 			codigoExibicao+="invokevirtual java/io/PrintStream/println(D)V\r\n";
 		}
-		else if(this.item.getTipo() == Tipo.STRING){
-			if(referencia==0) codigoExibicao+="astore_0\r\n";
-			else if(referencia==1) codigoExibicao+="astore_1\r\n";
-			else if(referencia==2) codigoExibicao+="astore_2\r\n";
-			else if(referencia==3) codigoExibicao+="astore_3\r\n";
-			else codigoExibicao+="astore "+(Simbolo.getMarcador())+"\r\n";
+		else if(tipo == Tipo.STRING){
+			if(referencia==0) codigoExibicao+="aload_0\r\n";
+			else if(referencia==1) codigoExibicao+="aload_1\r\n";
+			else if(referencia==2) codigoExibicao+="aload_2\r\n";
+			else if(referencia==3) codigoExibicao+="aload_3\r\n";
+			else codigoExibicao+="aload "+(Simbolo.getMarcador())+"\r\n";
 			
 			codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
 			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
