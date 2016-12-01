@@ -9,9 +9,6 @@ public class Tabela implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int labelCondicional = 0;//Esse label é utilizado localmente, e sempre muda. 
-	private int labelCondicionalEnd = 0;//Esse label é usado uma vez apenas, quando iniciamos um comando condicional.
-	
 	private HashMap<String,Simbolo> tab;
 
 	public Tabela() {
@@ -69,22 +66,6 @@ public class Tabela implements Serializable{
 	
 	public void setUtilizada(String _chave){
 		((Simbolo)this.tab.get(_chave)).setUtilizada(true);
-	}
-	
-	public int getLabelCondicional(){
-		return this.labelCondicional;
-	}
-	
-	public int getLabelCondicionalEnd(){
-		return this.labelCondicionalEnd;
-	}
-	
-	public void incLabelCondicional(){
-		this.labelCondicional++;
-	}
-	
-	public void incLabelCondicionalEnd(){
-		this.labelCondicionalEnd++;
 	}
 	
 }

@@ -18,7 +18,7 @@ public class Compilador
     public static Tabela tabela = new Tabela();
     public static ListaComandos listaComandosPrincipal;
 
-  	static String nomeArquivoFonte = "teste01";
+  	static String nomeArquivoFonte = "teste02";
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
     public static void main (String args []) throws ParseException

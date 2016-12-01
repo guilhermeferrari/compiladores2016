@@ -555,7 +555,7 @@ public class Expressao implements Serializable{
 					//e armazena 1 na pilha.
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +"\r\n";
 					codigoExpressao+= ("LABEL_0"+contLabel + ":\r\n");
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
@@ -568,7 +568,7 @@ public class Expressao implements Serializable{
 					//Caso os numeros sejam diferentes armazena 1 na pilha.
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +"\r\n";
 					codigoExpressao+= ("LABEL_0"+contLabel + ":\r\n");
 					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
@@ -580,7 +580,7 @@ public class Expressao implements Serializable{
 					//Caso o primeiro numero seja maior, armazena 1 na pilha.
 					codigoExpressao+="ifgt LABEL_0"+contLabel.toString()+ "\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +"\r\n";
 					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
@@ -591,7 +591,7 @@ public class Expressao implements Serializable{
 					//Caso o primeiro numero seja maior ou igual, armazena 1 na pilha.
 					codigoExpressao+="ifge LABEL_0"+contLabel.toString()+ "\r\n";
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +"\r\n";
 					codigoExpressao+="LABEL_0"+contLabel.toString() + ":\r\n";
 					codigoExpressao+="dconst_1\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";

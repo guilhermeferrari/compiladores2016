@@ -2,4 +2,3 @@ numero _a, _b;
 _a = 1+1;
 _b = _a + 3;
 exibe _b;
-

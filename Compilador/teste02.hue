@@ -1,13 +1,8 @@
 numero _a, _b;
-_a = 1+1;
-_b = _a + 3;
-
-se(2)
+_a = 1;
+_b = 2;
+se(_a == 1)
+   exibe _a;
+senao
    exibe _b;
 fimSe
-
-/*
-se(_a == 2 e _b == 5)
-   exibe _b;
-fimSe
-*/

@@ -9,6 +9,10 @@ public class Condicional extends Comando {
 	private ListaComandos verdadeiro;
 	private ListaComandos falso;
 	
+	static private int labelCondicional = 0; 
+	static private int labelCondicionalEnd = 0;
+	
+
 	public Condicional(){}
 
 	public Expressao getExpressao() {
@@ -36,8 +40,8 @@ public class Condicional extends Comando {
 	}
 	
 	public String geraCodigoDestino(){
-		int labelElse = Compilador.tabela.getLabelCondicional(); // Label usada caso a expressão do if resulte em false.
-		Compilador.tabela.incLabelCondicional();
+		int labelElse = Condicional.labelCondicional; // Label usada caso a expressão do if resulte em false.
+		Condicional.labelCondicional++;
 		String comandoIf ="";
 		
 		comandoIf += expressao.geraCodigoExpressao();//Código da expressão de análise do if();
@@ -45,16 +49,16 @@ public class Condicional extends Comando {
 		comandoIf += "dcmpg \r\n";
 		comandoIf += "ifeq CONDICIONAL_"+ labelElse + "\r\n";//Se der false, vá para else, se não, execute o código do if.
 		//Código do if
- /*   	for(Comando com : verdadeiro.getComandos()){
+    	for(Comando com : verdadeiro.getComandos()){
     		comandoIf += com.geraCodigoDestino();
     	}
-    	comandoIf += "goto CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+"\r\n";//Terminou o if, vá para depois do código do else;
+    	comandoIf += "goto CONDICIONALEND_"+Condicional.labelCondicionalEnd+"\r\n";//Terminou o if, vá para depois do código do else;
     	comandoIf += "CONDICIONAL_"+labelElse +":\r\n";
     	for(Comando com : falso.getComandos()){
     		comandoIf += com.geraCodigoDestino();
     	}
-*/    	comandoIf += "CONDICIONALEND_"+Compilador.tabela.getLabelCondicionalEnd()+":\r\n\r\n";
-    	Compilador.tabela.incLabelCondicionalEnd();
+    	comandoIf += "CONDICIONALEND_"+Condicional.labelCondicionalEnd+":\r\n\r\n";
+    	Condicional.labelCondicionalEnd++;
 		return comandoIf;
 	}
 	
