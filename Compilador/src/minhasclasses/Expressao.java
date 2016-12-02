@@ -470,10 +470,10 @@ public class Expressao implements Serializable{
 					codigoExpressao+="Fim:\r\n";
 				}
 				else if(item.getValor().equals("e")){
-					codigoExpressao += "dconst_1\r\n";
+					codigoExpressao += "dconst_0\r\n";
 					codigoExpressao += "dcmpg\r\n";
-					// Verifico se o topo é igual à 1
-					codigoExpressao += "ifeq topoUm_"+contAnd+"\r\n";
+					// Verifico se o topo é igual à 1 (ou -1)
+					codigoExpressao += "ifne topoUm_"+contAnd+"\r\n";
 
 					// Se o topo da pilha for zero, logo o resultado será sempre 0, já que
 					// 0 * (0 | 1) é sempre zero. Retiramos então o topo da pilha, empilhamos 0
@@ -485,11 +485,11 @@ public class Expressao implements Serializable{
 					// Caso o topo seja igual à 1, entra aqui. Empilho 1 e comparo o topo com o
 					// próximo, a fim de verificar se são iguais ou não.
 					codigoExpressao += "topoUm_"+contAnd+":\r\n";
-					codigoExpressao += "dconst_1\r\n";
+					codigoExpressao += "dconst_0\r\n";
 					codigoExpressao += "dcmpg\r\n";
 					// Caso seja igual à um, a resposta será um e desvia para a label 1. Senão, a operação
 					// de and irá dar zero, portanto empilharemos 0.
-					codigoExpressao += "ifeq um_"+contAnd+"\r\n";
+					codigoExpressao += "ifne um_"+contAnd+"\r\n";
 					codigoExpressao += "dconst_0\r\n";
 					codigoExpressao += "goto final_"+contAnd+"\r\n";
 					// Agora, tendo desempilhado 1, segue para a label 'um' e o empilhamos 1, já que 1x1 == 1.
@@ -497,7 +497,6 @@ public class Expressao implements Serializable{
 					codigoExpressao += "dconst_1\r\n";
 					codigoExpressao += "final_"+contAnd+":\r\n";
 					contAnd++;
-					//System.out.println(codigoExpressao);
 				}
 				else if(item.getValor().equals("ou")){
 					//É necessário empilhar zero para utilizar o dcmpg e testar se o topo é zero
@@ -534,7 +533,6 @@ public class Expressao implements Serializable{
 					//label final
 					codigoExpressao+="final_"+contOr+":\r\n";
 					contOr++;
-					System.out.println("and:"+codigoExpressao);
 				}
 				else if(item.getValor().equals("nao")){
 					codigoExpressao+="dconst_0\r\n";
