@@ -398,7 +398,7 @@ public class Expressao implements Serializable{
 					codigoExpressao+="ddiv\r\n";
 				}
 				else if(item.getValor().equals("^")){
-					
+					codigoExibicao+="invokestatic    java/lang/Math.pow(DD)D\r\n";
 				}
 				else if(item.getValor().equals("e")){
 					codigoExpressao += "dconst_0\r\n";
