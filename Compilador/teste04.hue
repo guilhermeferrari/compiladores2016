@@ -1,0 +1,5 @@
+numero _a;
+exibe "Entre com um numero: ";
+leia _a;
+exibe "O numero lido foi: ", _a;
+

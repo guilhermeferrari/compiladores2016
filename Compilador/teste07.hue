@@ -1,0 +1,15 @@
+numero _a, _b, _r1, _r2, _r3, _r4, _r5;
+_a = 4;
+_b = 3;
+_r1 = _a + _b;
+_r2 = _a - _b;
+_r3 = _a * _b;
+_r4 = _a / _b;
+_r5 = _a ^ _b;
+
+exibe "_a = 4, _b = 3";
+exibe "_a + _b:", _r1;
+exibe "_a - _b:", _r2;
+exibe "_a * _b:", _r3;
+exibe "_a / _b:", _r4;
+exibe "_a ^ _b:", _r5;

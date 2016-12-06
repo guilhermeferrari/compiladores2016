@@ -30,31 +30,46 @@ public class Exibe extends Comando implements Serializable{
 	
 	public String geraCodigoDestino(){
 		String codigoExibicao="";
-		int referencia = Compilador.tabela.consultaReferencia(item.getValor());
-		Tipo tipo = Compilador.tabela.getTipoSimbolo(item.getValor());		
-
+		
 		codigoExibicao+="getstatic java/lang/System/out Ljava/io/PrintStream;\r\n";		
 		
-		if(tipo == Tipo.NUMERO){
-			if(referencia==0) codigoExibicao+="dload_0\r\n";
-			else if(referencia==1) codigoExibicao+="dload_1\r\n";
-			else if(referencia==2) codigoExibicao+="dload_2\r\n";
-			else if(referencia==3) codigoExibicao+="dload_3\r\n";
-			else codigoExibicao+="dload "+referencia+"\r\n";
+		if(this.item.getTipo() == Tipo.VARIAVEL) {
+			int referencia = Compilador.tabela.consultaReferencia(item.getValor());
+			Tipo tipo = Compilador.tabela.getTipoSimbolo(item.getValor());		
+
+			if(tipo == Tipo.NUMERO){
+				if(referencia==0) codigoExibicao+="dload_0\r\n";
+				else if(referencia==1) codigoExibicao+="dload_1\r\n";
+				else if(referencia==2) codigoExibicao+="dload_2\r\n";
+				else if(referencia==3) codigoExibicao+="dload_3\r\n";
+				else codigoExibicao+="dload "+referencia+"\r\n";
+			
+				codigoExibicao+="invokevirtual java/io/PrintStream/println(D)V\r\n";
+			}
+			else if(tipo == Tipo.STRING){
+				if(referencia==0) codigoExibicao+="aload_0\r\n";
+				else if(referencia==1) codigoExibicao+="aload_1\r\n";
+				else if(referencia==2) codigoExibicao+="aload_2\r\n";
+				else if(referencia==3) codigoExibicao+="aload_3\r\n";
+				else codigoExibicao+="aload "+(Simbolo.getMarcador())+"\r\n";
+			
+				codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
+			}
+		}
+		
+		else if(this.item.getTipo() == Tipo.STRING) {
+			codigoExibicao += "ldc " + this.item.getValor() + "\r\n"; 
+			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
+		}
+
+		else if(this.item.getTipo() == Tipo.NUMERO) {
+			if(this.item.getValor().contains("."))
+				codigoExibicao += "ldc2_w " + this.item.getValor() + " \r\n";
+			else
+				codigoExibicao += "ldc2_w " + this.item.getValor() + ".0 \r\n";	
 			
 			codigoExibicao+="invokevirtual java/io/PrintStream/println(D)V\r\n";
 		}
-		else if(tipo == Tipo.STRING){
-			if(referencia==0) codigoExibicao+="aload_0\r\n";
-			else if(referencia==1) codigoExibicao+="aload_1\r\n";
-			else if(referencia==2) codigoExibicao+="aload_2\r\n";
-			else if(referencia==3) codigoExibicao+="aload_3\r\n";
-			else codigoExibicao+="aload "+(Simbolo.getMarcador())+"\r\n";
-			
-			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
-		}
-		else
-			codigoExibicao+="erro no comando exibicao - tipo nao identificado\r\n";
 		
 		return codigoExibicao;
 	}

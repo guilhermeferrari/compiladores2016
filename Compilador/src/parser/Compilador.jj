@@ -18,7 +18,7 @@ public class Compilador
     public static Tabela tabela = new Tabela();
     public static ListaComandos listaComandosPrincipal;
 
-  	static String nomeArquivoFonte = "teste02";
+  	static String nomeArquivoFonte = "teste07";
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
     public static void main (String args []) throws ParseException
@@ -45,7 +45,7 @@ public class Compilador
 
 				// exibe o codigo intermediário 
                 System.out.println("\nCODIGO INTERMEDIARIO:");
-                System.out.println(Compilador.listaComandosPrincipal.toString());
+                System.out.println(Compilador.listaComandosPrincipal);
                 
                 // grava a tabela e o codigo intermediario em arquivo
                 ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(nomeArquivoFonte+".int"));
@@ -223,7 +223,8 @@ TOKEN :
 ListaComandos inicio() : {ListaComandos listaCom;}
 {
     listaCom = listaComandos() <EOF>
-    {      return listaCom;
+    {
+      return listaCom;
     }
 }
 
@@ -235,7 +236,7 @@ ListaComandos listaComandos() : {ListaComandos listaCom = new ListaComandos(); }
     }
 }
 
-void comando(ListaComandos listaCom) : {ListaComandos listaAux;                                        Comando com;}
+void comando(ListaComandos listaCom) : {ListaComandos listaAux; Comando com;}
 {
         listaAux = atribVar()
         {

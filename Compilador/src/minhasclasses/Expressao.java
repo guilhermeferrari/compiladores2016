@@ -104,7 +104,7 @@ public class Expressao implements Serializable{
 	}
 
 	public void addItem(Item item){
-
+	
 		// questao da prova simulada: otimiza o operador modulo
 		if(item.getTipo() == Tipo.OPERADOR &&
 		   item.getValor() == "@") {
@@ -129,7 +129,6 @@ public class Expressao implements Serializable{
 					String aux="";
 
 					if (listaExpressao.get(this.listaExpressao.size()-2).getValor().equals("0") && !listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")) {
-						System.out.println("TESTE");
 						switch(item.getValor()) {
 							case "+":
 								aux = listaExpressao.get(this.listaExpressao.size()-1).getValor();
@@ -329,6 +328,8 @@ public class Expressao implements Serializable{
 		}
 		listaExpressao.add(item);
 	}
+	
+	
 	public void removeUltimo(){
 		listaExpressao.removeLast();
 	}
@@ -358,8 +359,7 @@ public class Expressao implements Serializable{
 
 	public String geraCodigoExpressao() {
 
-
-		String codigoExpressao="";
+		String codigoExpressao="\r\n; expressao: " + this.getCodigoInfixo() + "\r\n";
 		for(Item item : this.listaExpressao){
 			if(item.getTipo() == Tipo.NUMERO){
 				if(item.getValor().contains(".")){
@@ -398,7 +398,7 @@ public class Expressao implements Serializable{
 					codigoExpressao+="ddiv\r\n";
 				}
 				else if(item.getValor().equals("^")){
-					codigoExibicao+="invokestatic    java/lang/Math.pow(DD)D\r\n";
+					codigoExpressao+="invokestatic    java/lang/Math.pow(DD)D\r\n";
 				}
 				else if(item.getValor().equals("e")){
 					codigoExpressao += "dconst_0\r\n";
@@ -471,11 +471,11 @@ public class Expressao implements Serializable{
 					codigoExpressao+="ifeq LABEL_0"+contLabel+ "\r\n";
 					//se for diferente de zero a reposta é zero
 					codigoExpressao+="dconst_0\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) "\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1)+ "\r\n";
 					//se for igual a zero a resposta é 1
 					codigoExpressao+="LABEL_0"+contLabel+ ":\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="LABEL_0"+(contLabel+1):\r\n";
+					codigoExpressao+="LABEL_0"+(contLabel+1)+":\r\n";
 					contLabel+=2;
 				}
 				else if(item.getValor().equals("==")){
@@ -532,7 +532,7 @@ public class Expressao implements Serializable{
 					//Caso o primeiro numero seja menor, armazena 1 na pilha.
 					codigoExpressao+="ifge LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +"\r\n";
 					codigoExpressao+="LABEL_0"+contLabel + ":\r\n";
 					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
@@ -543,7 +543,7 @@ public class Expressao implements Serializable{
 					//Caso o primeiro numero seja menor ou igual, armazena 1 na pilha.
 					codigoExpressao+="ifgt LABEL_0"+contLabel+ "\r\n";
 					codigoExpressao+="dconst_1\r\n";
-					codigoExpressao+="goto LABEL_0"+(contLabel+1) +":\r\n";
+					codigoExpressao+="goto LABEL_0"+(contLabel+1) +"\r\n";
 					codigoExpressao+="LABEL_0"+contLabel + ":\r\n";
 					codigoExpressao+="dconst_0\r\n";
 					codigoExpressao+="LABEL_0"+(contLabel+1) + ":\r\n";
@@ -564,7 +564,7 @@ public class Expressao implements Serializable{
                 }
 			}
 		}
-		return codigoExpressao;
+		return codigoExpressao + "\r\n";
 	}
 
 }

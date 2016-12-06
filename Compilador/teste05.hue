@@ -1,0 +1,6 @@
+numero _a;
+_a = 1;
+enquanto(_a <= 10)
+   exibe _a;
+   _a = _a + 1;
+fimEnquanto

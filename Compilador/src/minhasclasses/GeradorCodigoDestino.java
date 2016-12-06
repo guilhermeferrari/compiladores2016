@@ -26,23 +26,25 @@ public class GeradorCodigoDestino {
             arqSaida.write("return\r\n");
             arqSaida.write(".end method\r\n\r\n");
             arqSaida.write(".method public static main([Ljava/lang/String;)V\r\n");
-            arqSaida.write(".limit stack "+Expressao.getMaxPilha()+"\r\n");
+            arqSaida.write(".limit stack "+(Expressao.getMaxPilha()+4)+"\r\n");  // +4 é devido ao comando de leitura que não usa expressao
             arqSaida.write(".limit locals "+(Simbolo.getMarcador()+1)+"\r\n\r\n"); //o +1 se deve ao fato de ter de adicionar o this, todo programa deve possui-lo
             arqSaida.write(processaListaComandos(Compilador.listaComandosPrincipal));
             arqSaida.write("return\r\n");
             arqSaida.write(".end method\r\n");
             arqSaida.close();
 		}catch(IOException e){
-			e.printStackTrace();
+			System.out.println("Problemas na geracao do codigo destino");
+			System.exit(1);
 		}catch(Exception e) {
             System.out.println(e.getMessage());
+            System.exit(1);
         }
 	}
 	
     static String processaListaComandos(ListaComandos listaComandos){
-    	String saida ="";
+        String saida ="";
     	for(Comando com : listaComandos.getComandos()){
-    		saida += com.geraCodigoDestino();		
+        	saida += com.geraCodigoDestino();
     	}	
     	return saida;
     }

@@ -12,11 +12,11 @@ public class ListaComandos implements Serializable{
 	private LinkedList<Comando> comandos;
 
 	public ListaComandos(){
-		comandos = new LinkedList<Comando>();
+		this.comandos = new LinkedList<Comando>();
 	}
 
 	public LinkedList<Comando> getComandos() {
-		return comandos;
+		return this.comandos;
 	}
 	
 	public Comando getComando(int n) {
@@ -24,12 +24,12 @@ public class ListaComandos implements Serializable{
 	}
 	
 	public void insere(Comando comando){
-		comandos.add(comando);
+		this.comandos.add(comando);
 	}
 	
 	// insere todos os elementos de 'lista'  
 	public void insere(ListaComandos lista) {
-		comandos.addAll(lista.comandos);
+		this.comandos.addAll(lista.comandos);
 	}
 	
 	public Comando removeUltimo(){

@@ -54,9 +54,11 @@ public class Condicional extends Comando {
     	}
     	comandoIf += "goto CONDICIONALEND_"+Condicional.labelCondicionalEnd+"\r\n";//Terminou o if, vá para depois do código do else;
     	comandoIf += "CONDICIONAL_"+labelElse +":\r\n";
-    	for(Comando com : falso.getComandos()){
-    		comandoIf += com.geraCodigoDestino();
-    	}
+    	if(this.falso != null) {
+    		for(Comando com : falso.getComandos()){
+    			comandoIf += com.geraCodigoDestino();
+    		}
+		}
     	comandoIf += "CONDICIONALEND_"+Condicional.labelCondicionalEnd+":\r\n\r\n";
     	Condicional.labelCondicionalEnd++;
 		return comandoIf;

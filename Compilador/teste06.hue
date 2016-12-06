@@ -1,0 +1,6 @@
+numero _x, _n, _aux;
+leia "Qual a tabuada?", _x;
+para (_n 1 ate 10)
+	_aux = _x * _n;
+    exibe _x, " x ", _n, " = ", _aux, "\n";
+fimPara

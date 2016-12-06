@@ -6,45 +6,45 @@ import minhasclasses.comandos.Exibe;
 import parser.*;
 
 public class EntradaDados extends Comando{
-	private Item ref1;
+	private Item nomeVar;
 
 	public EntradaDados(){}
 
-	public void setItem(Item ref1) {
-		this.ref1 = ref1;
+	public void setItem(Item nomeVar) {
+		this.nomeVar = nomeVar;
 	}
 	
 	public Item getItem() {
-		return ref1;
+		return nomeVar;
 	}
 	
 	public String geraCodigoDestino(){
 		String codigoLeia ="";
-		if(ref1.getTipo() == Tipo.STRING){
-			codigoLeia += "new java/util/Scanner \r\n";
-			codigoLeia += "dup \r\n";
-			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream \r\n";
-			codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
-			codigoLeia += "invokevirtual java/util/Scanner/nextLine()String \r\n";
-			codigoLeia += "dstore_"+ref1+"\r\n";
+		int referencia = Compilador.tabela.consultaReferencia(this.nomeVar.valor);
+		Tipo tipo = Compilador.tabela.getTipoSimbolo(this.nomeVar.valor);
+				
+		codigoLeia += "new java/util/Scanner \r\n";
+		codigoLeia += "dup \r\n";
+		codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream; \r\n";
+		codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
+
+		if(tipo == Tipo.STRING){
+			System.out.println("estou aqui no string "+referencia);
+			codigoLeia += "invokevirtual java/util/Scanner/nextLine()Ljava/lang/String; \r\n";
+			codigoLeia += "astore "+referencia+"\r\n";
 		}
-		else 
-		{
-			codigoLeia += "new java/util/Scanner \r\n";
-			codigoLeia += "dup \r\n";
-			codigoLeia += "getstatic java/lang/System/in Ljava/io/InputStream\r\n";
-			codigoLeia += "invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V \r\n";
-			codigoLeia += "invokevirtual java/util/Scanner/nextDouble()Double \r\n";
-			codigoLeia += "dstore_"+ref1+"\r\n";
-		}	
-		
+		else {
+			System.out.println("estou aqui no numero "+referencia);
+			codigoLeia += "invokevirtual java/util/Scanner/nextDouble()D \r\n";
+			codigoLeia += "dstore "+referencia+"\r\n";
+		}		
 		return codigoLeia;
 	}
 
 	@Override
 	public String toString() {
 		return "\nComando ENTRADA (item): "+
-		       "item: "+this.ref1.toString();
+		       "item: "+this.nomeVar.toString();
 	}
 		
 }

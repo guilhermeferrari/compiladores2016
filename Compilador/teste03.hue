@@ -1,0 +1,5 @@
+numero _a;
+_a = 1;
+se(_a == 1)
+   exibe _a;
+fimSe

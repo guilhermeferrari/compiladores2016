@@ -41,9 +41,8 @@ public class Enquanto extends Comando {
 		contagemEnquanto ++;
 
 		saida += "RotuloInicio_Enquanto"+(numLabel)+": \r\n";
-
-		saida += condicao.geraCodigoExpressao();
-		saida += "dconst_1 \r\n";
+		saida += condicao.geraCodigoExpressao() + " \r\n";
+		saida += "dconst_0 \r\n";
 		saida += "dcmpg \r\n";		
 		saida += "ifeq RotuloFim_Enquanto"+(numLabel)+" \r\n";
 		
