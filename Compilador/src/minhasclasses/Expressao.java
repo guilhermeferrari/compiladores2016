@@ -442,7 +442,7 @@ public class Expressao implements Serializable{
 					//empilha 1
 					codigoExpressao+="dconst_1\r\n";
 					//vai para o label final
-					codigoExpressao+="goto final_"+contOr+"\r\n";
+					codigoExpressao+="goto finalOu_"+contOr+"\r\n";
 
 					//Entra aqui se o topo for 0. O resultado de ifeq tem que empilhar 0
 					codigoExpressao+="topoZero_"+contOr+":\r\n";
@@ -455,14 +455,14 @@ public class Expressao implements Serializable{
 					//entra aqui se o resultado nao for zero. empilha 1 pois 0 ou 1 = 1
 					codigoExpressao+="dconst_1\r\n";
 					//vai pro final
-					codigoExpressao+="goto final_"+contOr+"\r\n";
+					codigoExpressao+="goto finalOu_"+contOr+"\r\n";
 					//label zero
 					codigoExpressao+="zero_"+contOr+":\r\n";
 					//empilha 0 pois 0 ou 0 = 0
 					codigoExpressao+="dconst_0\r\n";
 
 					//label final
-					codigoExpressao+="final_"+contOr+":\r\n";
+					codigoExpressao+="finalOu_"+contOr+":\r\n";
 					contOr++;
 				}
 				else if(item.getValor().equals("nao")){

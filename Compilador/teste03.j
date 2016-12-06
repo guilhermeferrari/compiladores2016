@@ -10,11 +10,16 @@ return
 .end method
 
 .method public static main([Ljava/lang/String;)V
-.limit stack 4
+.limit stack 8
 .limit locals 4
 
+
+; expressao: 1 
 ldc2_w 1.0
+
 dstore_1
+
+; expressao: _a == 1 
 dload_1
 ldc2_w 1.0
 dcmpg
@@ -24,6 +29,7 @@ goto LABEL_01
 LABEL_00:
 dconst_1
 LABEL_01:
+
 dconst_0 
 dcmpg 
 ifeq CONDICIONAL_0

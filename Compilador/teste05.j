@@ -13,7 +13,10 @@ return
 .limit stack 8
 .limit locals 4
 
+
+; expressao: 1 
 ldc2_w 1.0
+
 dstore_1
 RotuloInicio_Enquanto0: 
 
@@ -27,6 +30,7 @@ goto LABEL_01
 LABEL_00:
 dconst_0
 LABEL_01:
+
  
 dconst_0 
 dcmpg 
@@ -34,9 +38,12 @@ ifeq RotuloFim_Enquanto0
 getstatic java/lang/System/out Ljava/io/PrintStream;
 dload_1
 invokevirtual java/io/PrintStream/println(D)V
+
+; expressao: _a + 1 
 dload_1
 ldc2_w 1.0
 dadd
+
 dstore_1
 goto RotuloInicio_Enquanto0 
 RotuloFim_Enquanto0: 
