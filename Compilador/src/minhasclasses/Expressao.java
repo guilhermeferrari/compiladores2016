@@ -201,8 +201,26 @@ public class Expressao implements Serializable{
 					}
 					else if (this.listaExpressao.get(this.listaExpressao.size()-2).getTipo().equals(Tipo.VARIAVEL)) {
 						if(this.listaExpressao.get(this.listaExpressao.size()-1).getValor().equals("0")){
+							switch(item.getValor()) {
+								case "*":
+									this.listaExpressao.remove(this.listaExpressao.size()-2);
+									break;
+								case "/":
+									this.listaExpressao.remove(this.listaExpressao.size()-2);
+									break;
+								case "^":
+									this.listaExpressao.remove(this.listaExpressao.size()-2);
+									this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf("1"));
+									break;
+								case "+":
+								case "-":
+									this.listaExpressao.remove(this.listaExpressao.size()-1);
+									break;
+								default:
+									listaExpressao.add(item);
+							}
 
-							if(item.getValor().equals("*")){
+							/*if(item.getValor().equals("*")){
 
 								this.listaExpressao.remove(this.listaExpressao.size()-2);
 							}
@@ -216,7 +234,7 @@ public class Expressao implements Serializable{
 								this.listaExpressao.get(this.listaExpressao.size()-1).setValor(String.valueOf("1"));
 							}
 							else
-								this.listaExpressao.remove(this.listaExpressao.size()-1);
+								this.listaExpressao.remove(this.listaExpressao.size()-1);*/
 						}
 						else{
 							this.listaExpressao.remove(this.listaExpressao.size()-1);
