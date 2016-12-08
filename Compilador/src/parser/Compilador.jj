@@ -18,7 +18,7 @@ public class Compilador
     public static Tabela tabela = new Tabela();
     public static ListaComandos listaComandosPrincipal;
 
-  	static String nomeArquivoFonte = "teste09";
+  	static String nomeArquivoFonte = "exemplo9";
     static LinkedList <Tipo> listaExpTipo = new LinkedList<Tipo>();
     static LinkedList <String> listaExp = new LinkedList<String>();
     public static void main (String args []) throws ParseException
@@ -29,7 +29,7 @@ public class Compilador
             System.out.println("Fazendo analise...");
             try
             {
-				// define o arquivo do código fonte
+				// define o arquivo do cï¿½digo fonte
                 compilador = new Compilador(new FileInputStream(nomeArquivoFonte +".hue"));
 				// executa o compilador
                 Compilador.listaComandosPrincipal = compilador.inicio();
@@ -43,7 +43,7 @@ public class Compilador
                 System.out.println("\nTABELA DE SIMBOLOS:");
                 System.out.println(Compilador.tabela);
 
-				// exibe o codigo intermediário 
+				// exibe o codigo intermediï¿½rio 
                 System.out.println("\nCODIGO INTERMEDIARIO:");
                 System.out.println(Compilador.listaComandosPrincipal);
                 
@@ -56,11 +56,11 @@ public class Compilador
 
                 //gera codigo destino
                 GeradorCodigoDestino.geraCodigoAssembler(nomeArquivoFonte);
-				System.out.println("\nArquivo do código destino "+nomeArquivoFonte+".j criado com sucesso!");
+				System.out.println("\nArquivo do cï¿½digo destino "+nomeArquivoFonte+".j criado com sucesso!");
 
 				// instrucoes para execucao 
-	        	System.out.println("\nPara criar o arquivo executável em java (.class) use o montador Jasmin:");
-	     		System.out.println("   Copie o arquivo jasmin.jar para o mesmo diretório de "+nomeArquivoFonte+".j e execute o montador:");
+	        	System.out.println("\nPara criar o arquivo executï¿½vel em java (.class) use o montador Jasmin:");
+	     		System.out.println("   Copie o arquivo jasmin.jar para o mesmo diretï¿½rio de "+nomeArquivoFonte+".j e execute o montador:");
 	     		System.out.println("   prompt> java -jar jasmin.jar "+nomeArquivoFonte+".j");
 	     		
 				// executa automaticamente o montador jasmin
@@ -77,10 +77,10 @@ public class Compilador
          		}
          		err.close();
          		input.close();
-         		if(countErros > 1) 					System.out.println("Codigo não montado - com erros.");
+         		if(countErros > 1) 					System.out.println("Codigo nï¿½o montado - com erros.");
 				else { 					System.out.println("Codigo montado com sucesso!");
 					// instrucoes para execucao do codigo destino montado
-					System.out.println("Execute o código montado "+nomeArquivoFonte+".class com o comando:");
+					System.out.println("Execute o cï¿½digo montado "+nomeArquivoFonte+".class com o comando:");
 	     			System.out.println("   prompt> java "+nomeArquivoFonte);
  				} 
                 break;
@@ -642,7 +642,7 @@ Item item = null;}
         expressao.addItem(new Item(Tipo.VARIAVEL, t.image));
             
         if(!Compilador.tabela.isExiste(t.image)) {
-            erroSemantico("Erro sema¢ntico \n A variavel "+t.image+
+            erroSemantico("Erro semaï¿½ntico \n A variavel "+t.image+
                           " nao foi inicializada");
         } else {
             if (expressao.getTipoDados()==null) {
@@ -850,7 +850,7 @@ ListaComandos leia() : {Token t=null, tVar,tStr;EntradaDados entradaDados;Item i
             tVar = <NOMEVAR>
             {
                 if(!Compilador.tabela.isExiste(tVar.image)) {
-                    erroSemantico("Erro sema¢ntico \n A variavel "+
+                    erroSemantico("Erro semaï¿½ntico \n A variavel "+
                                   tVar.image+ " nao foi inicializada");
                 } else
 		        {
@@ -921,7 +921,7 @@ ListaComandos exibe() : {Token t=null; ListaComandos exibir = new ListaComandos(
                 {
 
                   
-                    erroSemantico("Erro sema¢ntico \n A variavel "+t.image+
+                    erroSemantico("Erro semaï¿½ntico \n A variavel "+t.image+
                                   " nao foi inicializada");
                 } else
 		        {
@@ -1246,8 +1246,8 @@ ListaComandos comandoPara() : {
 	    }
 	    else {
 	       LinkedList<Comando> atribuicoes = paraMultiplo.getAtribuicoes();
-	       for (int i = 0; i < atribuicoes.size(); i++)
-	       	  listaCom.insere(atribuicoes.get(i));
+	       //for (int i = 0; i < atribuicoes.size(); i++)
+	       	  listaCom.insere(atribuicoes.get(0));
 	          listaCom.insere(paraMultiplo.getEnquanto());
 	    }
 	    return listaCom;

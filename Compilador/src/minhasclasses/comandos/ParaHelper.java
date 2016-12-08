@@ -166,6 +166,7 @@ public final class ParaHelper {
 
             atribuicao = new Atribuicao (variavel, expressaoPasso);
             listaComandos = new ListaComandos();
+            listaComandos.insere(atribuicoes.get(i+1));
             listaComandos.insere(enquanto);
             listaComandos.insere(atribuicao);
             expressaoCondicional = ParaHelper.criaExpressaoCondicional(
