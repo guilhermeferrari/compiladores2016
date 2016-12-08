@@ -44,7 +44,7 @@ public class Exibe extends Comando implements Serializable{
 				else if(referencia==3) codigoExibicao+="dload_3\r\n";
 				else codigoExibicao+="dload "+referencia+"\r\n";
 			
-				codigoExibicao+="invokevirtual java/io/PrintStream/println(D)V\r\n";
+				codigoExibicao+="invokevirtual java/io/PrintStream/print(D)V\r\n";
 			}
 			else if(tipo == Tipo.STRING){
 				if(referencia==0) codigoExibicao+="aload_0\r\n";
@@ -53,13 +53,13 @@ public class Exibe extends Comando implements Serializable{
 				else if(referencia==3) codigoExibicao+="aload_3\r\n";
 				else codigoExibicao+="aload "+(Simbolo.getMarcador())+"\r\n";
 			
-				codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
+				codigoExibicao+="invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V\r\n";
 			}
 		}
 		
 		else if(this.item.getTipo() == Tipo.STRING) {
 			codigoExibicao += "ldc " + this.item.getValor() + "\r\n"; 
-			codigoExibicao+="invokevirtual java/io/PrintStream/println(Ljava/lang/String;)V\r\n";
+			codigoExibicao+="invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V\r\n";
 		}
 
 		else if(this.item.getTipo() == Tipo.NUMERO) {
@@ -68,7 +68,7 @@ public class Exibe extends Comando implements Serializable{
 			else
 				codigoExibicao += "ldc2_w " + this.item.getValor() + ".0 \r\n";	
 			
-			codigoExibicao+="invokevirtual java/io/PrintStream/println(D)V\r\n";
+			codigoExibicao+="invokevirtual java/io/PrintStream/print(D)V\r\n";
 		}
 		
 		return codigoExibicao;
